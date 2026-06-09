@@ -1,0 +1,246 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user in the system.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["super_admin", "organizer", "participant"] },
+        "avatar": { "type": "string" },
+        "whatsapp": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "role"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "An organized event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "slug": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "categories": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "banner": { "type": "string" },
+        "gallery": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "location": { "type": "string" },
+        "googleMapsUrl": { "type": "string" },
+        "province": { "type": "string" },
+        "city": { "type": "string" },
+        "date": { "type": "string" },
+        "registrationOpen": { "type": "string" },
+        "registrationClose": { "type": "string" },
+        "quota": { "type": "number" },
+        "registeredParticipantsCount": { "type": "number" },
+        "sponsors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "faq": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "isFeatured": { "type": "boolean" },
+        "organizerId": { "type": "string" },
+        "organizerName": { "type": "string" },
+        "viewsCount": { "type": "number" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "title", "organizerId", "date"]
+    },
+    "Registration": {
+      "title": "Registration",
+      "description": "A user's registration for an event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "userId": { "type": "string" },
+        "eventTitle": { "type": "string" },
+        "eventBanner": { "type": "string" },
+        "eventCity": { "type": "string" },
+        "eventDate": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "categoryName": { "type": "string" },
+        "ticketNumber": { "type": "string" },
+        "bibNumber": { "type": "string" },
+        "personalInfo": { "type": "object" },
+        "raceInfo": { "type": "object" },
+        "identityInfo": { "type": "object" },
+        "jerseyInfo": { "type": "object" },
+        "addressInfo": { "type": "object" },
+        "emergencyInfo": { "type": "object" },
+        "medicalInfo": { "type": "object" },
+        "paymentInfo": { "type": "object" },
+        "checkInStatus": { "type": "string", "enum": ["registered", "checked_in", "race_pack_collected", "finished", "dnf"] },
+        "createdAt": { "type": "string" },
+        "checkedInAt": { "type": "string" },
+        "racePackCollectedAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "eventId", "createdAt"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "A discount coupon.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "type": { "type": "string", "enum": ["percentage", "fixed"] },
+        "value": { "type": "number" },
+        "quota": { "type": "number" },
+        "usedCount": { "type": "number" },
+        "expiryDate": { "type": "string" }
+      },
+      "required": ["id", "code"]
+    },
+    "Withdrawal": {
+      "title": "Withdrawal",
+      "description": "Organizer withdrawal request.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizerId": { "type": "string" },
+        "organizerName": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "bankName": { "type": "string" },
+        "accountNumber": { "type": "string" },
+        "accountHolderName": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "organizerId", "amount", "status"]
+    },
+    "SystemAnnouncement": {
+      "title": "System Announcement",
+      "description": "An announcement from system admin to users.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "date": { "type": "string" },
+        "targetRole": { "type": "string", "enum": ["all", "organizer", "participant"] }
+      },
+      "required": ["id", "title"]
+    },
+    "AppNotification": {
+      "title": "App Notification",
+      "description": "User specific app notification.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "date": { "type": "string" },
+        "read": { "type": "boolean" },
+        "type": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "title", "userId"]
+    },
+    "GlobalSettings": {
+      "title": "Global Settings",
+      "description": "App wide global settings.",
+      "type": "object",
+      "properties": {
+        "platformName": { "type": "string" },
+        "platformFeePct": { "type": "number" },
+        "minWithdrawalAmount": { "type": "number" },
+        "smsNotificationEnabled": { "type": "boolean" },
+        "emailNotificationEnabled": { "type": "boolean" },
+        "whatsAppNotificationsEnabled": { "type": "boolean" }
+      }
+    },
+    "OrganizerEmailSettings": {
+      "title": "Organizer Email Settings",
+      "description": "Organizer specific settings.",
+      "type": "object",
+      "properties": {
+        "organizerId": { "type": "string" },
+        "registrationConfirmation": { "type": "boolean" },
+        "paymentReceipt": { "type": "boolean" },
+        "paymentReminder": { "type": "boolean" }
+      },
+      "required": ["organizerId"]
+    },
+    "SimulatedEmail": {
+      "title": "Simulated Email",
+      "description": "An email sent via system simulation.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "to": { "type": "string" },
+        "subject": { "type": "string" },
+        "body": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "type": { "type": "string" },
+        "read": { "type": "boolean" },
+        "userId": { "type": "string" },
+        "metadata": { "type": "object" }
+      },
+      "required": ["id", "to"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Users in the system"
+    },
+    "/events/{eventId}": {
+      "schema": { "$ref": "#/entities/Event" },
+      "description": "Events happening on the platform"
+    },
+    "/registrations/{registrationId}": {
+      "schema": { "$ref": "#/entities/Registration" },
+      "description": "User registrations"
+    },
+    "/coupons/{couponId}": {
+      "schema": { "$ref": "#/entities/Coupon" },
+      "description": "Platform coupons"
+    },
+    "/withdrawals/{withdrawalId}": {
+      "schema": { "$ref": "#/entities/Withdrawal" },
+      "description": "Withdrawals requests"
+    },
+    "/announcements/{announcementId}": {
+      "schema": { "$ref": "#/entities/SystemAnnouncement" },
+      "description": "System announcements"
+    },
+    "/global_settings/default": {
+      "schema": { "$ref": "#/entities/GlobalSettings" },
+      "description": "Global user settings"
+    },
+    "/organizer_settings/{organizerId}": {
+      "schema": { "$ref": "#/entities/OrganizerEmailSettings" },
+      "description": "Settings specific to an organizer"
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/AppNotification" },
+      "description": "Notifications for a user"
+    },
+    "/users/{userId}/emails/{emailId}": {
+      "schema": { "$ref": "#/entities/SimulatedEmail" },
+      "description": "Emails simulated to user"
+    }
+  }
+}

@@ -23,7 +23,7 @@ interface NavigationState {
 }
 
 const AppContent: React.FC = () => {
-  const { userRole, announcements } = useApp();
+  const { userRole, announcements, currentUser, login } = useApp();
   
   // Navigation State management
   const [navState, setNavState] = useState<NavigationState>({
@@ -141,11 +141,29 @@ const AppContent: React.FC = () => {
 
         {/* VIEW 5: MULTI-ROLE ADAPTIVE DASHBOARDS */}
         {navState.view === 'dashboard' && (
-          <>
-            {userRole === 'participant' && <ParticipantDashboard />}
-            {userRole === 'organizer' && <OrganizerDashboard />}
-            {userRole === 'super_admin' && <SuperAdminDashboard />}
-          </>
+          currentUser ? (
+            <>
+              {userRole === 'participant' && <ParticipantDashboard />}
+              {userRole === 'organizer' && <OrganizerDashboard />}
+              {userRole === 'super_admin' && <SuperAdminDashboard />}
+            </>
+          ) : (
+            <div className="flex items-center justify-center py-32 px-4 text-center animate-in fade-in duration-300">
+               <div className="max-w-md w-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
+                 <ShieldCheck className="h-12 w-12 text-cyan-500 mx-auto mb-4" />
+                 <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Login Required</h2>
+                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-sans">
+                   You need to be signed in to view and manage your account.
+                 </p>
+                 <button
+                   onClick={login}
+                   className="flex mx-auto items-center space-x-2 bg-slate-900 text-white dark:bg-cyan-600 dark:hover:bg-cyan-500 px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-colors"
+                 >
+                   <span>Sign in with Google</span>
+                 </button>
+               </div>
+            </div>
+          )
         )}
 
       </main>

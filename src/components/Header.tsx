@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, activeView }) => {
   const { 
     currentUser, userRole, changeRole, notifications, 
     markNotificationsAsRead, theme, toggleTheme,
-    language, setLanguage, t 
+    language, setLanguage, t, login, logout
   } = useApp();
   
   const [showNotifications, setShowNotifications] = useState(false);
@@ -96,74 +96,6 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, activeView }) => {
         {/* Right side controls */}
         <div className="flex items-center space-x-3.5">
           
-          {/* Quick Role Switcher Indicator / Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setShowRoleMenu(!showRoleMenu)}
-              className="flex items-center space-x-2 rounded-full border border-slate-200/80 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/60 py-1.5 pl-3 pr-3 text-xs font-bold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-slate-800/80 cursor-pointer md:pr-4"
-              id="role-indicator-btn"
-            >
-              <div className={`h-2 w-2 rounded-full ${
-                userRole === 'super_admin' ? 'bg-red-500' : userRole === 'organizer' ? 'bg-amber-500' : 'bg-emerald-500'
-              }`} />
-              <span className="font-sans">{cleanRoleName(userRole)}</span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500">▼</span>
-            </button>
-            
-            {showRoleMenu && (
-              <div 
-                className="absolute right-0 mt-2.5 w-60 rounded-2xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900 p-2.5 shadow-xl shadow-slate-200/80 dark:shadow-slate-950/40 ring-1 ring-black/5 z-50 animate-in fade-in slide-in-from-top-3 duration-200"
-                id="role-menu-dropdown"
-              >
-                <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-50 dark:border-slate-800 mb-1.5 font-mono">
-                  Simulate Workspace Role
-                </div>
-                
-                <button
-                  onClick={() => handleRoleSelect('participant')}
-                  className={`flex w-full items-center space-x-3 rounded-xl p-2.5 text-left transition-colors cursor-pointer ${
-                    userRole === 'participant' ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-300' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                  }`}
-                  id="role-switch-participant"
-                >
-                  <Ticket className={`h-4.5 w-4.5 ${userRole === 'participant' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
-                  <div>
-                    <p className="font-sans text-xs font-bold leading-tight">Participant</p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Register & download tickets</p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => handleRoleSelect('organizer')}
-                  className={`flex w-full items-center space-x-3 rounded-xl p-2.5 text-left transition-colors cursor-pointer ${
-                    userRole === 'organizer' ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-950 dark:text-amber-300' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                  }`}
-                  id="role-switch-organizer"
-                >
-                  <Users className={`h-4.5 w-4.5 ${userRole === 'organizer' ? 'text-amber-500' : 'text-slate-400'}`} />
-                  <div>
-                    <p className="font-sans text-xs font-bold leading-tight">Event Organizer</p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Manage check-in, BIBs & income</p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => handleRoleSelect('super_admin')}
-                  className={`flex w-full items-center space-x-3 rounded-xl p-2.5 text-left transition-colors cursor-pointer ${
-                    userRole === 'super_admin' ? 'bg-red-50 dark:bg-red-950/20 text-red-950 dark:text-red-300' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                  }`}
-                  id="role-switch-admin"
-                >
-                  <Shield className={`h-4.5 w-4.5 ${userRole === 'super_admin' ? 'text-red-500' : 'text-slate-400'}`} />
-                  <div>
-                    <p className="font-sans text-xs font-bold leading-tight">Super Admin</p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">Audit system parameters & coupons</p>
-                  </div>
-                </button>
-              </div>
-            )}
-          </div>
-
           {/* Language Switcher Button */}
           <button
             onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}
@@ -252,22 +184,39 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, activeView }) => {
             )}
           </div>
 
-          {/* User Profile Avatar */}
-          <div 
-            onClick={() => onNavigate('dashboard')} 
-            className="flex items-center space-x-2 pl-1.5 border-l border-slate-200 dark:border-slate-800 cursor-pointer group"
-            id="user-profile-trigger"
-          >
-            <img 
-              src={currentUser.avatar} 
-              alt={currentUser.name} 
-              className="h-8.5 w-8.5 rounded-full object-cover ring-2 ring-slate-100 dark:ring-slate-800 group-hover:ring-cyan-500/55 transition-all"
-            />
-            <div className="hidden lg:block text-left">
-              <p className="font-sans text-xs font-bold leading-tight text-slate-800 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">{currentUser.name}</p>
-              <p className="font-mono text-[9px] text-slate-400 dark:text-slate-550 leading-none mt-0.5">{currentUser.email}</p>
+          {/* User Profile Avatar / Login Button */}
+          {currentUser ? (
+            <div className="flex items-center space-x-2 pl-1.5 border-l border-slate-200 dark:border-slate-800">
+              <div 
+                onClick={() => onNavigate('dashboard')} 
+                className="flex items-center space-x-2 cursor-pointer group"
+                id="user-profile-trigger"
+              >
+                <img 
+                  src={currentUser.avatar} 
+                  alt={currentUser.name} 
+                  className="h-8.5 w-8.5 rounded-full object-cover ring-2 ring-slate-100 dark:ring-slate-800 group-hover:ring-cyan-500/55 transition-all"
+                />
+                <div className="hidden lg:block text-left">
+                  <p className="font-sans text-xs font-bold leading-tight text-slate-800 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">{currentUser.name}</p>
+                  <p className="font-mono text-[9px] text-slate-400 dark:text-slate-550 leading-none mt-0.5">{currentUser.email}</p>
+                </div>
+              </div>
+              <button onClick={logout} className="ml-2 text-slate-400 hover:text-red-500" title="Logout">
+                <LogOut className="h-4 w-4" />
+              </button>
             </div>
-          </div>
+          ) : (
+             <div className="pl-1.5 border-l border-slate-200 dark:border-slate-800">
+               <button
+                 onClick={login}
+                 className="flex items-center space-x-2 bg-slate-900 text-white dark:bg-cyan-600 dark:hover:bg-cyan-500 px-4 py-1.5 rounded-full text-xs font-bold hover:bg-slate-800 transition-colors"
+               >
+                 <User className="h-4 w-4" />
+                 <span>Login</span>
+               </button>
+             </div>
+          )}
 
           {/* Mobile menu button */}
           <button
