@@ -9,7 +9,7 @@ import {
   collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, 
   query, where, getDocs, addDoc, getDoc, serverTimestamp
 } from 'firebase/firestore';
-import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, browserPopupRedirectResolver } from 'firebase/auth';
 
 interface AppContextType {
   currentUser: User | null;
@@ -259,7 +259,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const login = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    await signInWithPopup(auth, provider, browserPopupRedirectResolver);
   };
 
   const logout = async () => {
