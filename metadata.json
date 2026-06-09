@@ -1,0 +1,6 @@
+{
+  "name": "EventHub Indonesia",
+  "description": "Enterprise Event Management & Ticketing Ecosystem for Running Events, Cycling, Festivals, and Seminars in Indonesia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
