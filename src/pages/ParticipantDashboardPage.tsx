@@ -242,32 +242,40 @@ export const ParticipantDashboardPage: React.FC = () => {
           </div>
         )}
 
-        {/* Dashboard Tabs */}
-        <div className="flex border-b border-slate-200 dark:border-slate-800 mb-8 overflow-x-auto gap-2">
-          {[
-            { id: 'overview', label: 'Ringkasan Event', icon: Trophy },
-            { id: 'registrations', label: 'Pembayaran & Invoice', icon: CreditCard },
-            { id: 'medical', label: 'Asesmen Medis', icon: Activity },
-            { id: 'result', label: 'Hasil & E-Sertifikat', icon: Award }
-          ].map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-xs uppercase tracking-wider whitespace-nowrap transition-all ${
-                  isActive 
-                    ? 'border-orange-500 text-orange-400 bg-white dark:bg-slate-900/50' 
-                    : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
+        {/* Layout Wrapper */}
+        <div className="flex flex-col md:flex-row gap-8">
+          
+          {/* Sidebar */}
+          <div className="w-full md:w-64 shrink-0">
+            <div className="flex md:flex-col overflow-x-auto md:overflow-visible gap-2 md:sticky md:top-28 pb-4 md:pb-0 scrollbar-hide">
+              {[
+                { id: 'overview', label: 'Ringkasan Event', icon: Trophy },
+                { id: 'registrations', label: 'Pembayaran & Invoice', icon: CreditCard },
+                { id: 'medical', label: 'Asesmen Medis', icon: Activity },
+                { id: 'result', label: 'Hasil & E-Sertifikat', icon: Award }
+              ].map(tab => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`flex items-center gap-3 px-5 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider whitespace-nowrap transition-all text-left ${
+                      isActive 
+                        ? 'bg-orange-500 text-slate-900 dark:text-white shadow-lg shadow-orange-500/20' 
+                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-200 hover:border-orange-500/50'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex-1 min-w-0">
 
         {/* Tab Contents */}
         {loading ? (
@@ -476,6 +484,9 @@ export const ParticipantDashboardPage: React.FC = () => {
             )}
           </>
         )}
+
+          </div>
+        </div>
 
       </div>
 
