@@ -81,29 +81,32 @@ export const AdminDashboardPage: React.FC = () => {
   const loadAdminData = async () => {
     setLoading(true);
     try {
-      const evs = await getAllEventsForAdmin();
-      setEvents(evs);
+      const results = await Promise.allSettled([
+        getAllEventsForAdmin(),
+        getAllRegistrationsAdmin(),
+        getAllPaymentsAdmin(),
+        getAllPayoutsAdmin(),
+        getDocs(collection(db, 'users')),
+        getDocs(query(collection(db, 'audit_logs'), limit(50)))
+      ]);
 
-      const regs = await getAllRegistrationsAdmin();
-      setRegistrations(regs);
-
-      const pays = await getAllPaymentsAdmin();
-      setPayments(pays);
-
-      const pouts = await getAllPayoutsAdmin();
-      setPayouts(pouts);
-
-      // Load Users List for Super Admin
-      const usersSnap = await getDocs(collection(db, 'users'));
-      setUsersList(usersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-
-      // Load Audit logs
-      const auditSnap = await getDocs(collection(db, 'audit_logs'));
-      setAuditLogs(auditSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-    } catch (e) {
-      console.error('Error loading admin data:', e);
+      if (results[0].status === 'fulfilled') setEvents(results[0].value);
+      if (results[1].status === 'fulfilled') setRegistrations(results[1].value);
+      if (results[2].status === 'fulfilled') setPayments(results[2].value);
+      if (results[3].status === 'fulfilled') setPayouts(results[3].value);
+      
+      if (results[4].status === 'fulfilled') {
+        setUsersList(results[4].value.docs.map(d => ({ id: d.id, ...d.data() })));
+      }
+      
+      if (results[5].status === 'fulfilled') {
+        setAuditLogs(results[5].value.docs.map(d => ({ id: d.id, ...d.data() })));
+      }
+    } catch (error) {
+      console.error('Error loading admin data:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const confirmAction = (title: string, message: string, isDanger: boolean, onConfirm: () => void) => {

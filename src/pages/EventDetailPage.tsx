@@ -44,7 +44,7 @@ export const EventDetailPage: React.FC = () => {
         setEvent(ev);
         const cats = await getEventCategories(ev.id);
         setCategories(cats);
-        if (cats.length > 0) setSelectedCategory(cats[0]);
+        if (cats.length > 0) {}
       }
       setLoading(false);
     }
