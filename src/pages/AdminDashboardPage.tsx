@@ -17,6 +17,7 @@ import { updateSystemSettings } from '../services/settingsService';
 import { EventItem, Registration, Payment, EventCategory, UserRole } from '../types';
 import { db } from '../config/firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { CreateEventModal } from '../components/admin/CreateEventModal';
 import { 
   ShieldAlert, 
   Trophy, 
@@ -52,13 +53,6 @@ export const AdminDashboardPage: React.FC = () => {
 
   // Modals / Forms
   const [showEventModal, setShowEventModal] = useState(false);
-  const [eventName, setEventName] = useState('');
-  const [eventSlug, setEventSlug] = useState('');
-  const [eventDesc, setEventDesc] = useState('');
-  const [eventBanner, setEventBanner] = useState('');
-  const [eventLocation, setEventLocation] = useState('');
-  const [eventStartDate, setEventStartDate] = useState('2026-10-15T05:00');
-  const [eventRegEnd, setEventRegEnd] = useState('2026-10-01T23:59');
 
   // Result Form
   const [resParticipantId, setResParticipantId] = useState('');
@@ -96,60 +90,6 @@ export const AdminDashboardPage: React.FC = () => {
       console.error('Error loading admin data:', e);
     }
     setLoading(false);
-  };
-
-  const handleCreateEvent = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-
-    try {
-      const newEv = await createEvent({
-        name: eventName,
-        slug: eventSlug || eventName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-        description: eventDesc,
-        banner: eventBanner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=1600&q=80',
-        thumbnail: eventBanner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=600&q=80',
-        location: eventLocation,
-        address: eventLocation,
-        startDate: new Date(eventStartDate).toISOString(),
-        endDate: new Date(eventStartDate).toISOString(),
-        registrationStart: new Date().toISOString(),
-        registrationEnd: new Date(eventRegEnd).toISOString(),
-        status: 'REGISTRATION_OPEN',
-        organizerId: user.uid,
-        organizerName: user.displayName || 'RacePro Admin',
-        featured: true,
-        facilities: ['Jersey Finisher', 'BIB dengan Timing Chip', 'Medali Finisher', 'Asuransi Peserta'],
-        schedule: [{ time: '05:00 WIB', title: 'Flag-off Start Lomba', description: 'Pelepasan peserta' }],
-        rules: 'Wajib membawa perlengkapan mandatory kit.',
-        faqs: [{ question: 'Apakah ada COT?', answer: 'Ya, sesuai petunjuk teknis.' }],
-        createdBy: user.uid,
-        updatedBy: user.uid
-      }, user.uid, user.email);
-
-      // Create default category
-      await createCategory({
-        eventId: newEv.id,
-        name: 'Kategori Utama 10K',
-        slug: 'kategori-10k',
-        description: 'Jalur 10K resmi',
-        distance: '10 KM',
-        elevation: '200 m+',
-        price: 250000,
-        quota: 500,
-        startTime: '06:00 WIB',
-        cutoffTime: '3 Jam',
-        genderRestriction: 'NONE',
-        minimumAge: 12,
-        status: 'ACTIVE'
-      }, user.uid, user.email);
-
-      addNotification('success', 'Event Berhasil Dibuat', `Event ${eventName} telah diterbitkan.`);
-      setShowEventModal(false);
-      loadAdminData();
-    } catch (err: any) {
-      addNotification('error', 'Gagal Membuat Event', err.message);
-    }
   };
 
   const handleVerifyPayment = async (paymentId: string, regId: string, status: 'APPROVE' | 'REJECT') => {
@@ -570,61 +510,16 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* Create Event Modal */}
-      {showEventModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950/80 backdrop-blur-md">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-xl w-full">
-            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase mb-4">Buat Event Lomba Baru</h3>
-            <form onSubmit={handleCreateEvent} className="space-y-4 text-xs">
-              <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nama Event</label>
-                <input
-                  type="text"
-                  required
-                  value={eventName}
-                  onChange={(e) => setEventName(e.target.value)}
-                  placeholder="Contoh: Rinjani Ultra Trail 2026"
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Lokasi</label>
-                <input
-                  type="text"
-                  required
-                  value={eventLocation}
-                  onChange={(e) => setEventLocation(e.target.value)}
-                  placeholder="Lombok, Nusa Tenggara Barat"
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Deskripsi Singkat</label>
-                <textarea
-                  rows={3}
-                  required
-                  value={eventDesc}
-                  onChange={(e) => setEventDesc(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
-                />
-              </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowEventModal(false)}
-                  className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold uppercase"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-orange-600 text-white font-black uppercase"
-                >
-                  Terbitkan Event
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {showEventModal && user && (
+        <CreateEventModal 
+          user={user}
+          onClose={() => setShowEventModal(false)}
+          onSuccess={() => {
+            setShowEventModal(false);
+            loadAdminData();
+          }}
+          addNotification={addNotification}
+        />
       )}
 
     </div>

@@ -7,6 +7,7 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 import { ToastContainer } from './components/common/ToastContainer';
+import { AutoLogout } from './components/auth/AutoLogout';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -79,6 +80,7 @@ const AppRoutes: React.FC = () => {
       </main>
       <Footer />
       <ToastContainer />
+      <AutoLogout />
     </div>
   );
 };
