@@ -11,10 +11,11 @@ import {
 } from '../services/eventService';
 import { getAllRegistrationsAdmin } from '../services/registrationService';
 import { getAllPaymentsAdmin, verifyPaymentByAdmin } from '../services/paymentService';
+import { getAllPayoutsAdmin, approvePayout } from '../services/payoutService';
 import { submitOrUpdateRaceResult } from '../services/resultService';
 import { updateUserRoleBySuperAdmin, banUserBySuperAdmin } from '../services/authService';
 import { updateSystemSettings } from '../services/settingsService';
-import { EventItem, Registration, Payment, EventCategory, UserRole } from '../types';
+import { EventItem, Registration, Payment, EventCategory, UserRole, PayoutRequest } from '../types';
 import { db } from '../config/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { CreateEventModal } from '../components/admin/CreateEventModal';
@@ -42,12 +43,13 @@ export const AdminDashboardPage: React.FC = () => {
   const { user, isSuperAdmin } = useAuth();
   const { settings, reloadSettings, addNotification } = useSettings();
 
-  const [activeTab, setActiveTab] = useState<'stats' | 'events' | 'payments' | 'results' | 'users' | 'settings'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'events' | 'payments' | 'payouts' | 'results' | 'users' | 'settings'>('stats');
   
   // Data States
   const [events, setEvents] = useState<EventItem[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
   const [usersList, setUsersList] = useState<any[]>([]);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,6 +89,9 @@ export const AdminDashboardPage: React.FC = () => {
 
       const pays = await getAllPaymentsAdmin();
       setPayments(pays);
+
+      const pouts = await getAllPayoutsAdmin();
+      setPayouts(pouts);
 
       // Load Users List for Super Admin
       const usersSnap = await getDocs(collection(db, 'users'));
@@ -247,6 +252,7 @@ export const AdminDashboardPage: React.FC = () => {
                 { id: 'stats', label: 'Ringkasan Statistik', icon: Activity },
                 { id: 'events', label: 'Manajemen Event', icon: Trophy },
                 { id: 'payments', label: 'Verifikasi Pembayaran', icon: CreditCard },
+                { id: 'payouts', label: 'Pencairan Dana', icon: DollarSign },
                 { id: 'results', label: 'Input Hasil Lomba', icon: FileText },
                 { id: 'users', label: 'Pengguna & Role', icon: Users },
                 { id: 'settings', label: 'Pengaturan Sistem', icon: Settings }
@@ -444,6 +450,119 @@ export const AdminDashboardPage: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* TAB 3.5: PAYOUTS */}
+        {activeTab === 'payouts' && (
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+              <h3 className="font-bold text-slate-900 dark:text-white uppercase tracking-wider">Permintaan Pencairan Dana</h3>
+              <button
+                onClick={async () => {
+                  const eventId = prompt('Masukkan Event ID:');
+                  if (!eventId) return;
+                  const bankName = prompt('Nama Bank (contoh: BCA):');
+                  if (!bankName) return;
+                  const accountNumber = prompt('Nomor Rekening:');
+                  if (!accountNumber) return;
+                  const accountHolderName = prompt('Nama Pemilik Rekening:');
+                  if (!accountHolderName) return;
+                  const amount = prompt('Nominal Pencairan (Rp):');
+                  if (!amount) return;
+
+                  try {
+                    const { requestPayout } = await import('../services/payoutService');
+                    await requestPayout(eventId, user!.uid, Number(amount), bankName, accountNumber, accountHolderName);
+                    addNotification('success', 'Berhasil', 'Permintaan pencairan dana telah diajukan.');
+                    loadAdminData();
+                  } catch (e: any) {
+                    addNotification('error', 'Gagal', e.message);
+                  }
+                }}
+                className="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg font-bold uppercase text-xs"
+              >
+                + Ajukan Pencairan
+              </button>
+            </div>
+            {payouts.length === 0 ? (
+              <div className="p-8 text-center text-slate-500 text-xs font-semibold">Belum ada permintaan pencairan dana.</div>
+            ) : (
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase">
+                    <th className="p-4">Tanggal</th>
+                    <th className="p-4">Event ID</th>
+                    <th className="p-4">Bank & Rekening</th>
+                    <th className="p-4">Nominal</th>
+                    <th className="p-4">Status</th>
+                    <th className="p-4">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {payouts.map(payout => (
+                    <tr key={payout.id}>
+                      <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">
+                        {new Date(payout.requestedAt).toLocaleDateString('id-ID')}
+                      </td>
+                      <td className="p-4 font-semibold text-slate-600 dark:text-slate-300 truncate max-w-[150px]">{payout.eventId}</td>
+                      <td className="p-4 font-semibold text-slate-900 dark:text-white">
+                        {payout.bankName} - {payout.accountNumber}<br/>
+                        <span className="text-[10px] text-slate-500">{payout.accountHolderName}</span>
+                      </td>
+                      <td className="p-4 font-bold text-amber-400">{formatRupiah(payout.amount)}</td>
+                      <td className="p-4 font-bold text-xs">{payout.status}</td>
+                      <td className="p-4 space-x-2">
+                        {payout.status === 'PENDING' && isSuperAdmin ? (
+                          <>
+                            <button
+                              onClick={async () => {
+                                const url = prompt('Masukkan URL bukti transfer (opsional):');
+                                if (url !== null) {
+                                  try {
+                                    await approvePayout(payout.id, 'PAID', url, '', user!.uid, user!.email!);
+                                    addNotification('success', 'Sukses', 'Pencairan dana disetujui dan dibayar.');
+                                    loadAdminData();
+                                  } catch (e: any) {
+                                    addNotification('error', 'Gagal', e.message);
+                                  }
+                                }
+                              }}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white rounded font-bold uppercase text-xs"
+                            >
+                              Selesai (Paid)
+                            </button>
+                            <button
+                              onClick={async () => {
+                                const notes = prompt('Alasan penolakan:');
+                                if (notes) {
+                                  try {
+                                    await approvePayout(payout.id, 'REJECTED', '', notes, user!.uid, user!.email!);
+                                    addNotification('info', 'Ditolak', 'Permintaan ditolak.');
+                                    loadAdminData();
+                                  } catch (e: any) {
+                                    addNotification('error', 'Gagal', e.message);
+                                  }
+                                }
+                              }}
+                              className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-slate-900 dark:text-white rounded font-bold uppercase text-xs"
+                            >
+                              Tolak
+                            </button>
+                          </>
+                        ) : (
+                          payout.proofUrl && (
+                            <a href={payout.proofUrl} target="_blank" rel="noreferrer" className="text-emerald-500 underline font-semibold">
+                              Bukti Transfer
+                            </a>
+                          )
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 

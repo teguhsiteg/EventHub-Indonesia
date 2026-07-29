@@ -29,20 +29,15 @@ export const EventDetailPage: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Form State
-  const [fullName, setFullName] = useState('');
-  const [nik, setNik] = useState('');
-  const [phone, setPhone] = useState('');
-  const [birthDate, setBirthDate] = useState('1998-05-12');
-  const [gender, setGender] = useState<'MALE' | 'FEMALE'>('MALE');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [province, setProvince] = useState('');
-  const [bloodType, setBloodType] = useState<'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | 'UNSPECIFIED'>('O+');
-  const [emergencyName, setEmergencyName] = useState('');
-  const [emergencyPhone, setEmergencyPhone] = useState('');
-  const [emergencyRelation, setEmergencyRelation] = useState('Orang Tua / Pasangan');
-  const [jerseySize, setJerseySize] = useState<'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL'>('L');
+  const [ticketCount, setTicketCount] = useState(1);
+  const [formsData, setFormsData] = useState<any[]>([
+    {
+      fullName: '', nik: '', phone: '', birthDate: '1998-05-12', gender: 'MALE', 
+      address: '', city: '', province: '', bloodType: 'O+', 
+      emergencyContactName: '', emergencyContactPhone: '', emergencyContactRelation: 'Orang Tua / Pasangan', jerseySize: 'L'
+    }
+  ]);
+  const [selectedAddons, setSelectedAddons] = useState<{addonId: string, quantity: number, price: number}[]>([]);
 
   const { user } = useAuth();
   const { addNotification } = useSettings();
@@ -66,10 +61,38 @@ export const EventDetailPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      setFullName(user.displayName || '');
-      setPhone(user.phoneNumber || '');
+      setFormsData(prev => {
+        const newData = [...prev];
+        newData[0].fullName = user.displayName || '';
+        newData[0].phone = user.phoneNumber || '';
+        newData[0].email = user.email || '';
+        return newData;
+      });
     }
   }, [user]);
+
+  const handleTicketCountChange = (count: number) => {
+    setTicketCount(count);
+    setFormsData(prev => {
+      const newData = [...prev];
+      while (newData.length < count) {
+        newData.push({
+          fullName: '', nik: '', phone: '', email: '', birthDate: '1998-05-12', gender: 'MALE', 
+          address: '', city: '', province: '', bloodType: 'O+', 
+          emergencyContactName: '', emergencyContactPhone: '', emergencyContactRelation: 'Orang Tua / Pasangan', jerseySize: 'L'
+        });
+      }
+      return newData.slice(0, count);
+    });
+  };
+
+  const handleFormChange = (index: number, field: string, value: string) => {
+    setFormsData(prev => {
+      const newData = [...prev];
+      newData[index] = { ...newData[index], [field]: value };
+      return newData;
+    });
+  };
 
   const handleStartRegistration = () => {
     if (!user) {
@@ -84,31 +107,19 @@ export const EventDetailPage: React.FC = () => {
     e.preventDefault();
     if (!user || !event || !selectedCategory) return;
 
-    if (!nik || nik.length < 16) {
-      addNotification('error', 'Validasi Gagal', 'NIK harus terdiri dari 16 digit.');
-      return;
+    // Validate NIK
+    for (let i = 0; i < formsData.length; i++) {
+      if (!formsData[i].nik || formsData[i].nik.length < 16) {
+        addNotification('error', 'Validasi Gagal', `NIK Peserta ${i + 1} harus terdiri dari 16 digit.`);
+        return;
+      }
     }
 
     setSubmitting(true);
     try {
-      const result = await createRegistration(user.uid, event.id, selectedCategory.id, {
-        fullName,
-        nik,
-        email: user.email,
-        phone,
-        birthDate,
-        gender,
-        address,
-        city,
-        province,
-        bloodType,
-        emergencyContactName: emergencyName,
-        emergencyContactPhone: emergencyPhone,
-        emergencyContactRelation: emergencyRelation,
-        jerseySize
-      });
+      const result = await createRegistration(user.uid, event.id, selectedCategory.id, formsData, selectedAddons);
 
-      addNotification('success', 'Pendaftaran Berhasil!', `Nomor Registrasi: ${result.registration.registrationNumber}. BIB: ${result.participant.bibNumber}`);
+      addNotification('success', 'Pendaftaran Berhasil!', `Nomor Registrasi: ${result.registration.registrationNumber}. Harap selesaikan pembayaran.`);
       navigate('/dashboard');
     } catch (err: any) {
       addNotification('error', 'Pendaftaran Gagal', err.message || 'Terjadi kesalahan sistem saat mendaftar.');
@@ -308,148 +319,204 @@ export const EventDetailPage: React.FC = () => {
             <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-wider mb-2">Formulir Data Peserta Lomba</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Pastikan data sesuai NIK/KTP untuk keperluan asuransi dan nomor BIB.</p>
 
-            <form onSubmit={handleSubmitRegistration} className="space-y-4 text-xs">
+            <form onSubmit={handleSubmitRegistration} className="space-y-6 text-xs">
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nama Lengkap (Sesuai KTP)</label>
-                  <input
-                    type="text"
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">NIK KTP / Paspor (16 Digit)</label>
-                  <input
-                    type="text"
-                    required
-                    maxLength={16}
-                    value={nik}
-                    onChange={(e) => setNik(e.target.value)}
-                    placeholder="331201xxxxxxxxxx"
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  />
-                </div>
+              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-2">Jumlah Tiket / Peserta</label>
+                <select
+                  value={ticketCount}
+                  onChange={(e) => handleTicketCountChange(Number(e.target.value))}
+                  className="w-full sm:w-1/3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                >
+                  {[1, 2, 3, 4, 5].map(num => (
+                    <option key={num} value={num}>{num} Tiket</option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-slate-500 mt-2">Anda dapat mendaftarkan hingga 5 peserta dalam satu kali checkout untuk kategori yang sama.</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nomor WhatsApp / HP</label>
-                  <input
-                    type="text"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Tanggal Lahir</label>
-                  <input
-                    type="date"
-                    required
-                    value={birthDate}
-                    onChange={(e) => setBirthDate(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Jenis Kelamin</label>
-                  <select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value as any)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  >
-                    <option value="MALE">Laki-laki</option>
-                    <option value="FEMALE">Perempuan</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Kota / Kabupaten</label>
-                  <input
-                    type="text"
-                    required
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="Contoh: Yogyakarta"
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Provinsi</label>
-                  <input
-                    type="text"
-                    required
-                    value={province}
-                    onChange={(e) => setProvince(e.target.value)}
-                    placeholder="Contoh: D.I. Yogyakarta"
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Golongan Darah</label>
-                  <select
-                    value={bloodType}
-                    onChange={(e) => setBloodType(e.target.value as any)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  >
-                    <option value="A+">A+</option>
-                    <option value="B+">B+</option>
-                    <option value="AB+">AB+</option>
-                    <option value="O+">O+</option>
-                    <option value="UNSPECIFIED">Tidak Tahu</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Ukuran Jersey Lomba</label>
-                  <select
-                    value={jerseySize}
-                    onChange={(e) => setJerseySize(e.target.value as any)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                  >
-                    <option value="S">S (Unisex)</option>
-                    <option value="M">M (Unisex)</option>
-                    <option value="L">L (Unisex)</option>
-                    <option value="XL">XL (Unisex)</option>
-                    <option value="XXL">XXL (Unisex)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
-                <h5 className="font-bold text-orange-400 uppercase">Kontak Darurat</h5>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-slate-500 dark:text-slate-400 mb-1">Nama Kontak Darurat</label>
-                    <input
-                      type="text"
-                      required
-                      value={emergencyName}
-                      onChange={(e) => setEmergencyName(e.target.value)}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-slate-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-500 dark:text-slate-400 mb-1">Nomor Telepon Darurat</label>
-                    <input
-                      type="text"
-                      required
-                      value={emergencyPhone}
-                      onChange={(e) => setEmergencyPhone(e.target.value)}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-slate-900 dark:text-white"
-                    />
+              {event.addons && event.addons.length > 0 && (
+                <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-2">Merchandise / Add-Ons Tambahan</label>
+                  <div className="space-y-3">
+                    {event.addons.map(addon => {
+                      const selected = selectedAddons.find(a => a.addonId === addon.id);
+                      return (
+                        <div key={addon.id} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                          <div>
+                            <span className="font-bold text-slate-900 dark:text-white block">{addon.name}</span>
+                            <span className="text-xs text-orange-500 font-bold">Rp {addon.price.toLocaleString('id-ID')}</span>
+                          </div>
+                          <select
+                            value={selected ? selected.quantity : 0}
+                            onChange={(e) => {
+                              const qty = Number(e.target.value);
+                              setSelectedAddons(prev => {
+                                const others = prev.filter(a => a.addonId !== addon.id);
+                                if (qty > 0) {
+                                  return [...others, { addonId: addon.id, quantity: qty, price: addon.price }];
+                                }
+                                return others;
+                              });
+                            }}
+                            className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg p-2 text-slate-900 dark:text-white outline-none"
+                          >
+                            <option value={0}>0</option>
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                          </select>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              </div>
+              )}
+
+              {formsData.map((formData, index) => (
+                <div key={index} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4">
+                  <h4 className="font-bold text-slate-900 dark:text-white uppercase mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">Data Peserta {index + 1}</h4>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nama Lengkap (Sesuai KTP)</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.fullName}
+                        onChange={(e) => handleFormChange(index, 'fullName', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">NIK KTP / Paspor (16 Digit)</label>
+                      <input
+                        type="text"
+                        required
+                        maxLength={16}
+                        value={formData.nik}
+                        onChange={(e) => handleFormChange(index, 'nik', e.target.value)}
+                        placeholder="331201xxxxxxxxxx"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nomor WhatsApp</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => handleFormChange(index, 'phone', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Tanggal Lahir</label>
+                      <input
+                        type="date"
+                        required
+                        value={formData.birthDate}
+                        onChange={(e) => handleFormChange(index, 'birthDate', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Jenis Kelamin</label>
+                      <select
+                        value={formData.gender}
+                        onChange={(e) => handleFormChange(index, 'gender', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      >
+                        <option value="MALE">Laki-laki</option>
+                        <option value="FEMALE">Perempuan</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Kota / Kabupaten</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.city}
+                        onChange={(e) => handleFormChange(index, 'city', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Provinsi</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.province}
+                        onChange={(e) => handleFormChange(index, 'province', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Golongan Darah</label>
+                      <select
+                        value={formData.bloodType}
+                        onChange={(e) => handleFormChange(index, 'bloodType', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      >
+                        <option value="A+">A+</option>
+                        <option value="B+">B+</option>
+                        <option value="AB+">AB+</option>
+                        <option value="O+">O+</option>
+                        <option value="UNSPECIFIED">Tidak Tahu</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Ukuran Jersey</label>
+                      <select
+                        value={formData.jerseySize}
+                        onChange={(e) => handleFormChange(index, 'jerseySize', e.target.value)}
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      >
+                        <option value="S">S (Unisex)</option>
+                        <option value="M">M (Unisex)</option>
+                        <option value="L">L (Unisex)</option>
+                        <option value="XL">XL (Unisex)</option>
+                        <option value="XXL">XXL (Unisex)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 mt-4">
+                    <h5 className="font-bold text-orange-400 uppercase text-[10px]">Kontak Darurat Peserta {index + 1}</h5>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[10px]">Nama Kontak Darurat</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.emergencyContactName}
+                          onChange={(e) => handleFormChange(index, 'emergencyContactName', e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-slate-900 dark:text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[10px]">Nomor Darurat</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.emergencyContactPhone}
+                          onChange={(e) => handleFormChange(index, 'emergencyContactPhone', e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-slate-900 dark:text-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
 
               <div className="pt-4 flex items-center justify-end gap-3">
                 <button

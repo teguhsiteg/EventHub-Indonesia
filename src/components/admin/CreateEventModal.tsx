@@ -38,6 +38,14 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   const [catQuota, setCatQuota] = useState('');
   const [catDistance, setCatDistance] = useState('');
   const [catCutoff, setCatCutoff] = useState('');
+  const [catEarlyBirdPrice, setCatEarlyBirdPrice] = useState('');
+  const [catEarlyBirdEndDate, setCatEarlyBirdEndDate] = useState('');
+
+  // Form States - Add-ons (Step 4)
+  const [addons, setAddons] = useState<any[]>(initialData?.addons || []);
+  const [addonName, setAddonName] = useState('');
+  const [addonPrice, setAddonPrice] = useState('');
+  const [addonDesc, setAddonDesc] = useState('');
 
   const handleAddFaq = () => {
     if (faqQ && faqA) {
@@ -56,6 +64,8 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         distance: catDistance,
         elevation: '-',
         price: Number(catPrice),
+        earlyBirdPrice: catEarlyBirdPrice ? Number(catEarlyBirdPrice) : undefined,
+        earlyBirdEndDate: catEarlyBirdEndDate ? new Date(catEarlyBirdEndDate).toISOString() : undefined,
         quota: Number(catQuota),
         startTime: '05:30 WIB',
         cutoffTime: catCutoff || '4 Jam',
@@ -68,6 +78,22 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
       setCatQuota('');
       setCatDistance('');
       setCatCutoff('');
+      setCatEarlyBirdPrice('');
+      setCatEarlyBirdEndDate('');
+    }
+  };
+
+  const handleAddAddon = () => {
+    if (addonName && addonPrice) {
+      setAddons([...addons, {
+        id: 'addon_' + Date.now(),
+        name: addonName,
+        price: Number(addonPrice),
+        description: addonDesc
+      }]);
+      setAddonName('');
+      setAddonPrice('');
+      setAddonDesc('');
     }
   };
 
@@ -100,6 +126,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         schedule: initialData?.schedule || [{ time: '05:00 WIB', title: 'Flag-off', description: 'Pelepasan peserta' }],
         rules: rules,
         faqs: faqs,
+        addons: addons,
         updatedBy: user.uid
       };
 
@@ -149,20 +176,20 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
 
         {/* Step Indicator */}
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
-          {[1, 2, 3].filter(i => !(initialData && i === 3)).map(i => (
+          {[1, 2, 3, 4].filter(i => !(initialData && (i === 3 || i === 4))).map(i => (
             <React.Fragment key={i}>
               <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-orange-500 text-white' : step > i ? 'bg-orange-200 text-orange-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
                 {step > i ? '✓' : i}
               </div>
               <span className={`text-xs font-bold uppercase tracking-wider whitespace-nowrap ${step === i ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>
-                {i === 1 ? 'Info Dasar' : i === 2 ? 'Fasilitas & Aturan' : 'Kategori Tiket'}
+                {i === 1 ? 'Info Dasar' : i === 2 ? 'Fasilitas & Aturan' : i === 3 ? 'Kategori Tiket' : 'Add-Ons'}
               </span>
-              {(i < 3 && !(initialData && i === 2)) && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
+              {(i < 4 && !(initialData && i === 2)) && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
             </React.Fragment>
           ))}
         </div>
 
-        <form onSubmit={(initialData && step === 2) || step === 3 ? handleSubmit : (e) => { e.preventDefault(); setStep(step + 1); }} className="space-y-6 text-sm">
+        <form onSubmit={(initialData && step === 2) || step === 4 ? handleSubmit : (e) => { e.preventDefault(); setStep(step + 1); }} className="space-y-6 text-sm">
           
           {/* STEP 1: Basic Info */}
           {step === 1 && (
@@ -325,7 +352,10 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       <div key={i} className="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div>
                           <span className="font-bold text-slate-900 dark:text-white block">{c.name} ({c.distance})</span>
-                          <span className="text-xs text-slate-500">Rp {c.price.toLocaleString('id-ID')} | Kuota: {c.quota}</span>
+                          <span className="text-xs text-slate-500">
+                            Rp {c.price.toLocaleString('id-ID')} | Kuota: {c.quota} 
+                            {c.earlyBirdPrice && ` | EB: Rp ${c.earlyBirdPrice.toLocaleString('id-ID')}`}
+                          </span>
                         </div>
                         <button type="button" onClick={() => setCategories(categories.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
                           Hapus
@@ -359,9 +389,68 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Waktu (Cut-Off Time)</label>
                     <input type="text" value={catCutoff} onChange={e => setCatCutoff(e.target.value)} placeholder="Cth: 3 Jam" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga Early Bird (Opsional)</label>
+                    <input type="number" value={catEarlyBirdPrice} onChange={e => setCatEarlyBirdPrice(e.target.value)} placeholder="Cth: 200000" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Waktu Early Bird (Opsional)</label>
+                    <input type="datetime-local" value={catEarlyBirdEndDate} onChange={e => setCatEarlyBirdEndDate(e.target.value)} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                  </div>
                   <div className="flex items-end">
                     <button type="button" onClick={handleAddCategory} className="w-full bg-slate-900 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-800 transition-colors">
                       Simpan Kategori
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4: Add-Ons (Merchandise) */}
+          {step === 4 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Daftar Merchandise / Add-Ons</h4>
+                {addons.length === 0 ? (
+                  <div className="text-center p-8 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <p className="text-slate-500 font-medium">Belum ada Add-Ons. (Misal: Jersey Tambahan, Topi Finisher)</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {addons.map((addon, i) => (
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div>
+                          <span className="font-bold text-slate-900 dark:text-white block">{addon.name}</span>
+                          <span className="text-xs text-slate-500">Rp {addon.price.toLocaleString('id-ID')} | {addon.description}</span>
+                        </div>
+                        <button type="button" onClick={() => setAddons(addons.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
+                          Hapus
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+                <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Tambah Add-On Baru</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Item</label>
+                    <input type="text" value={addonName} onChange={e => setAddonName(e.target.value)} placeholder="Cth: Topi Eksklusif Event" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga (Rp)</label>
+                    <input type="number" value={addonPrice} onChange={e => setAddonPrice(e.target.value)} placeholder="Cth: 150000" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Deskripsi Singkat</label>
+                    <input type="text" value={addonDesc} onChange={e => setAddonDesc(e.target.value)} placeholder="Opsional" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                  </div>
+                  <div className="md:col-span-2 flex justify-end mt-2">
+                    <button type="button" onClick={handleAddAddon} className="w-full md:w-auto bg-slate-900 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-800 transition-colors">
+                      Simpan Add-On
                     </button>
                   </div>
                 </div>
@@ -396,7 +485,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                 loading ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-600/30'
               }`}
             >
-              {loading ? 'Memproses...' : ((initialData && step === 2) || step === 3) ? (initialData ? 'Simpan Perubahan' : 'Terbitkan Event') : 'Selanjutnya'}
+              {loading ? 'Memproses...' : ((initialData && step === 2) || step === 4) ? (initialData ? 'Simpan Perubahan' : 'Terbitkan Event') : 'Selanjutnya'}
             </button>
           </div>
 

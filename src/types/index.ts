@@ -32,6 +32,14 @@ export interface FAQItem {
   answer: string;
 }
 
+export interface AddOnItem {
+  id: string;
+  name: string;
+  price: number;
+  description?: string;
+  image?: string;
+}
+
 export interface EventItem {
   id: string;
   name: string;
@@ -55,6 +63,7 @@ export interface EventItem {
   elevationGpxUrl?: string;
   rules: string;
   faqs: FAQItem[];
+  addons?: AddOnItem[];
   category?: string;
   categories?: string[];
   searchKeywords?: string[];
@@ -75,6 +84,8 @@ export interface EventCategory {
   distance: string; // e.g. "50 KM"
   elevation: string; // e.g. "2,400 m+"
   price: number; // e.g. 500000
+  earlyBirdPrice?: number;
+  earlyBirdEndDate?: string;
   quota: number;
   registeredCount: number;
   startTime: string; // e.g. "05:00 WIB"
@@ -102,6 +113,8 @@ export interface Registration {
   userId: string;
   eventId: string;
   categoryId: string;
+  ticketCount: number;
+  selectedAddons?: { addonId: string; quantity: number; price: number }[];
   status: RegistrationStatus;
   amount: number;
   invoiceId: string;
@@ -286,4 +299,21 @@ export interface AuthState {
   user: UserProfile | null;
   loading: boolean;
   error: string | null;
+}
+
+export type PayoutStatus = 'PENDING' | 'APPROVED' | 'PAID' | 'REJECTED';
+
+export interface PayoutRequest {
+  id: string;
+  eventId: string;
+  organizerId: string;
+  amount: number;
+  bankName: string;
+  accountNumber: string;
+  accountHolderName: string;
+  status: PayoutStatus;
+  requestedAt: string;
+  processedAt?: string;
+  proofUrl?: string;
+  notes?: string;
 }

@@ -33,7 +33,7 @@ export interface RegistrationFormData {
 }
 
 // Generate category bib prefix (e.g., Trail 50K -> TR50, Fun Run 5K -> FR05)
-function generateCategoryPrefix(categoryName: string, distance: string): string {
+export function generateCategoryPrefix(categoryName: string, distance: string): string {
   const cleanDist = distance.replace(/[^0-9]/g, '').padStart(2, '0');
   const words = categoryName.trim().toUpperCase().split(' ');
   let prefix = 'RC';
@@ -49,8 +49,9 @@ export async function createRegistration(
   userId: string,
   eventId: string,
   categoryId: string,
-  formData: RegistrationFormData
-): Promise<{ registration: Registration; participant: Participant; payment: Payment }> {
+  formsData: RegistrationFormData[],
+  selectedAddons: { addonId: string; quantity: number; price: number }[] = []
+): Promise<{ registration: Registration; participants: Participant[]; payment: Payment }> {
   // 1. Check existing registration to prevent duplicates
   const existingQ = query(
     collection(db, 'registrations'),
@@ -74,39 +75,37 @@ export async function createRegistration(
   }
   const category = categorySnap.data() as EventCategory;
 
-  if (category.registeredCount >= category.quota) {
-    throw new Error('Kuota pendaftaran untuk kategori ini sudah habis.');
+  const ticketCount = formsData.length;
+  if (category.registeredCount + ticketCount > category.quota) {
+    throw new Error(`Sisa kuota tidak cukup. Anda meminta ${ticketCount} tiket, sisa kuota: ${category.quota - category.registeredCount}`);
   }
 
   const eventSnap = await getDoc(doc(db, 'events', eventId));
   if (!eventSnap.exists()) {
     throw new Error('Event tidak ditemukan.');
   }
-  const event = eventSnap.data() as EventItem;
 
-  // 3. Generate IDs and BIB Number
+  // 3. Calculate Price
   const now = new Date();
+  let ticketPrice = category.price;
+  if (category.earlyBirdPrice && category.earlyBirdEndDate) {
+    const earlyBirdEnd = new Date(category.earlyBirdEndDate);
+    if (now <= earlyBirdEnd) {
+      ticketPrice = category.earlyBirdPrice;
+    }
+  }
+
+  const totalTicketsPrice = ticketPrice * ticketCount;
+  const totalAddonsPrice = selectedAddons.reduce((sum, addon) => sum + (addon.price * addon.quantity), 0);
+  const totalAmount = totalTicketsPrice + totalAddonsPrice;
+
+  // 4. Generate IDs
   const timestamp = now.getTime();
   const randomSuffix = Math.floor(1000 + Math.random() * 9000);
   const regNumber = `REG-${now.getFullYear()}-${randomSuffix}`;
   const invoiceId = `INV-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}-${randomSuffix}`;
 
-  const categoryPrefix = generateCategoryPrefix(category.name, category.distance);
-  
-  // Find highest existing BIB in this category to prevent duplicate
-  const bibQ = query(
-    collection(db, 'participants'),
-    where('eventId', '==', eventId),
-    where('categoryId', '==', categoryId)
-  );
-  const bibSnap = await getDocs(bibQ);
-  const count = bibSnap.size + 1;
-  const bibNumber = `${categoryPrefix}-${String(count).padStart(4, '0')}`;
-
-  const qrToken = `RACEPRO_QR_${eventId.substring(0, 5)}_${bibNumber}_${randomSuffix}`;
-
   const regRef = doc(collection(db, 'registrations'));
-  const partRef = doc(collection(db, 'participants'));
   const payRef = doc(collection(db, 'payments'));
 
   const registration: Registration = {
@@ -115,87 +114,100 @@ export async function createRegistration(
     userId,
     eventId,
     categoryId,
+    ticketCount,
+    selectedAddons,
     status: 'WAITING_PAYMENT',
-    amount: category.price,
+    amount: totalAmount,
     invoiceId,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
   };
 
-  const participant: Participant = {
-    id: partRef.id,
-    userId,
-    registrationId: regRef.id,
-    eventId,
-    categoryId,
-    fullName: formData.fullName,
-    nik: formData.nik,
-    email: formData.email,
-    phone: formData.phone,
-    birthDate: formData.birthDate,
-    gender: formData.gender,
-    address: formData.address,
-    city: formData.city,
-    province: formData.province,
-    bloodType: formData.bloodType,
-    emergencyContactName: formData.emergencyContactName,
-    emergencyContactPhone: formData.emergencyContactPhone,
-    emergencyContactRelation: formData.emergencyContactRelation,
-    jerseySize: formData.jerseySize,
-    bibNumber,
-    qrToken,
-    checkInStatus: false,
-    createdAt: now.toISOString(),
-    updatedAt: now.toISOString(),
-  };
+  const participants: Participant[] = [];
+  
+  // Note: BIB numbers are generated AFTER payment is verified to prevent gaps.
+  // We will leave bibNumber empty for now, and update it in verifyPaymentByAdmin.
+  
+  for (let i = 0; i < formsData.length; i++) {
+    const formData = formsData[i];
+    const partRef = doc(collection(db, 'participants'));
+    const qrToken = `RACEPRO_QR_${eventId.substring(0, 5)}_${regRef.id}_${i}_${randomSuffix}`;
 
-  const paymentExpiredAt = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours expiry
+    participants.push({
+      id: partRef.id,
+      userId,
+      registrationId: regRef.id,
+      eventId,
+      categoryId,
+      fullName: formData.fullName,
+      nik: formData.nik,
+      email: formData.email,
+      phone: formData.phone,
+      birthDate: formData.birthDate,
+      gender: formData.gender,
+      address: formData.address,
+      city: formData.city,
+      province: formData.province,
+      bloodType: formData.bloodType,
+      emergencyContactName: formData.emergencyContactName,
+      emergencyContactPhone: formData.emergencyContactPhone,
+      emergencyContactRelation: formData.emergencyContactRelation,
+      jerseySize: formData.jerseySize,
+      qrToken,
+      checkInStatus: false,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+    });
+  }
+
   const payment: Payment = {
     id: payRef.id,
     registrationId: regRef.id,
     userId,
     invoiceId,
-    amount: category.price,
-    status: category.price === 0 ? 'PAID' : 'PENDING',
-    paymentMethod: category.price === 0 ? 'GRATIS' : 'TRANSFER_BANK / PAYMENT_GATEWAY',
-    expiredAt: paymentExpiredAt,
-    paidAt: category.price === 0 ? now.toISOString() : undefined,
+    amount: totalAmount,
+    status: 'PENDING',
+    paymentMethod: 'BANK_TRANSFER',
+    expiredAt: new Date(timestamp + 24 * 60 * 60 * 1000).toISOString(),
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
   };
 
-  // Atomic creation using Firestore batch/set
+  // 5. Save to Firestore
   await setDoc(regRef, registration);
-  await setDoc(partRef, participant);
+  for (const participant of participants) {
+    await setDoc(doc(db, 'participants', participant.id), participant);
+  }
   await setDoc(payRef, payment);
 
-  // Update category registered count
+  // 6. Update Category Count (Temporary booking)
   await updateDoc(categoryRef, {
-    registeredCount: increment(1)
+    registeredCount: increment(ticketCount)
   });
 
-  // Create initial empty medical assessment record
-  const medRef = doc(collection(db, 'medical_assessments'));
-  await setDoc(medRef, {
-    id: medRef.id,
-    participantId: partRef.id,
-    userId,
-    eventId,
-    medicalConditions: [],
-    allergies: 'Tidak Ada',
-    emergencyContactVerified: true,
-    declarationAccepted: true,
-    status: 'NOT_STARTED',
-    createdAt: now.toISOString(),
-    updatedAt: now.toISOString(),
+  await logAuditEvent(userId, userId, 'PARTICIPANT', 'CREATE_REGISTRATION', 'registrations', regRef.id, {
+    ticketCount,
+    amount: totalAmount,
+    addons: selectedAddons
   });
 
-  await logAuditEvent(userId, formData.email, 'PARTICIPANT', 'CREATE_REGISTRATION', 'registrations', regRef.id, {
-    regNumber,
-    bibNumber,
-    eventName: event.name,
-    categoryName: category.name
-  });
+  // 7. Create initial empty medical assessment record for each participant
+  for (const participant of participants) {
+    const medRef = doc(collection(db, 'medical_assessments'));
+    await setDoc(medRef, {
+      id: medRef.id,
+      participantId: participant.id,
+      userId,
+      eventId,
+      medicalConditions: [],
+      allergies: 'Tidak Ada',
+      emergencyContactVerified: true,
+      declarationAccepted: true,
+      status: 'NOT_STARTED',
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+    });
+  }
 
   // Trigger automated registration confirmation email
   try {
@@ -203,22 +215,21 @@ export async function createRegistration(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        recipientEmail: formData.email,
-        participantName: formData.fullName,
+        recipientEmail: formsData[0].email,
+        participantName: formsData[0].fullName,
         registrationNumber: regNumber,
-        bibNumber,
         eventName: event.name,
         categoryName: category.name,
+        ticketCount: ticketCount,
         eventDate: new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'full' }),
         location: event.location,
-        qrToken,
       }),
     }).catch(err => console.warn('Notification trigger background notice:', err));
   } catch (e) {
     console.warn('Could not dispatch automated registration email notification:', e);
   }
 
-  return { registration, participant, payment };
+  return { registration, participants, payment };
 }
 
 export async function getUserRegistrations(userId: string): Promise<Registration[]> {
