@@ -71,45 +71,58 @@ export async function verifyPaymentByAdmin(
     if (!regSnap.exists()) throw new Error('Registration not found');
     const registration = regSnap.data() as Registration;
 
-    // 2. Fetch Category to get Prefix
-    const catSnap = await getDoc(doc(db, 'event_categories', registration.categoryId));
-    if (!catSnap.exists()) throw new Error('Category not found');
-    const category = catSnap.data() as EventCategory;
-    const categoryPrefix = generateCategoryPrefix(category.name, category.distance);
-
-    // 3. Find highest existing BIB in this category
-    const bibQ = query(
-      collection(db, 'participants'),
-      where('eventId', '==', registration.eventId),
-      where('categoryId', '==', registration.categoryId)
-    );
-    const bibSnap = await getDocs(bibQ);
-    
-    // We only want to count participants that ALREADY HAVE a BIB number to avoid gaps
-    const participantsWithBib = bibSnap.docs.filter(d => !!d.data().bibNumber).length;
-    let nextBibCount = participantsWithBib + 1;
-
-    // 4. Fetch all participants for this registration
+    // 2. Fetch all participants for this registration
     const partQ = query(collection(db, 'participants'), where('registrationId', '==', registrationId));
     const partSnap = await getDocs(partQ);
-    
-    // 5. Update each participant with a new BIB
-    for (const pDoc of partSnap.docs) {
-      const pData = pDoc.data() as Participant;
-      if (!pData.bibNumber) {
-        const newBib = `${categoryPrefix}-${String(nextBibCount).padStart(4, '0')}`;
-        
-        // Update QR Token with new BIB
-        const parts = pData.qrToken.split('_');
-        parts[3] = newBib; // Replace registrationId/index with newBib
-        const newQrToken = parts.join('_');
+    const participants = partSnap.docs.map(d => ({ id: d.id, ...d.data() } as Participant));
 
-        await updateDoc(doc(db, 'participants', pDoc.id), {
-          bibNumber: newBib,
-          qrToken: newQrToken,
-          updatedAt: now
-        });
-        nextBibCount++;
+    // 3. Group participants by categoryId
+    const participantsByCategory: { [categoryId: string]: Participant[] } = {};
+    for (const p of participants) {
+      if (!participantsByCategory[p.categoryId]) {
+        participantsByCategory[p.categoryId] = [];
+      }
+      participantsByCategory[p.categoryId].push(p);
+    }
+
+    // 4. Generate BIBs for each category group
+    for (const categoryId of Object.keys(participantsByCategory)) {
+      const catParticipants = participantsByCategory[categoryId];
+      
+      const catSnap = await getDoc(doc(db, 'event_categories', categoryId));
+      if (!catSnap.exists()) continue;
+      
+      const category = catSnap.data() as EventCategory;
+      const { generateCategoryPrefix } = await import('./registrationService');
+      const categoryPrefix = generateCategoryPrefix(category.name, category.distance);
+
+      // Find highest existing BIB in this category
+      const bibQ = query(
+        collection(db, 'participants'),
+        where('eventId', '==', registration.eventId),
+        where('categoryId', '==', categoryId)
+      );
+      const bibSnap = await getDocs(bibQ);
+      
+      const participantsWithBib = bibSnap.docs.filter(d => !!d.data().bibNumber).length;
+      let nextBibCount = participantsWithBib + 1;
+
+      // Assign BIB to each participant in this category group
+      for (const pData of catParticipants) {
+        if (!pData.bibNumber) {
+          const newBib = `${categoryPrefix}-${String(nextBibCount).padStart(4, '0')}`;
+          
+          const parts = pData.qrToken.split('_');
+          parts[3] = newBib; 
+          const newQrToken = parts.join('_');
+
+          await updateDoc(doc(db, 'participants', pData.id), {
+            bibNumber: newBib,
+            qrToken: newQrToken,
+            updatedAt: now
+          });
+          nextBibCount++;
+        }
       }
     }
 

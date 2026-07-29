@@ -112,7 +112,7 @@ export interface Registration {
   registrationNumber: string; // REG-2026-000001
   userId: string;
   eventId: string;
-  categoryId: string;
+  items: { categoryId: string; quantity: number; price: number; earlyBird: boolean }[];
   ticketCount: number;
   selectedAddons?: { addonId: string; quantity: number; price: number }[];
   status: RegistrationStatus;

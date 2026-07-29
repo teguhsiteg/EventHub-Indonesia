@@ -24,20 +24,12 @@ export const EventDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [event, setEvent] = useState<EventItem | null>(null);
   const [categories, setCategories] = useState<EventCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<EventCategory | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isRegistering, setIsRegistering] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  const [ticketCount, setTicketCount] = useState(1);
-  const [formsData, setFormsData] = useState<any[]>([
-    {
-      fullName: '', nik: '', phone: '', birthDate: '1998-05-12', gender: 'MALE', 
-      address: '', city: '', province: '', bloodType: 'O+', 
-      emergencyContactName: '', emergencyContactPhone: '', emergencyContactRelation: 'Orang Tua / Pasangan', jerseySize: 'L'
-    }
-  ]);
-  const [selectedAddons, setSelectedAddons] = useState<{addonId: string, quantity: number, price: number}[]>([]);
+  const [checkoutStep, setCheckoutStep] = useState(0); // 0 = Info, 1 = Kategori, 2 = Form, 3 = Pembayaran
+  const [cartItems, setCartItems] = useState<{ categoryId: string; quantity: number; price: number; earlyBird: boolean; name: string }[]>([]);
+  const [formsData, setFormsData] = useState<any[]>([]);
+  const [selectedAddons, setSelectedAddons] = useState<{addonId: string, quantity: number, price: number, name: string}[]>([]);
 
   const { user } = useAuth();
   const { addNotification } = useSettings();
@@ -71,19 +63,52 @@ export const EventDetailPage: React.FC = () => {
     }
   }, [user]);
 
-  const handleTicketCountChange = (count: number) => {
-    setTicketCount(count);
-    setFormsData(prev => {
-      const newData = [...prev];
-      while (newData.length < count) {
-        newData.push({
-          fullName: '', nik: '', phone: '', email: '', birthDate: '1998-05-12', gender: 'MALE', 
+  const handleCartUpdate = (categoryId: string, name: string, quantity: number, max: number, price: number, earlyBird: boolean) => {
+    setCartItems(prev => {
+      const idx = prev.findIndex(i => i.categoryId === categoryId);
+      let newCart = [...prev];
+      if (idx >= 0) {
+        if (quantity === 0) newCart.splice(idx, 1);
+        else newCart[idx] = { ...newCart[idx], quantity: Math.min(quantity, max) };
+      } else {
+        if (quantity > 0) newCart.push({ categoryId, name, quantity: Math.min(quantity, max), price, earlyBird });
+      }
+      return newCart;
+    });
+  };
+
+  const handleStartRegistration = () => {
+    if (!user) {
+      addNotification('warning', 'Autentikasi Diperlukan', 'Silakan masuk atau buat akun peserta terlebih dahulu untuk mendaftar lomba.');
+      navigate('/login', { state: { from: `/events/${slug}` } });
+      return;
+    }
+    
+    if (cartItems.length === 0) {
+      addNotification('warning', 'Keranjang Kosong', 'Silakan pilih setidaknya 1 tiket kategori lomba.');
+      return;
+    }
+
+    // Generate formsData based on cartItems
+    const newForms: any[] = [];
+    cartItems.forEach(item => {
+      for (let i = 0; i < item.quantity; i++) {
+        newForms.push({
+          categoryId: item.categoryId,
+          categoryName: item.name,
+          fullName: user.displayName || '', 
+          nik: '', 
+          phone: user.phoneNumber || '', 
+          email: user.email || '', 
+          birthDate: '1998-05-12', 
+          gender: 'MALE', 
           address: '', city: '', province: '', bloodType: 'O+', 
           emergencyContactName: '', emergencyContactPhone: '', emergencyContactRelation: 'Orang Tua / Pasangan', jerseySize: 'L'
         });
       }
-      return newData.slice(0, count);
     });
+    setFormsData(newForms);
+    setCheckoutStep(2);
   };
 
   const handleFormChange = (index: number, field: string, value: string) => {
@@ -94,31 +119,21 @@ export const EventDetailPage: React.FC = () => {
     });
   };
 
-  const handleStartRegistration = () => {
-    if (!user) {
-      addNotification('warning', 'Autentikasi Diperlukan', 'Silakan masuk atau buat akun peserta terlebih dahulu untuk mendaftar lomba.');
-      navigate('/login', { state: { from: `/events/${slug}` } });
-      return;
-    }
-    setIsRegistering(true);
-  };
-
   const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !event || !selectedCategory) return;
+    if (!user || !event || cartItems.length === 0) return;
 
     // Validate NIK
     for (let i = 0; i < formsData.length; i++) {
       if (!formsData[i].nik || formsData[i].nik.length < 16) {
-        addNotification('error', 'Validasi Gagal', `NIK Peserta ${i + 1} harus terdiri dari 16 digit.`);
+        addNotification('error', 'Validasi Gagal', `NIK Peserta ${i + 1} (${formsData[i].categoryName}) harus terdiri dari 16 digit.`);
         return;
       }
     }
 
     setSubmitting(true);
     try {
-      const result = await createRegistration(user.uid, event.id, selectedCategory.id, formsData, selectedAddons);
-
+      const result = await createRegistration(user.uid, event.id, cartItems, formsData, selectedAddons);
       addNotification('success', 'Pendaftaran Berhasil!', `Nomor Registrasi: ${result.registration.registrationNumber}. Harap selesaikan pembayaran.`);
       navigate('/dashboard');
     } catch (err: any) {
@@ -126,6 +141,10 @@ export const EventDetailPage: React.FC = () => {
     }
     setSubmitting(false);
   };
+
+  const subTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const addonsTotal = selectedAddons.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const grandTotal = subTotal + addonsTotal;
 
   const formatRupiah = (val: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
@@ -181,365 +200,413 @@ export const EventDetailPage: React.FC = () => {
       </div>
 
       {/* Detail Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        
+        {/* Stepper Header (Only show if in checkout) */}
+        {checkoutStep > 0 && (
+          <div className="flex items-center justify-center mb-10 overflow-x-auto pb-4">
+            {[
+              { step: 1, label: 'Pilih Kategori' },
+              { step: 2, label: 'Detail Pesanan' },
+              { step: 3, label: 'Metode Pembayaran' }
+            ].map((s, idx) => (
+              <React.Fragment key={s.step}>
+                <div className={`flex items-center gap-2 ${checkoutStep >= s.step ? 'text-orange-500' : 'text-slate-400 dark:text-slate-600'}`}>
+                  <div className={`flex items-center justify-center w-6 h-6 rounded-full text-[10px] font-black ${checkoutStep >= s.step ? 'bg-orange-500 text-white' : 'bg-slate-200 dark:bg-slate-800'}`}>
+                    {s.step}
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider">{s.label}</span>
+                </div>
+                {idx < 2 && <div className="w-12 md:w-24 h-px bg-slate-200 dark:bg-slate-800 mx-4" />}
+              </React.Fragment>
+            ))}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
           
-          {/* Main Info */}
+          {/* Main Column */}
           <div className="lg:col-span-2 space-y-10">
             
-            {/* Description */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-3">Deskripsi Event</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">{event.description}</p>
-            </div>
-
-            {/* Categories */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-4">Kategori Lomba & Biaya</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {categories.map((cat) => {
-                  const isFull = cat.registeredCount >= cat.quota;
-                  const isSelected = selectedCategory?.id === cat.id;
-
-                  return (
-                    <div
-                      key={cat.id}
-                      onClick={() => !isFull && setSelectedCategory(cat)}
-                      className={`p-5 rounded-xl border transition-all cursor-pointer relative ${
-                        isSelected 
-                          ? 'bg-orange-950/40 border-orange-500 shadow-lg shadow-orange-500/10' 
-                          : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:border-slate-700'
-                      } ${isFull ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-black text-amber-400 uppercase">{cat.distance}</span>
-                        {isFull ? (
-                          <span className="bg-red-950 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded border border-red-800/40">KUOTA HABIS</span>
-                        ) : (
-                          <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">Kuota: {cat.registeredCount}/{cat.quota}</span>
-                        )}
-                      </div>
-                      <h4 className="text-base font-bold text-slate-900 dark:text-white uppercase">{cat.name}</h4>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{cat.description}</p>
-                      
-                      <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
-                        <span className="text-xs text-slate-500 dark:text-slate-400">COT: {cat.cutoffTime}</span>
-                        <span className="text-sm font-black text-slate-900 dark:text-white">{formatRupiah(cat.price)}</span>
-                      </div>
+            {/* STEP 0: INFO */}
+            {checkoutStep === 0 && (
+              <>
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-3">Deskripsi Event</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">{event.description}</p>
+                </div>
+                {event.facilities && event.facilities.length > 0 && (
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-4">Fasilitas Peserta</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {event.facilities.map((fac, idx) => (
+                        <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{fac}</span>
+                        </div>
+                      ))}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Facilities */}
-            {event.facilities && event.facilities.length > 0 && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-4">Fasilitas Peserta (Race Pack)</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {event.facilities.map((fac, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{fac}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Schedule */}
-            {event.schedule && event.schedule.length > 0 && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-4">Jadwal Acara</h3>
-                <div className="space-y-3">
-                  {event.schedule.map((sch, idx) => (
-                    <div key={idx} className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex items-start gap-4">
-                      <span className="bg-orange-600/20 text-orange-400 border border-orange-500/30 text-xs font-black px-3 py-1 rounded-md shrink-0">
-                        {sch.time}
-                      </span>
-                      <div>
-                        <h5 className="text-xs font-bold text-slate-900 dark:text-white uppercase">{sch.title}</h5>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{sch.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-          </div>
-
-          {/* Sticky Registration Box */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-28 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
-              
-              <div>
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">KATEGORI TERPILIH</span>
-                <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase mt-1">
-                  {selectedCategory ? selectedCategory.name : 'Pilih Kategori'}
-                </h3>
-                <div className="text-2xl font-black text-amber-400 mt-2">
-                  {selectedCategory ? formatRupiah(selectedCategory.price) : '-'}
-                </div>
-              </div>
-
-              <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300 border-t border-b border-slate-200 dark:border-slate-800 py-4">
-                <div className="flex justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">Status Pendaftaran:</span>
-                  <span className="font-bold text-emerald-400">DIBUKA</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">Lokasi:</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">{event.location}</span>
-                </div>
-              </div>
-
-              <button
-                onClick={handleStartRegistration}
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-600/25 transition-all transform hover:-translate-y-0.5"
-              >
-                Daftar Sekarang
-              </button>
-
-              <div className="text-center text-[10px] text-slate-500 flex items-center justify-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Proses pendaftaran & pembayaran resmi terverifikasi</span>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Registration Form Modal */}
-      {isRegistering && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full p-8 shadow-2xl my-8">
-            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-wider mb-2">Formulir Data Peserta Lomba</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Pastikan data sesuai NIK/KTP untuk keperluan asuransi dan nomor BIB.</p>
-
-            <form onSubmit={handleSubmitRegistration} className="space-y-6 text-xs">
-              
-              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-2">Jumlah Tiket / Peserta</label>
-                <select
-                  value={ticketCount}
-                  onChange={(e) => handleTicketCountChange(Number(e.target.value))}
-                  className="w-full sm:w-1/3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                >
-                  {[1, 2, 3, 4, 5].map(num => (
-                    <option key={num} value={num}>{num} Tiket</option>
-                  ))}
-                </select>
-                <p className="text-[10px] text-slate-500 mt-2">Anda dapat mendaftarkan hingga 5 peserta dalam satu kali checkout untuk kategori yang sama.</p>
-              </div>
-
-              {event.addons && event.addons.length > 0 && (
-                <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-2">Merchandise / Add-Ons Tambahan</label>
-                  <div className="space-y-3">
-                    {event.addons.map(addon => {
-                      const selected = selectedAddons.find(a => a.addonId === addon.id);
-                      return (
-                        <div key={addon.id} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                  </div>
+                )}
+                {event.schedule && event.schedule.length > 0 && (
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-4">Jadwal Acara</h3>
+                    <div className="space-y-3">
+                      {event.schedule.map((sch, idx) => (
+                        <div key={idx} className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex items-start gap-4">
+                          <span className="bg-orange-600/20 text-orange-400 border border-orange-500/30 text-xs font-black px-3 py-1 rounded-md shrink-0">
+                            {sch.time}
+                          </span>
                           <div>
-                            <span className="font-bold text-slate-900 dark:text-white block">{addon.name}</span>
-                            <span className="text-xs text-orange-500 font-bold">Rp {addon.price.toLocaleString('id-ID')}</span>
+                            <h5 className="text-xs font-bold text-slate-900 dark:text-white uppercase">{sch.title}</h5>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{sch.description}</p>
                           </div>
-                          <select
-                            value={selected ? selected.quantity : 0}
-                            onChange={(e) => {
-                              const qty = Number(e.target.value);
-                              setSelectedAddons(prev => {
-                                const others = prev.filter(a => a.addonId !== addon.id);
-                                if (qty > 0) {
-                                  return [...others, { addonId: addon.id, quantity: qty, price: addon.price }];
-                                }
-                                return others;
-                              });
-                            }}
-                            className="bg-slate-100 dark:bg-slate-800 border-none rounded-lg p-2 text-slate-900 dark:text-white outline-none"
-                          >
-                            <option value={0}>0</option>
-                            <option value={1}>1</option>
-                            <option value={2}>2</option>
-                            <option value={3}>3</option>
-                          </select>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* STEP 1: PILIH KATEGORI */}
+            {checkoutStep === 1 && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase flex items-center gap-2 mb-6">
+                    <Trophy className="w-5 h-5 text-orange-500" /> Kategori Tiket
+                  </h3>
+                  <div className="space-y-4">
+                    {categories.map((cat) => {
+                      const isFull = cat.registeredCount >= cat.quota;
+                      const cartItem = cartItems.find(i => i.categoryId === cat.id);
+                      const currentQty = cartItem ? cartItem.quantity : 0;
+                      
+                      const now = new Date();
+                      let currentPrice = cat.price;
+                      let isEarlyBird = false;
+                      if (cat.earlyBirdPrice && cat.earlyBirdEndDate) {
+                        if (now <= new Date(cat.earlyBirdEndDate)) {
+                          currentPrice = cat.earlyBirdPrice;
+                          isEarlyBird = true;
+                        }
+                      }
+
+                      return (
+                        <div key={cat.id} className={`p-4 md:p-5 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${isFull ? 'bg-slate-100 dark:bg-slate-950 opacity-60 border-slate-200 dark:border-slate-800' : currentQty > 0 ? 'bg-orange-50 dark:bg-orange-950/20 border-orange-400' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'}`}>
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase">{cat.name}</h4>
+                              {isEarlyBird && <span className="bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded border border-amber-200">EARLY BIRD</span>}
+                              {isFull && <span className="bg-red-100 text-red-600 text-[9px] font-black px-1.5 py-0.5 rounded border border-red-200">HABIS</span>}
+                            </div>
+                            <p className="text-[11px] text-slate-500 mb-2">Kuota: {cat.registeredCount}/{cat.quota} | COT: {cat.cutoffTime}</p>
+                            <div className="text-base font-black text-orange-500">{formatRupiah(currentPrice)}</div>
+                          </div>
+                          
+                          <div className="shrink-0 flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-1 w-fit">
+                            <button 
+                              type="button"
+                              disabled={currentQty === 0}
+                              onClick={() => handleCartUpdate(cat.id, cat.name, currentQty - 1, cat.quota - cat.registeredCount, currentPrice, isEarlyBird)}
+                              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold hover:text-orange-500 disabled:opacity-50 shadow-sm"
+                            >
+                              -
+                            </button>
+                            <span className="w-10 text-center font-bold text-sm">{currentQty}</span>
+                            <button 
+                              type="button"
+                              disabled={isFull || currentQty >= (cat.quota - cat.registeredCount)}
+                              onClick={() => handleCartUpdate(cat.id, cat.name, currentQty + 1, cat.quota - cat.registeredCount, currentPrice, isEarlyBird)}
+                              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold hover:text-orange-500 disabled:opacity-50 shadow-sm"
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 </div>
-              )}
 
-              {formsData.map((formData, index) => (
-                <div key={index} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4">
-                  <h4 className="font-bold text-slate-900 dark:text-white uppercase mb-4 border-b border-slate-200 dark:border-slate-800 pb-2">Data Peserta {index + 1}</h4>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nama Lengkap (Sesuai KTP)</label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.fullName}
-                        onChange={(e) => handleFormChange(index, 'fullName', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">NIK KTP / Paspor (16 Digit)</label>
-                      <input
-                        type="text"
-                        required
-                        maxLength={16}
-                        value={formData.nik}
-                        onChange={(e) => handleFormChange(index, 'nik', e.target.value)}
-                        placeholder="331201xxxxxxxxxx"
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      />
+                {event.addons && event.addons.length > 0 && (
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase flex items-center gap-2 mb-6">
+                      <Sparkles className="w-5 h-5 text-amber-500" /> Tambahan (Add-ons)
+                    </h3>
+                    <div className="space-y-3">
+                      {event.addons.map((addon) => {
+                        const existing = selectedAddons.find(a => a.addonId === addon.id);
+                        const qty = existing ? existing.quantity : 0;
+                        return (
+                          <div key={addon.id} className="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950">
+                            <div>
+                              <p className="font-bold text-sm text-slate-900 dark:text-white uppercase">{addon.name}</p>
+                              <p className="text-[11px] text-slate-500">{addon.description}</p>
+                              <p className="text-xs font-bold text-amber-500 mt-1">{formatRupiah(addon.price)}</p>
+                            </div>
+                            <div className="flex items-center bg-white dark:bg-slate-900 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+                              <button type="button" onClick={() => {
+                                if (qty > 0) {
+                                  if (qty - 1 === 0) setSelectedAddons(selectedAddons.filter(a => a.addonId !== addon.id));
+                                  else setSelectedAddons(selectedAddons.map(a => a.addonId === addon.id ? {...a, quantity: qty - 1} : a));
+                                }
+                              }} className="w-6 h-6 flex items-center justify-center text-slate-600 font-bold">-</button>
+                              <span className="w-6 text-center text-xs font-bold">{qty}</span>
+                              <button type="button" onClick={() => {
+                                if (qty === 0) setSelectedAddons([...selectedAddons, {addonId: addon.id, name: addon.name, quantity: 1, price: addon.price}]);
+                                else setSelectedAddons(selectedAddons.map(a => a.addonId === addon.id ? {...a, quantity: qty + 1} : a));
+                              }} className="w-6 h-6 flex items-center justify-center text-slate-600 font-bold">+</button>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nomor WhatsApp</label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => handleFormChange(index, 'phone', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Tanggal Lahir</label>
-                      <input
-                        type="date"
-                        required
-                        value={formData.birthDate}
-                        onChange={(e) => handleFormChange(index, 'birthDate', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Jenis Kelamin</label>
-                      <select
-                        value={formData.gender}
-                        onChange={(e) => handleFormChange(index, 'gender', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      >
-                        <option value="MALE">Laki-laki</option>
-                        <option value="FEMALE">Perempuan</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Kota / Kabupaten</label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.city}
-                        onChange={(e) => handleFormChange(index, 'city', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Provinsi</label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.province}
-                        onChange={(e) => handleFormChange(index, 'province', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Golongan Darah</label>
-                      <select
-                        value={formData.bloodType}
-                        onChange={(e) => handleFormChange(index, 'bloodType', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      >
-                        <option value="A+">A+</option>
-                        <option value="B+">B+</option>
-                        <option value="AB+">AB+</option>
-                        <option value="O+">O+</option>
-                        <option value="UNSPECIFIED">Tidak Tahu</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Ukuran Jersey</label>
-                      <select
-                        value={formData.jerseySize}
-                        onChange={(e) => handleFormChange(index, 'jerseySize', e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
-                      >
-                        <option value="S">S (Unisex)</option>
-                        <option value="M">M (Unisex)</option>
-                        <option value="L">L (Unisex)</option>
-                        <option value="XL">XL (Unisex)</option>
-                        <option value="XXL">XXL (Unisex)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 mt-4">
-                    <h5 className="font-bold text-orange-400 uppercase text-[10px]">Kontak Darurat Peserta {index + 1}</h5>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[10px]">Nama Kontak Darurat</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.emergencyContactName}
-                          onChange={(e) => handleFormChange(index, 'emergencyContactName', e.target.value)}
-                          className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-slate-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-slate-500 dark:text-slate-400 mb-1 text-[10px]">Nomor Darurat</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.emergencyContactPhone}
-                          onChange={(e) => handleFormChange(index, 'emergencyContactPhone', e.target.value)}
-                          className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-slate-900 dark:text-white"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              <div className="pt-4 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsRegistering(false)}
-                  className="px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white font-bold uppercase tracking-wider"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black uppercase tracking-wider shadow-lg shadow-orange-600/30"
-                >
-                  {submitting ? 'Memproses...' : 'Lanjutkan Ke Pembayaran'}
-                </button>
+                )}
               </div>
+            )}
 
-            </form>
+            {/* STEP 2: ISI DATA PESERTA */}
+            {checkoutStep === 2 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <button onClick={() => setCheckoutStep(1)} className="text-xs font-bold text-orange-500 hover:underline flex items-center gap-1 mb-4"><ArrowLeft className="w-3 h-3"/> Kembali ke Pemilihan Tiket</button>
+                {formsData.map((data, index) => (
+                  <div key={index} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+                    <div className="bg-slate-100 dark:bg-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                      <h4 className="font-black text-slate-900 dark:text-white uppercase text-sm flex items-center gap-2">
+                        <UserCheck className="w-4 h-4 text-orange-500" />
+                        Data Peserta {index + 1}
+                      </h4>
+                      <span className="bg-orange-100 text-orange-600 text-[10px] font-black px-2 py-0.5 rounded border border-orange-200 uppercase">{data.categoryName}</span>
+                    </div>
+                    <div className="p-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nama Lengkap (Sesuai KTP) *</label>
+                          <input type="text" required value={data.fullName} onChange={(e) => handleFormChange(index, 'fullName', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                        </div>
+                        <div>
+                          <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nomor KTP (NIK) *</label>
+                          <input type="text" required maxLength={16} value={data.nik} onChange={(e) => handleFormChange(index, 'nik', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                        </div>
+                        <div>
+                          <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Email *</label>
+                          <input type="email" required value={data.email} onChange={(e) => handleFormChange(index, 'email', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                        </div>
+                        <div>
+                          <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nomor WhatsApp *</label>
+                          <input type="text" required value={data.phone} onChange={(e) => handleFormChange(index, 'phone', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 sm:col-span-2">
+                          <div>
+                            <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Tanggal Lahir *</label>
+                            <input type="date" required value={data.birthDate} onChange={(e) => handleFormChange(index, 'birthDate', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                          </div>
+                          <div>
+                            <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Jenis Kelamin *</label>
+                            <select value={data.gender} onChange={(e) => handleFormChange(index, 'gender', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500">
+                              <option value="MALE">Laki-Laki</option>
+                              <option value="FEMALE">Perempuan</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-2">
+                          <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Alamat Lengkap *</label>
+                          <textarea required value={data.address} onChange={(e) => handleFormChange(index, 'address', e.target.value)} rows={2} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Kota *</label>
+                          <input type="text" required value={data.city} onChange={(e) => handleFormChange(index, 'city', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                        </div>
+                        <div>
+                          <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Provinsi *</label>
+                          <input type="text" required value={data.province} onChange={(e) => handleFormChange(index, 'province', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                        </div>
+
+                        <div className="sm:col-span-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                          <h5 className="font-bold text-xs text-slate-800 dark:text-slate-200 uppercase mb-3 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-rose-500"/> Data Medis & Darurat</h5>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Golongan Darah *</label>
+                              <select value={data.bloodType} onChange={(e) => handleFormChange(index, 'bloodType', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500">
+                                <option value="A+">A+</option><option value="A-">A-</option>
+                                <option value="B+">B+</option><option value="B-">B-</option>
+                                <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                                <option value="O+">O+</option><option value="O-">O-</option>
+                                <option value="UNSPECIFIED">Tidak Tahu</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Ukuran Jersey *</label>
+                              <select value={data.jerseySize} onChange={(e) => handleFormChange(index, 'jerseySize', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500">
+                                <option value="XS">XS</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option>
+                              </select>
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nama Kontak Darurat *</label>
+                              <input type="text" required value={data.emergencyContactName} onChange={(e) => handleFormChange(index, 'emergencyContactName', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                            </div>
+                            <div>
+                              <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">No HP Darurat *</label>
+                              <input type="text" required value={data.emergencyContactPhone} onChange={(e) => handleFormChange(index, 'emergencyContactPhone', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                            </div>
+                            <div>
+                              <label className="block text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Hubungan *</label>
+                              <input type="text" required value={data.emergencyContactRelation} onChange={(e) => handleFormChange(index, 'emergencyContactRelation', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-orange-500" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* STEP 3: METODE PEMBAYARAN */}
+            {checkoutStep === 3 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <button onClick={() => setCheckoutStep(2)} className="text-xs font-bold text-orange-500 hover:underline flex items-center gap-1 mb-4"><ArrowLeft className="w-3 h-3"/> Kembali ke Data Peserta</button>
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase flex items-center gap-2 mb-6">Syarat & Ketentuan</h3>
+                  <div className="h-48 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 rounded-xl text-[11px] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 space-y-3 leading-relaxed">
+                    <p>1. Pihak penyelenggara berhak mengubah rute lomba jika terjadi kondisi cuaca buruk atau hal-hal lain di luar kendali.</p>
+                    <p>2. Uang pendaftaran yang telah dibayarkan tidak dapat dikembalikan (Non-refundable) dengan alasan apapun.</p>
+                    <p>3. Nomor dada (BIB) tidak dapat dipindahtangankan kepada orang lain.</p>
+                    <p>4. Peserta menyatakan bahwa dirinya dalam keadaan sehat jasmani dan rohani serta sanggup mengikuti lomba.</p>
+                    <p>5. Panitia tidak bertanggung jawab atas cedera, kehilangan barang, atau kejadian tidak terduga lainnya selama perlombaan.</p>
+                    {event.rules && <p className="font-bold mt-4">Aturan Khusus: {event.rules}</p>}
+                  </div>
+                  <label className="flex items-start gap-3 mt-4 cursor-pointer">
+                    <input type="checkbox" required className="mt-1 shrink-0 text-orange-500 focus:ring-orange-500 rounded border-slate-300" />
+                    <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">Saya dan seluruh peserta yang saya daftarkan telah membaca, memahami, dan menyetujui seluruh Syarat & Ketentuan serta Aturan Lomba yang berlaku.</span>
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sticky Registration / Cart Box */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-28 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+              
+              {checkoutStep === 0 ? (
+                <>
+                  <div className="space-y-3">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block border-b border-slate-100 dark:border-slate-800 pb-2">STATUS PENDAFTARAN</span>
+                    <div className="flex items-center gap-2 text-emerald-500 font-black text-lg uppercase">
+                      <CheckCircle2 className="w-6 h-6" />
+                      SEDANG DIBUKA
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (event.status !== 'REGISTRATION_OPEN') return;
+                      setCheckoutStep(1);
+                    }}
+                    disabled={event.status !== 'REGISTRATION_OPEN'}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-orange-600/25 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {event.status === 'REGISTRATION_OPEN' ? 'Daftar Sekarang' : 'Ditutup'}
+                  </button>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <h3 className="font-black text-slate-900 dark:text-white uppercase border-b border-slate-200 dark:border-slate-800 pb-3 flex items-center gap-2">
+                    Rincian Pesanan
+                  </h3>
+                  
+                  {cartItems.length === 0 ? (
+                    <div className="text-center py-6 text-slate-400 text-xs">Belum ada tiket dipilih</div>
+                  ) : (
+                    <div className="space-y-3">
+                      {cartItems.map((item, idx) => (
+                        <div key={idx} className="flex justify-between items-start text-xs">
+                          <div>
+                            <span className="font-bold text-slate-900 dark:text-white uppercase block">{item.name}</span>
+                            <span className="text-slate-500">{item.quantity}x tiket dipesan {item.earlyBird && '(EB)'}</span>
+                          </div>
+                          <span className="font-semibold text-slate-700 dark:text-slate-300">{formatRupiah(item.price * item.quantity)}</span>
+                        </div>
+                      ))}
+                      
+                      {selectedAddons.length > 0 && (
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60 mt-2 space-y-2">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Tambahan (Add-ons)</span>
+                          {selectedAddons.map((item, idx) => (
+                            <div key={idx} className="flex justify-between items-start text-xs">
+                              <span className="text-slate-600 dark:text-slate-400">{item.quantity}x {item.name}</span>
+                              <span className="font-semibold text-slate-700 dark:text-slate-300">{formatRupiah(item.price * item.quantity)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="border-t border-dashed border-slate-200 dark:border-slate-700 pt-4 mt-4 space-y-2">
+                        <div className="flex justify-between text-xs text-slate-500">
+                          <span>Sub Total</span>
+                          <span>{formatRupiah(subTotal)}</span>
+                        </div>
+                        {addonsTotal > 0 && (
+                          <div className="flex justify-between text-xs text-slate-500">
+                            <span>Add-ons</span>
+                            <span>{formatRupiah(addonsTotal)}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between text-base font-black text-slate-900 dark:text-white pt-2 border-t border-slate-100 dark:border-slate-800">
+                          <span>Grand Total</span>
+                          <span className="text-orange-500">{formatRupiah(grandTotal)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {checkoutStep === 1 && (
+                    <button
+                      onClick={handleStartRegistration}
+                      className="w-full mt-4 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 transition-all transform hover:-translate-y-0.5"
+                    >
+                      Isi Data Peserta
+                    </button>
+                  )}
+                  {checkoutStep === 2 && (
+                    <button
+                      onClick={() => {
+                        let valid = true;
+                        // Basic validation check
+                        formsData.forEach(d => {
+                          if (!d.fullName || !d.nik || !d.email || !d.phone || !d.address || !d.city || !d.province || !d.emergencyContactName || !d.emergencyContactPhone || !d.emergencyContactRelation) {
+                            valid = false;
+                          }
+                        });
+                        if (!valid) addNotification('error', 'Form Belum Lengkap', 'Mohon lengkapi semua data dengan tanda bintang (*) sebelum melanjutkan.');
+                        else setCheckoutStep(3);
+                      }}
+                      className="w-full mt-4 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 transition-all transform hover:-translate-y-0.5"
+                    >
+                      Lanjut Pembayaran
+                    </button>
+                  )}
+                  {checkoutStep === 3 && (
+                    <button
+                      onClick={handleSubmitRegistration}
+                      disabled={submitting}
+                      className="w-full mt-4 py-3.5 rounded-xl bg-green-600 hover:bg-green-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-green-600/25 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {submitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>}
+                      {submitting ? 'MEMPROSES...' : 'BAYAR SEKARANG'}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      )}
-
+      </div>
     </div>
   );
 };

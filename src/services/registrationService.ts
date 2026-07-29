@@ -16,6 +16,7 @@ import { Registration, Participant, Payment, EventCategory, EventItem } from '..
 import { logAuditEvent } from './auditService';
 
 export interface RegistrationFormData {
+  categoryId: string;
   fullName: string;
   nik: string;
   email: string;
@@ -48,58 +49,47 @@ export function generateCategoryPrefix(categoryName: string, distance: string): 
 export async function createRegistration(
   userId: string,
   eventId: string,
-  categoryId: string,
+  cartItems: { categoryId: string; quantity: number; price: number; earlyBird: boolean }[],
   formsData: RegistrationFormData[],
   selectedAddons: { addonId: string; quantity: number; price: number }[] = []
 ): Promise<{ registration: Registration; participants: Participant[]; payment: Payment }> {
-  // 1. Check existing registration to prevent duplicates
-  const existingQ = query(
-    collection(db, 'registrations'),
-    where('userId', '==', userId),
-    where('eventId', '==', eventId),
-    where('categoryId', '==', categoryId)
-  );
-  const existingSnap = await getDocs(existingQ);
-  if (!existingSnap.empty) {
-    const existing = existingSnap.docs[0].data() as Registration;
-    if (existing.status !== 'CANCELLED') {
-      throw new Error('Anda telah terdaftar pada kategori lomba ini untuk event ini.');
-    }
-  }
-
-  // 2. Fetch category and event data
-  const categoryRef = doc(db, 'event_categories', categoryId);
-  const categorySnap = await getDoc(categoryRef);
-  if (!categorySnap.exists()) {
-    throw new Error('Kategori event tidak ditemukan.');
-  }
-  const category = categorySnap.data() as EventCategory;
-
-  const ticketCount = formsData.length;
-  if (category.registeredCount + ticketCount > category.quota) {
-    throw new Error(`Sisa kuota tidak cukup. Anda meminta ${ticketCount} tiket, sisa kuota: ${category.quota - category.registeredCount}`);
-  }
-
+  // 1. Fetch event data
   const eventSnap = await getDoc(doc(db, 'events', eventId));
   if (!eventSnap.exists()) {
     throw new Error('Event tidak ditemukan.');
   }
+  const event = eventSnap.data() as EventItem;
 
-  // 3. Calculate Price
+  // 2. Validate categories and quotas
   const now = new Date();
-  let ticketPrice = category.price;
-  if (category.earlyBirdPrice && category.earlyBirdEndDate) {
-    const earlyBirdEnd = new Date(category.earlyBirdEndDate);
-    if (now <= earlyBirdEnd) {
-      ticketPrice = category.earlyBirdPrice;
+  const categoryRefs = cartItems.map(item => doc(db, 'event_categories', item.categoryId));
+  const categoryDocs = await Promise.all(categoryRefs.map(ref => getDoc(ref)));
+  
+  let totalTicketsPrice = 0;
+  let totalTicketCount = 0;
+
+  for (let i = 0; i < cartItems.length; i++) {
+    const item = cartItems[i];
+    const catSnap = categoryDocs[i];
+    if (!catSnap.exists()) throw new Error(`Kategori ${item.categoryId} tidak ditemukan.`);
+    
+    const category = catSnap.data() as EventCategory;
+    if (category.registeredCount + item.quantity > category.quota) {
+      throw new Error(`Kategori ${category.name} kehabisan kuota.`);
     }
+
+    totalTicketCount += item.quantity;
+    totalTicketsPrice += (item.price * item.quantity);
   }
 
-  const totalTicketsPrice = ticketPrice * ticketCount;
+  if (totalTicketCount !== formsData.length) {
+    throw new Error('Jumlah data peserta tidak sesuai dengan jumlah tiket.');
+  }
+
   const totalAddonsPrice = selectedAddons.reduce((sum, addon) => sum + (addon.price * addon.quantity), 0);
   const totalAmount = totalTicketsPrice + totalAddonsPrice;
 
-  // 4. Generate IDs
+  // 3. Generate IDs
   const timestamp = now.getTime();
   const randomSuffix = Math.floor(1000 + Math.random() * 9000);
   const regNumber = `REG-${now.getFullYear()}-${randomSuffix}`;
@@ -113,8 +103,8 @@ export async function createRegistration(
     registrationNumber: regNumber,
     userId,
     eventId,
-    categoryId,
-    ticketCount,
+    items: cartItems,
+    ticketCount: totalTicketCount,
     selectedAddons,
     status: 'WAITING_PAYMENT',
     amount: totalAmount,
@@ -124,9 +114,6 @@ export async function createRegistration(
   };
 
   const participants: Participant[] = [];
-  
-  // Note: BIB numbers are generated AFTER payment is verified to prevent gaps.
-  // We will leave bibNumber empty for now, and update it in verifyPaymentByAdmin.
   
   for (let i = 0; i < formsData.length; i++) {
     const formData = formsData[i];
@@ -138,7 +125,7 @@ export async function createRegistration(
       userId,
       registrationId: regRef.id,
       eventId,
-      categoryId,
+      categoryId: formData.categoryId,
       fullName: formData.fullName,
       nik: formData.nik,
       email: formData.email,
@@ -173,25 +160,28 @@ export async function createRegistration(
     updatedAt: now.toISOString(),
   };
 
-  // 5. Save to Firestore
+  // 4. Save to Firestore
   await setDoc(regRef, registration);
   for (const participant of participants) {
     await setDoc(doc(db, 'participants', participant.id), participant);
   }
   await setDoc(payRef, payment);
 
-  // 6. Update Category Count (Temporary booking)
-  await updateDoc(categoryRef, {
-    registeredCount: increment(ticketCount)
-  });
+  // 5. Update Category Counts
+  for (const item of cartItems) {
+    const catRef = doc(db, 'event_categories', item.categoryId);
+    await updateDoc(catRef, {
+      registeredCount: increment(item.quantity)
+    });
+  }
 
   await logAuditEvent(userId, userId, 'PARTICIPANT', 'CREATE_REGISTRATION', 'registrations', regRef.id, {
-    ticketCount,
+    ticketCount: totalTicketCount,
     amount: totalAmount,
     addons: selectedAddons
   });
 
-  // 7. Create initial empty medical assessment record for each participant
+  // 6. Create initial empty medical assessment record for each participant
   for (const participant of participants) {
     const medRef = doc(collection(db, 'medical_assessments'));
     await setDoc(medRef, {
@@ -219,8 +209,7 @@ export async function createRegistration(
         participantName: formsData[0].fullName,
         registrationNumber: regNumber,
         eventName: event.name,
-        categoryName: category.name,
-        ticketCount: ticketCount,
+        ticketCount: totalTicketCount,
         eventDate: new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'full' }),
         location: event.location,
       }),
