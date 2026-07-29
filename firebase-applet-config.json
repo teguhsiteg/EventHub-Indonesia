@@ -1,12 +1,9 @@
 {
-  "projectId": "potent-yardage-rb34d",
-  "appId": "1:818908850933:web:72bc2801ac651669c773bc",
-  "apiKey": "AIzaSyDuvPdrNtoUyrKMi9xQH1zBaI7Dtf61zSY",
-  "authDomain": "potent-yardage-rb34d.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-raceproplatforme-913e5251-4402-474a-8178-7e5e742bb719",
-  "storageBucket": "potent-yardage-rb34d.firebasestorage.app",
-  "messagingSenderId": "818908850933",
-  "measurementId": "",
-  "oAuthClientId": "818908850933-38bkksejvn8opr1g4519urktvq6vufpf.apps.googleusercontent.com",
-  "recaptchaSiteKey": ""
+  "apiKey": "AIzaSyDS4J3BKR5MPDYU6yQEQr1LVBsoHblzJ5I",
+  "authDomain": "raceproevent.firebaseapp.com",
+  "projectId": "raceproevent",
+  "storageBucket": "raceproevent.firebasestorage.app",
+  "messagingSenderId": "357279458015",
+  "appId": "1:357279458015:web:ff54401c8368c9e22fbf6a",
+  "measurementId": "G-B6ZRFGQVDZ"
 }

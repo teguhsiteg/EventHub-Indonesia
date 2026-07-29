@@ -31,7 +31,7 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
   }, [value, size]);
 
   return (
-    <div className="flex flex-col items-center p-6 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl max-w-sm mx-auto text-center">
+    <div className="flex flex-col items-center p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl max-w-sm mx-auto text-center">
       <div className="flex items-center gap-2 text-xs font-bold text-orange-400 uppercase tracking-wider mb-4">
         <QrCode className="w-4 h-4" />
         <span>Token Verifikasi QR Resmi</span>
@@ -46,11 +46,11 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
         <span>Tervalidasi Sistem RacePro</span>
       </div>
 
-      <p className="text-xs text-slate-400 mt-3 leading-relaxed font-medium">
+      <p className="text-xs text-slate-500 dark:text-slate-400 mt-3 leading-relaxed font-medium">
         {label}
       </p>
 
-      <div className="mt-3 text-[10px] font-mono text-slate-500 bg-slate-950 px-3 py-1 rounded border border-slate-800 break-all">
+      <div className="mt-3 text-[10px] font-mono text-slate-500 bg-slate-50 dark:bg-slate-950 px-3 py-1 rounded border border-slate-200 dark:border-slate-800 break-all">
         Token: {value}
       </div>
     </div>

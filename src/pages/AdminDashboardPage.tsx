@@ -219,11 +219,11 @@ export const AdminDashboardPage: React.FC = () => {
   const totalRevenue = payments.filter(p => p.status === 'PAID').reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-10">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center font-black text-xl">
               <ShieldAlert className="w-7 h-7" />
@@ -232,8 +232,8 @@ export const AdminDashboardPage: React.FC = () => {
               <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest bg-amber-950 px-2.5 py-1 rounded border border-amber-800/40">
                 GUWIGO EVENTS ADMIN
               </span>
-              <h1 className="text-2xl font-black text-white uppercase mt-1">Guwigo Events Management</h1>
-              <p className="text-xs text-slate-400">Pengelolaan real-time event, pendaftaran, pembayaran, dan hasil lomba.</p>
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase mt-1">Guwigo Events Management</h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Pengelolaan real-time event, pendaftaran, pembayaran, dan hasil lomba.</p>
             </div>
           </div>
 
@@ -247,7 +247,7 @@ export const AdminDashboardPage: React.FC = () => {
             </Link>
             <button
               onClick={() => setShowEventModal(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider border border-slate-700"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider border border-slate-300 dark:border-slate-700"
             >
               <Plus className="w-4 h-4" />
               <span>Buat Event Baru</span>
@@ -256,7 +256,7 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-800 mb-8 overflow-x-auto gap-2">
+        <div className="flex border-b border-slate-200 dark:border-slate-800 mb-8 overflow-x-auto gap-2">
           {[
             { id: 'stats', label: 'Ringkasan Statistik', icon: Activity },
             { id: 'events', label: 'Manajemen Event', icon: Trophy },
@@ -273,8 +273,8 @@ export const AdminDashboardPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-xs uppercase tracking-wider whitespace-nowrap transition-all ${
                   isActive 
-                    ? 'border-orange-500 text-orange-400 bg-slate-900/50' 
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                    ? 'border-orange-500 text-orange-400 bg-white dark:bg-slate-900/50' 
+                    : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -288,33 +288,33 @@ export const AdminDashboardPage: React.FC = () => {
         {activeTab === 'stats' && (
           <div className="space-y-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">TOTAL EVENT</span>
-                <span className="block text-3xl font-black text-white mt-1">{events.length}</span>
+              <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">TOTAL EVENT</span>
+                <span className="block text-3xl font-black text-slate-900 dark:text-white mt-1">{events.length}</span>
               </div>
-              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">TOTAL PENDAFTARAN</span>
+              <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">TOTAL PENDAFTARAN</span>
                 <span className="block text-3xl font-black text-orange-400 mt-1">{registrations.length}</span>
               </div>
-              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">PEMBAYARAN PENDING</span>
+              <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">PEMBAYARAN PENDING</span>
                 <span className="block text-3xl font-black text-amber-400 mt-1">
                   {payments.filter(p => p.status === 'PENDING').length}
                 </span>
               </div>
-              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">TOTAL REVENUE</span>
+              <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">TOTAL REVENUE</span>
                 <span className="block text-2xl font-black text-emerald-400 mt-1">{formatRupiah(totalRevenue)}</span>
               </div>
             </div>
 
             {/* Audit Logs Table */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-              <h3 className="text-base font-bold text-white uppercase mb-4">Audit Logs Aktivitas Sistem</h3>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white uppercase mb-4">Audit Logs Aktivitas Sistem</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-800 text-slate-400 uppercase">
+                    <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase">
                       <th className="pb-3">Waktu</th>
                       <th className="pb-3">Aktor</th>
                       <th className="pb-3">Tindakan</th>
@@ -324,10 +324,10 @@ export const AdminDashboardPage: React.FC = () => {
                   <tbody className="divide-y divide-slate-800/60 font-mono">
                     {auditLogs.slice(0, 10).map(log => (
                       <tr key={log.id}>
-                        <td className="py-2.5 text-slate-400">{new Date(log.createdAt).toLocaleString('id-ID')}</td>
-                        <td className="py-2.5 text-white">{log.actorEmail}</td>
+                        <td className="py-2.5 text-slate-500 dark:text-slate-400">{new Date(log.createdAt).toLocaleString('id-ID')}</td>
+                        <td className="py-2.5 text-slate-900 dark:text-white">{log.actorEmail}</td>
                         <td className="py-2.5 text-amber-400 font-bold">{log.action}</td>
-                        <td className="py-2.5 text-slate-400">{log.resourceId}</td>
+                        <td className="py-2.5 text-slate-500 dark:text-slate-400">{log.resourceId}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -339,10 +339,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* TAB 2: EVENTS MANAGER */}
         {activeTab === 'events' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase">
                   <th className="p-4">Nama Event</th>
                   <th className="p-4">Lokasi</th>
                   <th className="p-4">Tanggal Start</th>
@@ -353,9 +353,9 @@ export const AdminDashboardPage: React.FC = () => {
               <tbody className="divide-y divide-slate-800">
                 {events.map(ev => (
                   <tr key={ev.id}>
-                    <td className="p-4 font-bold text-white">{ev.name}</td>
-                    <td className="p-4 text-slate-300">{ev.location}</td>
-                    <td className="p-4 text-slate-400">{new Date(ev.startDate).toLocaleDateString('id-ID')}</td>
+                    <td className="p-4 font-bold text-slate-900 dark:text-white">{ev.name}</td>
+                    <td className="p-4 text-slate-600 dark:text-slate-300">{ev.location}</td>
+                    <td className="p-4 text-slate-500 dark:text-slate-400">{new Date(ev.startDate).toLocaleDateString('id-ID')}</td>
                     <td className="p-4">
                       <span className="px-2.5 py-1 bg-orange-950 text-orange-400 rounded text-[10px] font-black uppercase">
                         {ev.status}
@@ -383,10 +383,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* TAB 3: PAYMENTS VERIFICATION */}
         {activeTab === 'payments' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase">
                   <th className="p-4">Invoice ID</th>
                   <th className="p-4">Nominal</th>
                   <th className="p-4">Bukti Upload</th>
@@ -397,7 +397,7 @@ export const AdminDashboardPage: React.FC = () => {
               <tbody className="divide-y divide-slate-800">
                 {payments.map(pay => (
                   <tr key={pay.id}>
-                    <td className="p-4 font-mono font-bold text-white">{pay.invoiceId}</td>
+                    <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">{pay.invoiceId}</td>
                     <td className="p-4 font-bold text-amber-400">{formatRupiah(pay.amount)}</td>
                     <td className="p-4">
                       {pay.proofUrl ? (
@@ -412,13 +412,13 @@ export const AdminDashboardPage: React.FC = () => {
                     <td className="p-4 space-x-2">
                       <button
                         onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'APPROVE')}
-                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold uppercase"
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white rounded font-bold uppercase"
                       >
                         Setujui
                       </button>
                       <button
                         onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'REJECT')}
-                        className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded font-bold uppercase"
+                        className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-slate-900 dark:text-white rounded font-bold uppercase"
                       >
                         Tolak
                       </button>
@@ -432,62 +432,62 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* TAB 4: RACE RESULTS EDITOR */}
         {activeTab === 'results' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xl mx-auto space-y-4">
-            <h3 className="text-lg font-bold text-white uppercase">Input / Update Waktu Finisher</h3>
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-xl mx-auto space-y-4">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">Input / Update Waktu Finisher</h3>
             <form onSubmit={handleSubmitResult} className="space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-bold uppercase mb-1">Pilih Event</label>
+                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Pilih Event</label>
                 <select
                   value={resEventId}
                   onChange={(e) => setResEventId(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
                 >
                   {events.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-bold uppercase mb-1">Nomor BIB</label>
+                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nomor BIB</label>
                   <input
                     type="text"
                     required
                     value={resBib}
                     onChange={(e) => setResBib(e.target.value)}
                     placeholder="TR50-0001"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-bold uppercase mb-1">Nama Peserta</label>
+                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nama Peserta</label>
                   <input
                     type="text"
                     required
                     value={resName}
                     onChange={(e) => setResName(e.target.value)}
                     placeholder="Budi Santoso"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-bold uppercase mb-1">Chip Time</label>
+                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Chip Time</label>
                   <input
                     type="text"
                     required
                     value={resChipTime}
                     onChange={(e) => setResChipTime(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-mono"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-bold uppercase mb-1">Rank Finisher</label>
+                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Rank Finisher</label>
                   <input
                     type="number"
                     required
                     value={resRank}
                     onChange={(e) => setResRank(Number(e.target.value))}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -503,10 +503,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* TAB 5: USER ROLE MANAGEMENT */}
         {activeTab === 'users' && isSuperAdmin && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase">
                   <th className="p-4">Email Pengguna</th>
                   <th className="p-4">Role Saat Ini</th>
                   <th className="p-4">Ubah Role</th>
@@ -515,16 +515,16 @@ export const AdminDashboardPage: React.FC = () => {
               <tbody className="divide-y divide-slate-800">
                 {usersList.map(u => (
                   <tr key={u.id}>
-                    <td className="p-4 font-bold text-white">{u.email}</td>
+                    <td className="p-4 font-bold text-slate-900 dark:text-white">{u.email}</td>
                     <td className="p-4 font-mono text-amber-400">{u.role}</td>
                     <td className="p-4 space-x-2">
-                      <button onClick={() => handleRoleChange(u.id, 'ADMIN')} className="px-2.5 py-1 bg-amber-600 text-white rounded font-bold text-[10px]">
+                      <button onClick={() => handleRoleChange(u.id, 'ADMIN')} className="px-2.5 py-1 bg-amber-600 text-slate-900 dark:text-white rounded font-bold text-[10px]">
                         ADMIN
                       </button>
-                      <button onClick={() => handleRoleChange(u.id, 'ORGANIZER')} className="px-2.5 py-1 bg-blue-600 text-white rounded font-bold text-[10px]">
+                      <button onClick={() => handleRoleChange(u.id, 'ORGANIZER')} className="px-2.5 py-1 bg-blue-600 text-slate-900 dark:text-white rounded font-bold text-[10px]">
                         ORGANIZER
                       </button>
-                      <button onClick={() => handleRoleChange(u.id, 'PARTICIPANT')} className="px-2.5 py-1 bg-slate-700 text-white rounded font-bold text-[10px]">
+                      <button onClick={() => handleRoleChange(u.id, 'PARTICIPANT')} className="px-2.5 py-1 bg-slate-700 text-slate-900 dark:text-white rounded font-bold text-[10px]">
                         PARTICIPANT
                       </button>
                     </td>
@@ -537,17 +537,17 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* TAB 6: SETTINGS */}
         {activeTab === 'settings' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-xl mx-auto space-y-6">
-            <h3 className="text-lg font-bold text-white uppercase">Pengaturan Sistem & Maintenance</h3>
-            <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 max-w-xl mx-auto space-y-6">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">Pengaturan Sistem & Maintenance</h3>
+            <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <span className="text-sm font-bold text-white block">Maintenance Mode</span>
-                <span className="text-xs text-slate-400">Pengunjung publik akan melihat halaman pemeliharaan sistem.</span>
+                <span className="text-sm font-bold text-slate-900 dark:text-white block">Maintenance Mode</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">Pengunjung publik akan melihat halaman pemeliharaan sistem.</span>
               </div>
               <button
                 onClick={handleToggleMaintenance}
                 className={`px-4 py-2 rounded-xl font-bold text-xs uppercase ${
-                  settings.maintenanceMode ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-300'
+                  settings.maintenanceMode ? 'bg-red-600 text-slate-900 dark:text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                 }`}
               >
                 {settings.maintenanceMode ? 'AKTIF' : 'NONAKTIF'}
@@ -560,47 +560,47 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* Create Event Modal */}
       {showEventModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-xl w-full">
-            <h3 className="text-xl font-black text-white uppercase mb-4">Buat Event Lomba Baru</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950/80 backdrop-blur-md">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-xl w-full">
+            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase mb-4">Buat Event Lomba Baru</h3>
             <form onSubmit={handleCreateEvent} className="space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-bold uppercase mb-1">Nama Event</label>
+                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nama Event</label>
                 <input
                   type="text"
                   required
                   value={eventName}
                   onChange={(e) => setEventName(e.target.value)}
                   placeholder="Contoh: Rinjani Ultra Trail 2026"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
                 />
               </div>
               <div>
-                <label className="block text-slate-300 font-bold uppercase mb-1">Lokasi</label>
+                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Lokasi</label>
                 <input
                   type="text"
                   required
                   value={eventLocation}
                   onChange={(e) => setEventLocation(e.target.value)}
                   placeholder="Lombok, Nusa Tenggara Barat"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
                 />
               </div>
               <div>
-                <label className="block text-slate-300 font-bold uppercase mb-1">Deskripsi Singkat</label>
+                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Deskripsi Singkat</label>
                 <textarea
                   rows={3}
                   required
                   value={eventDesc}
                   onChange={(e) => setEventDesc(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowEventModal(false)}
-                  className="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-bold uppercase"
+                  className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold uppercase"
                 >
                   Batal
                 </button>

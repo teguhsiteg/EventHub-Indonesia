@@ -31,7 +31,7 @@ export const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
+    <header className="sticky top-0 z-50 bg-slate-50 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
@@ -41,7 +41,7 @@ export const Navbar: React.FC = () => {
               href="https://guwigo.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-orange-400 text-xs font-semibold border border-slate-800 transition-colors"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-orange-400 text-xs font-semibold border border-slate-200 dark:border-slate-800 transition-colors"
               title="Ke Website Utama Guwigo"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -50,15 +50,15 @@ export const Navbar: React.FC = () => {
 
             <Link to="/" className="flex items-center gap-3 group">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 via-amber-500 to-amber-300 p-0.5 shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-all">
-                <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                <div className="w-full h-full bg-slate-50 dark:bg-slate-950 rounded-[10px] flex items-center justify-center">
                   <Trophy className="w-5 h-5 text-orange-400 group-hover:scale-110 transition-transform" />
                 </div>
               </div>
               <div>
-                <span className="text-xl font-black tracking-tight text-white font-sans uppercase">
+                <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white font-sans uppercase">
                   GUWIGO <span className="text-orange-500">EVENTS</span>
                 </span>
-                <span className="block text-[10px] font-semibold text-slate-400 tracking-wider uppercase">
+                <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 tracking-wider uppercase">
                   Part of Guwigo Ecosystem
                 </span>
               </div>
@@ -66,13 +66,13 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 bg-slate-900/60 p-1.5 rounded-full border border-slate-800/60">
+          <nav className="hidden md:flex items-center gap-1 bg-white dark:bg-slate-900/60 p-1.5 rounded-full border border-slate-200 dark:border-slate-800/60">
             <Link
               to="/"
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 isActive('/') 
-                  ? 'bg-orange-500 text-white font-semibold shadow-md shadow-orange-500/20' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  ? 'bg-orange-500 text-slate-900 dark:text-white font-semibold shadow-md shadow-orange-500/20' 
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-slate-800/50'
               }`}
             >
               Home
@@ -81,8 +81,8 @@ export const Navbar: React.FC = () => {
               to="/events"
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 isActive('/events') 
-                  ? 'bg-orange-500 text-white font-semibold shadow-md shadow-orange-500/20' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  ? 'bg-orange-500 text-slate-900 dark:text-white font-semibold shadow-md shadow-orange-500/20' 
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-slate-800/50'
               }`}
             >
               Events
@@ -91,8 +91,8 @@ export const Navbar: React.FC = () => {
               to="/results"
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 isActive('/results') 
-                  ? 'bg-orange-500 text-white font-semibold shadow-md shadow-orange-500/20' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  ? 'bg-orange-500 text-slate-900 dark:text-white font-semibold shadow-md shadow-orange-500/20' 
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-slate-800/50'
               }`}
             >
               Results
@@ -101,8 +101,8 @@ export const Navbar: React.FC = () => {
               to="/about"
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 isActive('/about') 
-                  ? 'bg-orange-500 text-white font-semibold shadow-md shadow-orange-500/20' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  ? 'bg-orange-500 text-slate-900 dark:text-white font-semibold shadow-md shadow-orange-500/20' 
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-slate-800/50'
               }`}
             >
               About
@@ -111,8 +111,8 @@ export const Navbar: React.FC = () => {
               to="/faq"
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 isActive('/faq') 
-                  ? 'bg-orange-500 text-white font-semibold shadow-md shadow-orange-500/20' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  ? 'bg-orange-500 text-slate-900 dark:text-white font-semibold shadow-md shadow-orange-500/20' 
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-slate-800/50'
               }`}
             >
               FAQ
@@ -127,7 +127,7 @@ export const Navbar: React.FC = () => {
               onClick={toggleTheme}
               title={theme === 'dark' ? 'Ganti ke Mode Terang (Light)' : 'Ganti ke Mode Gelap (Dark)'}
               aria-label="Toggle Theme"
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-orange-500/50 text-amber-400 hover:text-amber-300 transition-all flex items-center justify-center shadow-sm"
+              className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500/50 text-amber-400 hover:text-amber-300 transition-all flex items-center justify-center shadow-sm"
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400 animate-spin-slow" />
@@ -138,7 +138,7 @@ export const Navbar: React.FC = () => {
 
             <Link
               to="/events"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-orange-500/50 text-slate-200 hover:text-white text-xs font-bold uppercase transition-all"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-orange-500/50 text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:text-white text-xs font-bold uppercase transition-all"
             >
               <Search className="w-3.5 h-3.5 text-orange-400" />
               <span>Temukan Event</span>
@@ -169,7 +169,7 @@ export const Navbar: React.FC = () => {
                 {isParticipant && !isAdmin && !isOrganizer && (
                   <Link
                     to="/dashboard"
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-700 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-700 transition-all"
                   >
                     <User className="w-4 h-4 text-orange-400" />
                     Dashboard
@@ -179,7 +179,7 @@ export const Navbar: React.FC = () => {
                 <button
                   onClick={handleLogout}
                   title="Keluar Akun"
-                  className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-red-400 hover:bg-red-950/30 transition-colors"
+                  className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-red-400 hover:bg-red-950/30 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -188,7 +188,7 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
+                  className="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:bg-white dark:bg-slate-900 transition-colors"
                 >
                   Masuk
                 </Link>
@@ -210,14 +210,14 @@ export const Navbar: React.FC = () => {
               onClick={toggleTheme}
               title={theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}
               aria-label="Toggle Theme"
-              className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-amber-400"
+              className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-amber-400"
             >
               {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-slate-700" />}
             </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
+              className="p-2 rounded-lg bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -227,12 +227,12 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-slate-950 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
+        <div className="md:hidden bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-6 space-y-3">
           <a
             href="https://guwigo.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-slate-900 text-slate-300 text-xs font-semibold border border-slate-800"
+            className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-slate-800"
           >
             <span>Kembali ke Guwigo.com</span>
             <ArrowLeft className="w-4 h-4 text-orange-400 rotate-180" />
@@ -241,44 +241,44 @@ export const Navbar: React.FC = () => {
           <Link
             to="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-base font-medium text-slate-200 hover:text-orange-400"
+            className="block py-2 text-base font-medium text-slate-800 dark:text-slate-200 hover:text-orange-400"
           >
             Home
           </Link>
           <Link
             to="/events"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-base font-medium text-slate-200 hover:text-orange-400"
+            className="block py-2 text-base font-medium text-slate-800 dark:text-slate-200 hover:text-orange-400"
           >
             Events
           </Link>
           <Link
             to="/results"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-base font-medium text-slate-200 hover:text-orange-400"
+            className="block py-2 text-base font-medium text-slate-800 dark:text-slate-200 hover:text-orange-400"
           >
             Results
           </Link>
           <Link
             to="/about"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-base font-medium text-slate-200 hover:text-orange-400"
+            className="block py-2 text-base font-medium text-slate-800 dark:text-slate-200 hover:text-orange-400"
           >
             About
           </Link>
           <Link
             to="/faq"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-base font-medium text-slate-200 hover:text-orange-400"
+            className="block py-2 text-base font-medium text-slate-800 dark:text-slate-200 hover:text-orange-400"
           >
             FAQ
           </Link>
 
-          <div className="pt-4 border-t border-slate-800 space-y-2">
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
             <Link
               to="/events"
               onClick={() => setMobileMenuOpen(false)}
-              className="block w-full text-center py-2.5 rounded-lg bg-slate-900 text-orange-400 font-bold border border-slate-800"
+              className="block w-full text-center py-2.5 rounded-lg bg-white dark:bg-slate-900 text-orange-400 font-bold border border-slate-200 dark:border-slate-800"
             >
               Temukan Event
             </Link>
@@ -315,7 +315,7 @@ export const Navbar: React.FC = () => {
                     handleLogout();
                     setMobileMenuOpen(false);
                   }}
-                  className="block w-full text-center py-2.5 rounded-lg bg-slate-900 text-red-400 font-semibold"
+                  className="block w-full text-center py-2.5 rounded-lg bg-white dark:bg-slate-900 text-red-400 font-semibold"
                 >
                   Keluar
                 </button>
@@ -325,7 +325,7 @@ export const Navbar: React.FC = () => {
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block w-full text-center py-2.5 rounded-lg bg-slate-900 text-slate-200 font-semibold border border-slate-800"
+                  className="block w-full text-center py-2.5 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-semibold border border-slate-200 dark:border-slate-800"
                 >
                   Masuk Akun
                 </Link>

@@ -34,23 +34,23 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6">
         
         <div className="text-center space-y-2">
           <Link to="/" className="inline-flex items-center gap-2 mb-2">
             <div className="w-10 h-10 rounded-xl bg-orange-600 flex items-center justify-center text-white">
               <Trophy className="w-5 h-5" />
             </div>
-            <span className="text-xl font-black text-white tracking-wider">RACE<span className="text-orange-500">PRO</span></span>
+            <span className="text-xl font-black text-slate-900 dark:text-white tracking-wider">RACE<span className="text-orange-500">PRO</span></span>
           </Link>
-          <h2 className="text-2xl font-black text-white uppercase tracking-tight">Buat Akun Peserta Lomba</h2>
-          <p className="text-xs text-slate-400">Daftarkan akun resmi untuk kemudahan pendaftaran event lomba.</p>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Buat Akun Peserta Lomba</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Daftarkan akun resmi untuk kemudahan pendaftaran event lomba.</p>
         </div>
 
         <form onSubmit={handleRegister} className="space-y-4 text-xs">
           <div>
-            <label className="block text-slate-300 font-bold uppercase mb-1">Nama Lengkap</label>
+            <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nama Lengkap</label>
             <div className="relative">
               <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               <input
@@ -59,13 +59,13 @@ export const RegisterPage: React.FC = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Budi Santoso"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white placeholder-slate-600 focus:outline-none focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-slate-300 font-bold uppercase mb-1">Nomor WhatsApp / HP</label>
+            <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Nomor WhatsApp / HP</label>
             <div className="relative">
               <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               <input
@@ -74,13 +74,13 @@ export const RegisterPage: React.FC = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="08123456789"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white placeholder-slate-600 focus:outline-none focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-slate-300 font-bold uppercase mb-1">Email</label>
+            <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Email</label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               <input
@@ -89,13 +89,13 @@ export const RegisterPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="budi@email.com"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white placeholder-slate-600 focus:outline-none focus:border-orange-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-slate-300 font-bold uppercase mb-1">Kata Sandi (Min 6 Karakter)</label>
+            <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1">Kata Sandi (Min 6 Karakter)</label>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               <input
@@ -104,7 +104,7 @@ export const RegisterPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white placeholder-slate-600 focus:outline-none focus:border-orange-500"
               />
             </div>
           </div>
@@ -119,7 +119,7 @@ export const RegisterPage: React.FC = () => {
           </button>
         </form>
 
-        <p className="text-center text-xs text-slate-400">
+        <p className="text-center text-xs text-slate-500 dark:text-slate-400">
           Sudah memiliki akun?{' '}
           <Link to="/login" className="text-orange-400 font-bold hover:underline">
             Masuk Di Sini

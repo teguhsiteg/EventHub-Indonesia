@@ -31,7 +31,7 @@ const AppRoutes: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-950 font-sans text-slate-100 selection:bg-orange-500 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 selection:bg-orange-500 selection:text-slate-900 dark:text-white">
       <Navbar />
       <main className="flex-1">
         <Routes>

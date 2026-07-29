@@ -19,9 +19,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
         <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-slate-400 text-sm font-medium animate-pulse">Memuat data autentikasi...</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium animate-pulse">Memuat data autentikasi...</p>
       </div>
     );
   }
