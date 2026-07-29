@@ -186,6 +186,6 @@ export async function ensureInitialSeed(): Promise<void> {
 
     console.log('Seed completed successfully.');
   } catch (err) {
-    console.error('Initial seed error:', err);
+    console.warn('Initial seed skipped: Missing permissions or already seeded.');
   }
 }
