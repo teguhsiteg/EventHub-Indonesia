@@ -51,17 +51,7 @@ export const EventDetailPage: React.FC = () => {
     loadData();
   }, [slug]);
 
-  useEffect(() => {
-    if (user) {
-      setFormsData(prev => {
-        const newData = [...prev];
-        newData[0].fullName = user.displayName || '';
-        newData[0].phone = user.phoneNumber || '';
-        newData[0].email = user.email || '';
-        return newData;
-      });
-    }
-  }, [user]);
+
 
   const handleCartUpdate = (categoryId: string, name: string, quantity: number, max: number, price: number, earlyBird: boolean) => {
     setCartItems(prev => {
