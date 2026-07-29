@@ -5,6 +5,9 @@ import { createRegistration } from '../services/registrationService';
 import { EventItem, EventCategory } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
+import { auth, db } from '../config/firebase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc, collection, addDoc } from 'firebase/firestore';
 import { Countdown } from '../components/common/Countdown';
 import { 
   Calendar, 
@@ -68,12 +71,6 @@ export const EventDetailPage: React.FC = () => {
   };
 
   const handleStartRegistration = () => {
-    if (!user) {
-      addNotification('warning', 'Autentikasi Diperlukan', 'Silakan masuk atau buat akun peserta terlebih dahulu untuk mendaftar lomba.');
-      navigate('/login', { state: { from: `/events/${slug}` } });
-      return;
-    }
-    
     if (cartItems.length === 0) {
       addNotification('warning', 'Keranjang Kosong', 'Silakan pilih setidaknya 1 tiket kategori lomba.');
       return;
@@ -86,14 +83,20 @@ export const EventDetailPage: React.FC = () => {
         newForms.push({
           categoryId: item.categoryId,
           categoryName: item.name,
-          fullName: user.displayName || '', 
+          fullName: user?.displayName || '', 
           nik: '', 
-          phone: user.phoneNumber || '', 
-          email: user.email || '', 
-          birthDate: '1998-05-12', 
+          email: user?.email || '', 
+          phone: user?.phoneNumber || '', 
+          birthDate: '', 
           gender: 'MALE', 
-          address: '', city: '', province: '', bloodType: 'O+', 
-          emergencyContactName: '', emergencyContactPhone: '', emergencyContactRelation: 'Orang Tua / Pasangan', jerseySize: 'L'
+          address: '', 
+          city: '', 
+          province: '',
+          bloodType: 'UNSPECIFIED', 
+          emergencyContactName: '', 
+          emergencyContactPhone: '', 
+          emergencyContactRelation: '', 
+          jerseySize: 'M'
         });
       }
     });
@@ -111,19 +114,71 @@ export const EventDetailPage: React.FC = () => {
 
   const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !event || cartItems.length === 0) return;
+    if (!event || cartItems.length === 0) return;
 
-    // Validate NIK
+    // Validate email, phone, nik for all forms
     for (let i = 0; i < formsData.length; i++) {
       if (!formsData[i].nik || formsData[i].nik.length < 16) {
-        addNotification('error', 'Validasi Gagal', `NIK Peserta ${i + 1} (${formsData[i].categoryName}) harus terdiri dari 16 digit.`);
+        addNotification('error', 'Validasi Gagal', `NIK Peserta ${i + 1} (${formsData[i].categoryName}) harus minimal 16 karakter.`);
+        return;
+      }
+      if (!formsData[i].email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formsData[i].email)) {
+        addNotification('error', 'Validasi Gagal', `Email Peserta ${i + 1} tidak valid.`);
+        return;
+      }
+      if (!formsData[i].phone || formsData[i].phone.length < 9) {
+        addNotification('error', 'Validasi Gagal', `Nomor WhatsApp Peserta ${i + 1} tidak valid.`);
         return;
       }
     }
 
     setSubmitting(true);
+    let currentUserId = user?.uid;
+
     try {
-      const result = await createRegistration(user.uid, event.id, cartItems, formsData, selectedAddons);
+      // Auto register if guest
+      if (!currentUserId) {
+        const primaryEmail = formsData[0].email;
+        const primaryName = formsData[0].fullName;
+        const randomPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
+        
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, primaryEmail, randomPassword);
+          const newUser = userCredential.user;
+          
+          await updateProfile(newUser, { displayName: primaryName });
+          
+          await setDoc(doc(db, 'users', newUser.uid), {
+            email: newUser.email,
+            name: primaryName,
+            role: 'PARTICIPANT',
+            createdAt: new Date().toISOString()
+          });
+
+          // Queue welcome email (requires Trigger Email extension)
+          await addDoc(collection(db, 'mail'), {
+            to: newUser.email,
+            message: {
+              subject: 'Selamat Datang di Guwigo Event! Ini Akun Anda',
+              text: `Halo ${primaryName},\n\nTerima kasih telah mendaftar. Akun Anda telah dibuat secara otomatis.\n\nEmail: ${newUser.email}\nPassword Sementara: ${randomPassword}\n\nHarap segera login dan ganti password Anda di dashboard.\n\nSalam,\nGuwigo Event`
+            }
+          });
+          
+          currentUserId = newUser.uid;
+        } catch (authErr: any) {
+          if (authErr.code === 'auth/email-already-in-use') {
+            addNotification('warning', 'Email Sudah Terdaftar', 'Email ini sudah memiliki akun. Silakan masuk (login) terlebih dahulu.');
+            navigate('/login', { state: { from: `/events/${slug}` } });
+            setSubmitting(false);
+            return;
+          }
+          throw authErr;
+        }
+      }
+
+      if (!currentUserId) throw new Error('Gagal mengidentifikasi sesi pengguna.');
+
+      const result = await createRegistration(currentUserId, event.id, cartItems, formsData, selectedAddons);
       addNotification('success', 'Pendaftaran Berhasil!', `Nomor Registrasi: ${result.registration.registrationNumber}. Harap selesaikan pembayaran.`);
       navigate('/dashboard');
     } catch (err: any) {
