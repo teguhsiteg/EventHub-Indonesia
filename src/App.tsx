@@ -22,6 +22,7 @@ import { ParticipantDashboardPage } from './pages/ParticipantDashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { AdminCheckInPage } from './pages/AdminCheckInPage';
 import { MaintenancePage } from './pages/MaintenancePage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 const AppRoutes: React.FC = () => {
   const { settings } = useSettings();
@@ -73,7 +74,7 @@ const AppRoutes: React.FC = () => {
             } 
           />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
       <Footer />
