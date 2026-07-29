@@ -1,34 +1,35 @@
 import React, { useState } from 'react';
-import { createEvent, createCategory } from '../../services/eventService';
-import { UserProfile } from '../../types';
+import { createEvent, updateEvent, createCategory } from '../../services/eventService';
+import { UserProfile, EventItem } from '../../types';
 
 interface CreateEventModalProps {
   user: UserProfile;
+  initialData?: EventItem | null;
   onClose: () => void;
   onSuccess: () => void;
   addNotification: (type: 'success' | 'error' | 'info', title: string, msg: string) => void;
 }
 
-export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, onClose, onSuccess, addNotification }) => {
+export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initialData, onClose, onSuccess, addNotification }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
   // Form States - Basic Info
-  const [eventName, setEventName] = useState('');
-  const [eventSlug, setEventSlug] = useState('');
-  const [eventDesc, setEventDesc] = useState('');
-  const [eventBanner, setEventBanner] = useState('');
-  const [eventLocation, setEventLocation] = useState('');
-  const [eventStartDate, setEventStartDate] = useState('');
-  const [eventRegStart, setEventRegStart] = useState('');
-  const [eventRegEnd, setEventRegEnd] = useState('');
+  const [eventName, setEventName] = useState(initialData?.name || '');
+  const [eventSlug, setEventSlug] = useState(initialData?.slug || '');
+  const [eventDesc, setEventDesc] = useState(initialData?.description || '');
+  const [eventBanner, setEventBanner] = useState(initialData?.banner || '');
+  const [eventLocation, setEventLocation] = useState(initialData?.location || '');
+  const [eventStartDate, setEventStartDate] = useState(initialData?.startDate ? new Date(initialData.startDate).toISOString().slice(0, 16) : '');
+  const [eventRegStart, setEventRegStart] = useState(initialData?.registrationStart ? new Date(initialData.registrationStart).toISOString().slice(0, 16) : '');
+  const [eventRegEnd, setEventRegEnd] = useState(initialData?.registrationEnd ? new Date(initialData.registrationEnd).toISOString().slice(0, 16) : '');
 
   // Form States - Facilities & Rules
-  const [facilities, setFacilities] = useState('Medali Finisher, Jersey Finisher, BIB dengan Timing Chip, Water Station, Asuransi');
-  const [rules, setRules] = useState('Peserta wajib dalam keadaan sehat. Wajib mematuhi cut-off time.');
+  const [facilities, setFacilities] = useState(initialData?.facilities?.join(', ') || 'Medali Finisher, Jersey Finisher, BIB dengan Timing Chip, Water Station, Asuransi');
+  const [rules, setRules] = useState(initialData?.rules || 'Peserta wajib dalam keadaan sehat. Wajib mematuhi cut-off time.');
   const [faqQ, setFaqQ] = useState('');
   const [faqA, setFaqA] = useState('');
-  const [faqs, setFaqs] = useState<{question: string, answer: string}[]>([]);
+  const [faqs, setFaqs] = useState<{question: string, answer: string}[]>(initialData?.faqs || []);
 
   // Form States - Categories
   const [categories, setCategories] = useState<any[]>([]);
@@ -72,14 +73,14 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, onClos
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (categories.length === 0) {
+    if (!initialData && categories.length === 0) {
       addNotification('error', 'Validasi Gagal', 'Mohon tambahkan setidaknya satu kategori lomba.');
       return;
     }
 
     setLoading(true);
     try {
-      const newEv = await createEvent({
+      const eventPayload = {
         name: eventName,
         slug: eventSlug || eventName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
         description: eventDesc,
@@ -91,30 +92,39 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, onClos
         endDate: new Date(eventStartDate).toISOString(),
         registrationStart: new Date(eventRegStart || Date.now()).toISOString(),
         registrationEnd: new Date(eventRegEnd).toISOString(),
-        status: 'REGISTRATION_OPEN',
+        status: initialData ? initialData.status : 'REGISTRATION_OPEN',
         organizerId: user.uid,
         organizerName: user.displayName || 'RacePro Admin',
         featured: true,
         facilities: facilities.split(',').map(f => f.trim()).filter(f => f),
-        schedule: [{ time: '05:00 WIB', title: 'Flag-off', description: 'Pelepasan peserta' }],
+        schedule: initialData?.schedule || [{ time: '05:00 WIB', title: 'Flag-off', description: 'Pelepasan peserta' }],
         rules: rules,
         faqs: faqs,
-        createdBy: user.uid,
         updatedBy: user.uid
-      }, user.uid, user.email || '');
+      };
 
-      // Create all categories
-      for (const cat of categories) {
-        await createCategory({
-          ...cat,
-          eventId: newEv.id,
-        }, user.uid, user.email || '');
+      if (initialData) {
+        await updateEvent(initialData.id, eventPayload, user.uid, user.email || '');
+        addNotification('success', 'Event Diperbarui', `Event ${eventName} telah berhasil diperbarui.`);
+      } else {
+        const newEv = await createEvent({
+          ...eventPayload,
+          createdBy: user.uid
+        } as any, user.uid, user.email || '');
+
+        // Create all categories
+        for (const cat of categories) {
+          await createCategory({
+            ...cat,
+            eventId: newEv.id,
+          }, user.uid, user.email || '');
+        }
+        addNotification('success', 'Event Berhasil Dibuat', `Event ${eventName} telah diterbitkan dengan ${categories.length} kategori.`);
       }
 
-      addNotification('success', 'Event Berhasil Dibuat', `Event ${eventName} telah diterbitkan dengan ${categories.length} kategori.`);
       onSuccess();
     } catch (err: any) {
-      addNotification('error', 'Gagal Membuat Event', err.message);
+      addNotification('error', 'Gagal Memproses Event', err.message);
     }
     setLoading(false);
   };
@@ -134,12 +144,12 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, onClos
           <span className="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-500 flex items-center justify-center">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
           </span>
-          Buat Event Lomba Baru
+          {initialData ? 'Edit Event Lomba' : 'Buat Event Lomba Baru'}
         </h3>
 
         {/* Step Indicator */}
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].filter(i => !(initialData && i === 3)).map(i => (
             <React.Fragment key={i}>
               <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-orange-500 text-white' : step > i ? 'bg-orange-200 text-orange-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
                 {step > i ? '✓' : i}
@@ -147,12 +157,12 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, onClos
               <span className={`text-xs font-bold uppercase tracking-wider whitespace-nowrap ${step === i ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>
                 {i === 1 ? 'Info Dasar' : i === 2 ? 'Fasilitas & Aturan' : 'Kategori Tiket'}
               </span>
-              {i < 3 && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
+              {(i < 3 && !(initialData && i === 2)) && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
             </React.Fragment>
           ))}
         </div>
 
-        <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); setStep(step + 1); }} className="space-y-6 text-sm">
+        <form onSubmit={(initialData && step === 2) || step === 3 ? handleSubmit : (e) => { e.preventDefault(); setStep(step + 1); }} className="space-y-6 text-sm">
           
           {/* STEP 1: Basic Info */}
           {step === 1 && (
@@ -386,7 +396,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, onClos
                 loading ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-600/30'
               }`}
             >
-              {loading ? 'Memproses...' : step < 3 ? 'Selanjutnya' : 'Terbitkan Event'}
+              {loading ? 'Memproses...' : ((initialData && step === 2) || step === 3) ? (initialData ? 'Simpan Perubahan' : 'Terbitkan Event') : 'Selanjutnya'}
             </button>
           </div>
 

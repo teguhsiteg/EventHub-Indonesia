@@ -186,3 +186,18 @@ export async function updateUserRoleBySuperAdmin(
 
   await logAuditEvent(adminUid, adminEmail, 'SUPER_ADMIN', 'CHANGE_USER_ROLE', 'users', targetUid, { newRole });
 }
+
+export async function banUserBySuperAdmin(
+  adminUid: string,
+  adminEmail: string,
+  targetUid: string,
+  isBanned: boolean
+): Promise<void> {
+  const userRef = doc(db, 'users', targetUid);
+  await updateDoc(userRef, {
+    banned: isBanned,
+    updatedAt: new Date().toISOString()
+  });
+
+  await logAuditEvent(adminUid, adminEmail, 'SUPER_ADMIN', isBanned ? 'BAN_USER' : 'UNBAN_USER', 'users', targetUid, { banned: isBanned });
+}

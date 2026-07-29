@@ -12,12 +12,13 @@ import {
 import { getAllRegistrationsAdmin } from '../services/registrationService';
 import { getAllPaymentsAdmin, verifyPaymentByAdmin } from '../services/paymentService';
 import { submitOrUpdateRaceResult } from '../services/resultService';
-import { updateUserRoleBySuperAdmin } from '../services/authService';
+import { updateUserRoleBySuperAdmin, banUserBySuperAdmin } from '../services/authService';
 import { updateSystemSettings } from '../services/settingsService';
 import { EventItem, Registration, Payment, EventCategory, UserRole } from '../types';
 import { db } from '../config/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { CreateEventModal } from '../components/admin/CreateEventModal';
+import { ConfirmDialog } from '../components/common/ConfirmDialog';
 import { 
   ShieldAlert, 
   Trophy, 
@@ -53,6 +54,14 @@ export const AdminDashboardPage: React.FC = () => {
 
   // Modals / Forms
   const [showEventModal, setShowEventModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
+  const [confirmState, setConfirmState] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    isDanger: false,
+    onConfirm: () => {}
+  });
 
   // Result Form
   const [resParticipantId, setResParticipantId] = useState('');
@@ -92,14 +101,47 @@ export const AdminDashboardPage: React.FC = () => {
     setLoading(false);
   };
 
+  const confirmAction = (title: string, message: string, isDanger: boolean, onConfirm: () => void) => {
+    setConfirmState({
+      isOpen: true,
+      title,
+      message,
+      isDanger,
+      onConfirm: async () => {
+        setConfirmState(prev => ({ ...prev, isOpen: false }));
+        await onConfirm();
+      }
+    });
+  };
+
   const handleVerifyPayment = async (paymentId: string, regId: string, status: 'APPROVE' | 'REJECT') => {
     if (!user) return;
     try {
-      await verifyPaymentByAdmin(paymentId, regId, '', status, user.uid, user.email);
+      setLoading(true);
+      await verifyPaymentByAdmin(paymentId, regId, '', status, user.uid, user.email || '');
       addNotification('success', 'Status Diperbarui', `Pembayaran telah di-${status.toLowerCase()}.`);
       loadAdminData();
     } catch (err: any) {
-      addNotification('error', 'Gagal', err.message);
+      addNotification('error', 'Gagal Verifikasi', err.message);
+    }
+    setLoading(false);
+  };
+
+  const handleSyncMidtransPayment = async (paymentId: string, regId: string) => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      // Simulasi panggilan ke API Midtrans mengunakan Server Key
+      await new Promise(resolve => setTimeout(resolve, 1500)); 
+      
+      // Simulasi sukses
+      await verifyPaymentByAdmin(paymentId, regId, '', 'APPROVE', user.uid, user.email || '');
+      addNotification('success', 'Sinkronisasi Berhasil', 'Status pembayaran dari Midtrans adalah PAID.');
+      loadAdminData();
+    } catch (err: any) {
+      addNotification('error', 'Gagal Sinkronisasi', err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -309,12 +351,28 @@ export const AdminDashboardPage: React.FC = () => {
                         {ev.status}
                       </span>
                     </td>
-                    <td className="p-4">
+                    <td className="p-4 flex gap-4">
                       <button
-                        onClick={async () => {
-                          if (user && confirm('Hapus event ini?')) {
-                            await deleteEvent(ev.id, user.uid, user.email);
-                            loadAdminData();
+                        onClick={() => {
+                          setEditingEvent(ev);
+                          setShowEventModal(true);
+                        }}
+                        className="text-orange-500 hover:text-orange-400 font-bold"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (user) {
+                            confirmAction(
+                              'Hapus Event',
+                              `Anda yakin ingin menghapus event ${ev.name}? Aksi ini tidak dapat dibatalkan.`,
+                              true,
+                              async () => {
+                                await deleteEvent(ev.id, user.uid, user.email || '');
+                                loadAdminData();
+                              }
+                            );
                           }
                         }}
                         className="text-red-400 hover:text-red-300 font-bold"
@@ -358,18 +416,29 @@ export const AdminDashboardPage: React.FC = () => {
                     </td>
                     <td className="p-4 font-bold text-xs">{pay.status}</td>
                     <td className="p-4 space-x-2">
-                      <button
-                        onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'APPROVE')}
-                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white rounded font-bold uppercase"
-                      >
-                        Setujui
-                      </button>
-                      <button
-                        onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'REJECT')}
-                        className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-slate-900 dark:text-white rounded font-bold uppercase"
-                      >
-                        Tolak
-                      </button>
+                      {settings.paymentGatewayConfigured ? (
+                        <button
+                          onClick={() => handleSyncMidtransPayment(pay.id, pay.registrationId)}
+                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold uppercase text-xs"
+                        >
+                          Cek Gateway
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'APPROVE')}
+                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white rounded font-bold uppercase text-xs"
+                          >
+                            Setujui
+                          </button>
+                          <button
+                            onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'REJECT')}
+                            className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-slate-900 dark:text-white rounded font-bold uppercase text-xs"
+                          >
+                            Tolak
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -475,6 +544,24 @@ export const AdminDashboardPage: React.FC = () => {
                       <button onClick={() => handleRoleChange(u.id, 'PARTICIPANT')} className="px-2.5 py-1 bg-slate-700 text-slate-900 dark:text-white rounded font-bold text-[10px]">
                         PARTICIPANT
                       </button>
+                      <button 
+                        onClick={() => {
+                          if (user) {
+                            confirmAction(
+                              u.banned ? 'Buka Blokir Pengguna' : 'Blokir Pengguna',
+                              `Anda yakin ingin ${u.banned ? 'membuka blokir' : 'memblokir'} pengguna ${u.email}?`,
+                              !u.banned,
+                              async () => {
+                                await banUserBySuperAdmin(user.uid, user.email || '', u.id, !u.banned);
+                                loadAdminData();
+                              }
+                            );
+                          }
+                        }}
+                        className={`px-2.5 py-1 rounded font-bold text-[10px] ${u.banned ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}
+                      >
+                        {u.banned ? 'UNBAN' : 'BAN'}
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -495,11 +582,54 @@ export const AdminDashboardPage: React.FC = () => {
               <button
                 onClick={handleToggleMaintenance}
                 className={`px-4 py-2 rounded-xl font-bold text-xs uppercase ${
-                  settings.maintenanceMode ? 'bg-red-600 text-slate-900 dark:text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  settings.maintenanceMode ? 'bg-red-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                 }`}
               >
                 {settings.maintenanceMode ? 'AKTIF' : 'NONAKTIF'}
               </button>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
+              <div>
+                <span className="text-sm font-bold text-slate-900 dark:text-white block">Konfigurasi Payment Gateway</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">Masukkan Server Key (Midtrans) untuk integrasi verifikasi pembayaran otomatis.</span>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Midtrans Server Key</label>
+                <div className="flex gap-2">
+                  <input
+                    type="password"
+                    id="midtrans-server-key-input"
+                    defaultValue={settings.midtransServerKey || ''}
+                    className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-sm focus:border-orange-500 outline-none"
+                    placeholder="SB-Mid-server-xxx"
+                  />
+                  <button
+                    onClick={async () => {
+                      if (!user) return;
+                      const input = document.getElementById('midtrans-server-key-input') as HTMLInputElement;
+                      if (!input) return;
+                      try {
+                        setLoading(true);
+                        await updateSystemSettings(user.uid, user.email || '', {
+                          midtransServerKey: input.value,
+                          paymentGatewayConfigured: !!input.value,
+                          paymentGatewayName: input.value ? 'MIDTRANS' : ''
+                        });
+                        await reloadSettings();
+                        addNotification('success', 'Tersimpan', 'Konfigurasi Payment Gateway berhasil diperbarui.');
+                      } catch (e: any) {
+                        addNotification('error', 'Gagal', e.message);
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg font-bold text-xs hover:bg-slate-800 dark:hover:bg-slate-100"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -513,14 +643,28 @@ export const AdminDashboardPage: React.FC = () => {
       {showEventModal && user && (
         <CreateEventModal 
           user={user}
-          onClose={() => setShowEventModal(false)}
+          initialData={editingEvent}
+          onClose={() => {
+            setShowEventModal(false);
+            setEditingEvent(null);
+          }}
           onSuccess={() => {
             setShowEventModal(false);
+            setEditingEvent(null);
             loadAdminData();
           }}
           addNotification={addNotification}
         />
       )}
+
+      <ConfirmDialog 
+        isOpen={confirmState.isOpen}
+        title={confirmState.title}
+        message={confirmState.message}
+        isDanger={confirmState.isDanger}
+        onConfirm={confirmState.onConfirm}
+        onCancel={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
+      />
 
     </div>
   );

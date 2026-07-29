@@ -277,6 +277,7 @@ export interface SystemSettings {
   maintenanceMode: boolean;
   paymentGatewayConfigured: boolean;
   paymentGatewayName: string;
+  midtransServerKey?: string;
   oauthConfigured: boolean;
   updatedAt: string;
 }
