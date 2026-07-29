@@ -1,0 +1,621 @@
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
+import { 
+  getAllEventsForAdmin, 
+  createEvent, 
+  updateEvent, 
+  deleteEvent, 
+  createCategory 
+} from '../services/eventService';
+import { getAllRegistrationsAdmin } from '../services/registrationService';
+import { getAllPaymentsAdmin, verifyPaymentByAdmin } from '../services/paymentService';
+import { submitOrUpdateRaceResult } from '../services/resultService';
+import { updateUserRoleBySuperAdmin } from '../services/authService';
+import { updateSystemSettings } from '../services/settingsService';
+import { EventItem, Registration, Payment, EventCategory, UserRole } from '../types';
+import { db } from '../config/firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { 
+  ShieldAlert, 
+  Trophy, 
+  Users, 
+  CreditCard, 
+  DollarSign, 
+  CheckCircle2, 
+  XCircle, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  QrCode, 
+  Activity, 
+  Settings, 
+  FileText,
+  Search,
+  Filter
+} from 'lucide-react';
+
+export const AdminDashboardPage: React.FC = () => {
+  const { user, isSuperAdmin } = useAuth();
+  const { settings, reloadSettings, addNotification } = useSettings();
+
+  const [activeTab, setActiveTab] = useState<'stats' | 'events' | 'payments' | 'results' | 'users' | 'settings'>('stats');
+  
+  // Data States
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [usersList, setUsersList] = useState<any[]>([]);
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Modals / Forms
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [eventName, setEventName] = useState('');
+  const [eventSlug, setEventSlug] = useState('');
+  const [eventDesc, setEventDesc] = useState('');
+  const [eventBanner, setEventBanner] = useState('');
+  const [eventLocation, setEventLocation] = useState('');
+  const [eventStartDate, setEventStartDate] = useState('2026-10-15T05:00');
+  const [eventRegEnd, setEventRegEnd] = useState('2026-10-01T23:59');
+
+  // Result Form
+  const [resParticipantId, setResParticipantId] = useState('');
+  const [resBib, setResBib] = useState('');
+  const [resEventId, setResEventId] = useState('');
+  const [resName, setResName] = useState('');
+  const [resChipTime, setResChipTime] = useState('03:45:12');
+  const [resGunTime, setResGunTime] = useState('03:46:00');
+  const [resRank, setResRank] = useState(1);
+
+  useEffect(() => {
+    loadAdminData();
+  }, []);
+
+  const loadAdminData = async () => {
+    setLoading(true);
+    try {
+      const evs = await getAllEventsForAdmin();
+      setEvents(evs);
+
+      const regs = await getAllRegistrationsAdmin();
+      setRegistrations(regs);
+
+      const pays = await getAllPaymentsAdmin();
+      setPayments(pays);
+
+      // Load Users List for Super Admin
+      const usersSnap = await getDocs(collection(db, 'users'));
+      setUsersList(usersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+
+      // Load Audit logs
+      const auditSnap = await getDocs(collection(db, 'audit_logs'));
+      setAuditLogs(auditSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    } catch (e) {
+      console.error('Error loading admin data:', e);
+    }
+    setLoading(false);
+  };
+
+  const handleCreateEvent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    try {
+      const newEv = await createEvent({
+        name: eventName,
+        slug: eventSlug || eventName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+        description: eventDesc,
+        banner: eventBanner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=1600&q=80',
+        thumbnail: eventBanner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=600&q=80',
+        location: eventLocation,
+        address: eventLocation,
+        startDate: new Date(eventStartDate).toISOString(),
+        endDate: new Date(eventStartDate).toISOString(),
+        registrationStart: new Date().toISOString(),
+        registrationEnd: new Date(eventRegEnd).toISOString(),
+        status: 'REGISTRATION_OPEN',
+        organizerId: user.uid,
+        organizerName: user.displayName || 'RacePro Admin',
+        featured: true,
+        facilities: ['Jersey Finisher', 'BIB dengan Timing Chip', 'Medali Finisher', 'Asuransi Peserta'],
+        schedule: [{ time: '05:00 WIB', title: 'Flag-off Start Lomba', description: 'Pelepasan peserta' }],
+        rules: 'Wajib membawa perlengkapan mandatory kit.',
+        faqs: [{ question: 'Apakah ada COT?', answer: 'Ya, sesuai petunjuk teknis.' }],
+        createdBy: user.uid,
+        updatedBy: user.uid
+      }, user.uid, user.email);
+
+      // Create default category
+      await createCategory({
+        eventId: newEv.id,
+        name: 'Kategori Utama 10K',
+        slug: 'kategori-10k',
+        description: 'Jalur 10K resmi',
+        distance: '10 KM',
+        elevation: '200 m+',
+        price: 250000,
+        quota: 500,
+        startTime: '06:00 WIB',
+        cutoffTime: '3 Jam',
+        genderRestriction: 'NONE',
+        minimumAge: 12,
+        status: 'ACTIVE'
+      }, user.uid, user.email);
+
+      addNotification('success', 'Event Berhasil Dibuat', `Event ${eventName} telah diterbitkan.`);
+      setShowEventModal(false);
+      loadAdminData();
+    } catch (err: any) {
+      addNotification('error', 'Gagal Membuat Event', err.message);
+    }
+  };
+
+  const handleVerifyPayment = async (paymentId: string, regId: string, status: 'APPROVE' | 'REJECT') => {
+    if (!user) return;
+    try {
+      await verifyPaymentByAdmin(paymentId, regId, '', status, user.uid, user.email);
+      addNotification('success', 'Status Diperbarui', `Pembayaran telah di-${status.toLowerCase()}.`);
+      loadAdminData();
+    } catch (err: any) {
+      addNotification('error', 'Gagal', err.message);
+    }
+  };
+
+  const handleSubmitResult = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    try {
+      await submitOrUpdateRaceResult({
+        participantId: resParticipantId || `part_${Date.now()}`,
+        bibNumber: resBib,
+        eventId: resEventId || events[0]?.id || 'event-1',
+        categoryId: 'cat-1',
+        participantName: resName,
+        gender: 'MALE',
+        gunTime: resGunTime,
+        chipTime: resChipTime,
+        pace: '05:30 /km',
+        rank: resRank,
+        genderRank: resRank,
+        categoryRank: resRank,
+        status: 'FINISH'
+      }, user.uid, user.email);
+
+      addNotification('success', 'Hasil Lomba Tersimpan', `Hasil finisher ${resName} (BIB: ${resBib}) berhasil dipublikasikan.`);
+      loadAdminData();
+    } catch (err: any) {
+      addNotification('error', 'Gagal', err.message);
+    }
+  };
+
+  const handleRoleChange = async (targetUid: string, newRole: UserRole) => {
+    if (!user || !isSuperAdmin) return;
+    try {
+      await updateUserRoleBySuperAdmin(user.uid, user.email, targetUid, newRole);
+      addNotification('success', 'Role Diperbarui', `Role pengguna telah diubah menjadi ${newRole}.`);
+      loadAdminData();
+    } catch (err: any) {
+      addNotification('error', 'Gagal', err.message);
+    }
+  };
+
+  const handleToggleMaintenance = async () => {
+    try {
+      await updateSystemSettings({ maintenanceMode: !settings.maintenanceMode });
+      await reloadSettings();
+      addNotification('info', 'Status Maintenance', `Maintenance Mode sekarang: ${!settings.maintenanceMode ? 'AKTIF' : 'NONAKTIF'}`);
+    } catch (err: any) {
+      addNotification('error', 'Gagal Update', err.message);
+    }
+  };
+
+  const formatRupiah = (val: number) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+  };
+
+  const totalRevenue = payments.filter(p => p.status === 'PAID').reduce((sum, p) => sum + p.amount, 0);
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center font-black text-xl">
+              <ShieldAlert className="w-7 h-7" />
+            </div>
+            <div>
+              <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest bg-amber-950 px-2.5 py-1 rounded border border-amber-800/40">
+                GUWIGO EVENTS ADMIN
+              </span>
+              <h1 className="text-2xl font-black text-white uppercase mt-1">Guwigo Events Management</h1>
+              <p className="text-xs text-slate-400">Pengelolaan real-time event, pendaftaran, pembayaran, dan hasil lomba.</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/admin/check-in"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-orange-600/20"
+            >
+              <QrCode className="w-4 h-4" />
+              <span>Buka QR Check-In Scanner</span>
+            </Link>
+            <button
+              onClick={() => setShowEventModal(true)}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider border border-slate-700"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Buat Event Baru</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex border-b border-slate-800 mb-8 overflow-x-auto gap-2">
+          {[
+            { id: 'stats', label: 'Ringkasan Statistik', icon: Activity },
+            { id: 'events', label: 'Manajemen Event', icon: Trophy },
+            { id: 'payments', label: 'Verifikasi Pembayaran', icon: CreditCard },
+            { id: 'results', label: 'Input Hasil Lomba', icon: FileText },
+            { id: 'users', label: 'Pengguna & Role', icon: Users },
+            { id: 'settings', label: 'Pengaturan Sistem', icon: Settings }
+          ].map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-xs uppercase tracking-wider whitespace-nowrap transition-all ${
+                  isActive 
+                    ? 'border-orange-500 text-orange-400 bg-slate-900/50' 
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* TAB 1: REAL FIRESTORE STATS */}
+        {activeTab === 'stats' && (
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">TOTAL EVENT</span>
+                <span className="block text-3xl font-black text-white mt-1">{events.length}</span>
+              </div>
+              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">TOTAL PENDAFTARAN</span>
+                <span className="block text-3xl font-black text-orange-400 mt-1">{registrations.length}</span>
+              </div>
+              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">PEMBAYARAN PENDING</span>
+                <span className="block text-3xl font-black text-amber-400 mt-1">
+                  {payments.filter(p => p.status === 'PENDING').length}
+                </span>
+              </div>
+              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">TOTAL REVENUE</span>
+                <span className="block text-2xl font-black text-emerald-400 mt-1">{formatRupiah(totalRevenue)}</span>
+              </div>
+            </div>
+
+            {/* Audit Logs Table */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+              <h3 className="text-base font-bold text-white uppercase mb-4">Audit Logs Aktivitas Sistem</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 uppercase">
+                      <th className="pb-3">Waktu</th>
+                      <th className="pb-3">Aktor</th>
+                      <th className="pb-3">Tindakan</th>
+                      <th className="pb-3">Resource ID</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 font-mono">
+                    {auditLogs.slice(0, 10).map(log => (
+                      <tr key={log.id}>
+                        <td className="py-2.5 text-slate-400">{new Date(log.createdAt).toLocaleString('id-ID')}</td>
+                        <td className="py-2.5 text-white">{log.actorEmail}</td>
+                        <td className="py-2.5 text-amber-400 font-bold">{log.action}</td>
+                        <td className="py-2.5 text-slate-400">{log.resourceId}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: EVENTS MANAGER */}
+        {activeTab === 'events' && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                  <th className="p-4">Nama Event</th>
+                  <th className="p-4">Lokasi</th>
+                  <th className="p-4">Tanggal Start</th>
+                  <th className="p-4">Status</th>
+                  <th className="p-4">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {events.map(ev => (
+                  <tr key={ev.id}>
+                    <td className="p-4 font-bold text-white">{ev.name}</td>
+                    <td className="p-4 text-slate-300">{ev.location}</td>
+                    <td className="p-4 text-slate-400">{new Date(ev.startDate).toLocaleDateString('id-ID')}</td>
+                    <td className="p-4">
+                      <span className="px-2.5 py-1 bg-orange-950 text-orange-400 rounded text-[10px] font-black uppercase">
+                        {ev.status}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <button
+                        onClick={async () => {
+                          if (user && confirm('Hapus event ini?')) {
+                            await deleteEvent(ev.id, user.uid, user.email);
+                            loadAdminData();
+                          }
+                        }}
+                        className="text-red-400 hover:text-red-300 font-bold"
+                      >
+                        Hapus
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* TAB 3: PAYMENTS VERIFICATION */}
+        {activeTab === 'payments' && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                  <th className="p-4">Invoice ID</th>
+                  <th className="p-4">Nominal</th>
+                  <th className="p-4">Bukti Upload</th>
+                  <th className="p-4">Status</th>
+                  <th className="p-4">Aksi Verifikasi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {payments.map(pay => (
+                  <tr key={pay.id}>
+                    <td className="p-4 font-mono font-bold text-white">{pay.invoiceId}</td>
+                    <td className="p-4 font-bold text-amber-400">{formatRupiah(pay.amount)}</td>
+                    <td className="p-4">
+                      {pay.proofUrl ? (
+                        <a href={pay.proofUrl} target="_blank" rel="noreferrer" className="text-orange-400 underline font-semibold">
+                          Lihat Bukti
+                        </a>
+                      ) : (
+                        <span className="text-slate-500">Belum Upload</span>
+                      )}
+                    </td>
+                    <td className="p-4 font-bold text-xs">{pay.status}</td>
+                    <td className="p-4 space-x-2">
+                      <button
+                        onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'APPROVE')}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold uppercase"
+                      >
+                        Setujui
+                      </button>
+                      <button
+                        onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'REJECT')}
+                        className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded font-bold uppercase"
+                      >
+                        Tolak
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* TAB 4: RACE RESULTS EDITOR */}
+        {activeTab === 'results' && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xl mx-auto space-y-4">
+            <h3 className="text-lg font-bold text-white uppercase">Input / Update Waktu Finisher</h3>
+            <form onSubmit={handleSubmitResult} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-slate-300 font-bold uppercase mb-1">Pilih Event</label>
+                <select
+                  value={resEventId}
+                  onChange={(e) => setResEventId(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                >
+                  {events.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-bold uppercase mb-1">Nomor BIB</label>
+                  <input
+                    type="text"
+                    required
+                    value={resBib}
+                    onChange={(e) => setResBib(e.target.value)}
+                    placeholder="TR50-0001"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-bold uppercase mb-1">Nama Peserta</label>
+                  <input
+                    type="text"
+                    required
+                    value={resName}
+                    onChange={(e) => setResName(e.target.value)}
+                    placeholder="Budi Santoso"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-bold uppercase mb-1">Chip Time</label>
+                  <input
+                    type="text"
+                    required
+                    value={resChipTime}
+                    onChange={(e) => setResChipTime(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-bold uppercase mb-1">Rank Finisher</label>
+                  <input
+                    type="number"
+                    required
+                    value={resRank}
+                    onChange={(e) => setResRank(Number(e.target.value))}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black uppercase"
+              >
+                Publikasikan Hasil Finisher
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* TAB 5: USER ROLE MANAGEMENT */}
+        {activeTab === 'users' && isSuperAdmin && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                  <th className="p-4">Email Pengguna</th>
+                  <th className="p-4">Role Saat Ini</th>
+                  <th className="p-4">Ubah Role</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {usersList.map(u => (
+                  <tr key={u.id}>
+                    <td className="p-4 font-bold text-white">{u.email}</td>
+                    <td className="p-4 font-mono text-amber-400">{u.role}</td>
+                    <td className="p-4 space-x-2">
+                      <button onClick={() => handleRoleChange(u.id, 'ADMIN')} className="px-2.5 py-1 bg-amber-600 text-white rounded font-bold text-[10px]">
+                        ADMIN
+                      </button>
+                      <button onClick={() => handleRoleChange(u.id, 'ORGANIZER')} className="px-2.5 py-1 bg-blue-600 text-white rounded font-bold text-[10px]">
+                        ORGANIZER
+                      </button>
+                      <button onClick={() => handleRoleChange(u.id, 'PARTICIPANT')} className="px-2.5 py-1 bg-slate-700 text-white rounded font-bold text-[10px]">
+                        PARTICIPANT
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* TAB 6: SETTINGS */}
+        {activeTab === 'settings' && (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-xl mx-auto space-y-6">
+            <h3 className="text-lg font-bold text-white uppercase">Pengaturan Sistem & Maintenance</h3>
+            <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div>
+                <span className="text-sm font-bold text-white block">Maintenance Mode</span>
+                <span className="text-xs text-slate-400">Pengunjung publik akan melihat halaman pemeliharaan sistem.</span>
+              </div>
+              <button
+                onClick={handleToggleMaintenance}
+                className={`px-4 py-2 rounded-xl font-bold text-xs uppercase ${
+                  settings.maintenanceMode ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-300'
+                }`}
+              >
+                {settings.maintenanceMode ? 'AKTIF' : 'NONAKTIF'}
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
+
+      {/* Create Event Modal */}
+      {showEventModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-xl w-full">
+            <h3 className="text-xl font-black text-white uppercase mb-4">Buat Event Lomba Baru</h3>
+            <form onSubmit={handleCreateEvent} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-slate-300 font-bold uppercase mb-1">Nama Event</label>
+                <input
+                  type="text"
+                  required
+                  value={eventName}
+                  onChange={(e) => setEventName(e.target.value)}
+                  placeholder="Contoh: Rinjani Ultra Trail 2026"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-300 font-bold uppercase mb-1">Lokasi</label>
+                <input
+                  type="text"
+                  required
+                  value={eventLocation}
+                  onChange={(e) => setEventLocation(e.target.value)}
+                  placeholder="Lombok, Nusa Tenggara Barat"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-300 font-bold uppercase mb-1">Deskripsi Singkat</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={eventDesc}
+                  onChange={(e) => setEventDesc(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowEventModal(false)}
+                  className="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-bold uppercase"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-orange-600 text-white font-black uppercase"
+                >
+                  Terbitkan Event
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+};

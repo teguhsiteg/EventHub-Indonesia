@@ -1,0 +1,6 @@
+{
+  "name": "GUWIGO EVENTS",
+  "description": "Official Event & Race Management Platform by PT Guwigo Teknologi Indonesia. Temukan, daftar, dan kelola pengalaman event olahraga bersama Guwigo Events.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

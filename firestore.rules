@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        getUserData().role == 'SUPER_ADMIN' || 
+        getUserData().role == 'ADMIN'
+      );
+    }
+
+    function isOrganizer() {
+      return isAuthenticated() && (
+        getUserData().role == 'ORGANIZER' || 
+        isAdmin()
+      );
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Events Collection
+    match /events/{eventId} {
+      allow read: if true; // Public read
+      allow create: if isOrganizer();
+      allow update, delete: if isAdmin() || (isOrganizer() && resource.data.organizerId == request.auth.uid);
+    }
+
+    // Event Categories Collection
+    match /event_categories/{categoryId} {
+      allow read: if true;
+      allow write: if isOrganizer();
+    }
+
+    // Registrations Collection
+    match /registrations/{registrationId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin() || isOrganizer());
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin() || isOrganizer());
+      allow delete: if isAdmin();
+    }
+
+    // Participants Collection
+    match /participants/{participantId} {
+      allow read: if true; // Public results check basic non-sensitive fields or verified token
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin() || isOrganizer());
+      allow delete: if isAdmin();
+    }
+
+    // Payments Collection
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin() || isOrganizer());
+      allow create: if isAuthenticated();
+      allow update: if isAdmin() || isOrganizer();
+      allow delete: if isAdmin();
+    }
+
+    // Medical Assessments Collection
+    match /medical_assessments/{assessmentId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // Race Packs Collection
+    match /race_packs/{packId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() || isOrganizer();
+    }
+
+    // Race Results Collection
+    match /race_results/{resultId} {
+      allow read: if true; // Public results
+      allow write: if isAdmin() || isOrganizer();
+    }
+
+    // Certificates Collection
+    match /certificates/{certId} {
+      allow read: if true;
+      allow write: if isAdmin() || isOrganizer();
+    }
+
+    // Sponsors, Galleries, FAQs, Announcements
+    match /sponsors/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /galleries/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /faqs/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /announcements/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Audit Logs
+    match /audit_logs/{id} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if false; // Immutable audit log
+    }
+
+    // System Settings
+    match /system_settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
