@@ -46,12 +46,19 @@ export async function syncUserProfile(
       email: fbUser.email || '',
       displayName: extraData?.displayName || fbUser.displayName || fbUser.email?.split('@')[0] || 'Peserta',
       role: assignedRole,
-      photoURL: fbUser.photoURL || undefined,
-      phoneNumber: extraData?.phoneNumber || fbUser.phoneNumber || undefined,
+      photoURL: fbUser.photoURL || null,
+      phoneNumber: extraData?.phoneNumber || fbUser.phoneNumber || null,
       isEmailVerified: fbUser.emailVerified,
       createdAt: now,
       updatedAt: now,
     };
+    
+    // Clean up undefined values that Firestore rejects
+    Object.keys(newProfile).forEach(key => {
+      if ((newProfile as any)[key] === undefined) {
+        delete (newProfile as any)[key];
+      }
+    });
 
     await setDoc(userDocRef, newProfile);
     
