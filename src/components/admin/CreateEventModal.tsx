@@ -13,6 +13,17 @@ interface CreateEventModalProps {
 export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initialData, onClose, onSuccess, addNotification }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [deletedCategoryIds, setDeletedCategoryIds] = useState<string[]>([]);
+
+  React.useEffect(() => {
+    if (initialData) {
+      import('../../services/eventService').then(({ getEventCategories }) => {
+        getEventCategories(initialData.id).then(cats => {
+          setCategories(cats);
+        }).catch(err => console.error(err));
+      });
+    }
+  }, [initialData]);
 
   // Form States - Basic Info
   const [eventName, setEventName] = useState(initialData?.name || '');
@@ -83,6 +94,14 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
     }
   };
 
+  const handleRemoveCategory = (index: number) => {
+    const cat = categories[index];
+    if (cat.id) {
+      setDeletedCategoryIds([...deletedCategoryIds, cat.id]);
+    }
+    setCategories(categories.filter((_, idx) => idx !== index));
+  };
+
   const handleAddAddon = () => {
     if (addonName && addonPrice) {
       setAddons([...addons, {
@@ -132,6 +151,25 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
 
       if (initialData) {
         await updateEvent(initialData.id, eventPayload, user.uid, user.email || '');
+        
+        // Update or Create categories
+        const { updateCategory, deleteCategory } = await import('../../services/eventService');
+        for (const cat of categories) {
+          if (cat.id) {
+            await updateCategory(cat.id, cat, user.uid, user.email || '');
+          } else {
+            await createCategory({
+              ...cat,
+              eventId: initialData.id,
+            }, user.uid, user.email || '');
+          }
+        }
+
+        // Process deletions
+        for (const catId of deletedCategoryIds) {
+          if (deleteCategory) await deleteCategory(catId, user.uid, user.email || '');
+        }
+        
         addNotification('success', 'Event Diperbarui', `Event ${eventName} telah berhasil diperbarui.`);
       } else {
         const newEv = await createEvent({
@@ -176,7 +214,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
 
         {/* Step Indicator */}
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
-          {[1, 2, 3, 4].filter(i => !(initialData && (i === 3 || i === 4))).map(i => (
+          {[1, 2, 3, 4].map(i => (
             <React.Fragment key={i}>
               <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-orange-500 text-white' : step > i ? 'bg-orange-200 text-orange-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
                 {step > i ? '✓' : i}
@@ -184,12 +222,12 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <span className={`text-xs font-bold uppercase tracking-wider whitespace-nowrap ${step === i ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>
                 {i === 1 ? 'Info Dasar' : i === 2 ? 'Fasilitas & Aturan' : i === 3 ? 'Kategori Tiket' : 'Add-Ons'}
               </span>
-              {(i < 4 && !(initialData && i === 2)) && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
+              {i < 4 && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
             </React.Fragment>
           ))}
         </div>
 
-        <form onSubmit={(initialData && step === 2) || step === 4 ? handleSubmit : (e) => { e.preventDefault(); setStep(step + 1); }} className="space-y-6 text-sm">
+        <form onSubmit={step === 4 ? handleSubmit : (e) => { e.preventDefault(); setStep(step + 1); }} className="space-y-6 text-sm">
           
           {/* STEP 1: Basic Info */}
           {step === 1 && (
