@@ -1,3 +1,7 @@
+// ============================================================
+// GUWIGO INDONESIA — Konfigurasi Vite Build
+// ============================================================
+
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -12,10 +16,10 @@ export default defineConfig(() => {
       },
     },
     server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      // HMR dinonaktifkan di AI Studio melalui env var DISABLE_HMR.
+      // Jangan dimodifikasi — file watching dinonaktifkan untuk mencegah flicker selama agent edit.
       hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
+      // Matikan file watching saat DISABLE_HMR = true untuk menghemat CPU selama agent edit.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };

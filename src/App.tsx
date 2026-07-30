@@ -1,13 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
-import { Navbar } from './components/layout/Navbar';
-import { Footer } from './components/layout/Footer';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
-import { ToastContainer } from './components/common/ToastContainer';
-import { AutoLogout } from './components/auth/AutoLogout';
+
+// Layouts
+import { PublicLayout } from './components/layout/PublicLayout';
+import { AuthLayout } from './components/layout/AuthLayout';
+import { DashboardLayout } from './components/layout/DashboardLayout';
+import { AdminLayout } from './components/layout/AdminLayout';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -16,6 +18,8 @@ import { EventDetailPage } from './pages/EventDetailPage';
 import { PublicResultsPage } from './pages/PublicResultsPage';
 import { VerifyQRPage } from './pages/VerifyQRPage';
 import { AboutPage } from './pages/AboutPage';
+import { TermsPage } from './pages/TermsPage';
+import { PrivacyPage } from './pages/PrivacyPage';
 import { ContactPage } from './pages/ContactPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
@@ -33,55 +37,59 @@ const AppRoutes: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 selection:bg-orange-500 selection:text-slate-900 dark:text-white">
-      <Navbar />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/events/:slug" element={<EventDetailPage />} />
-          <Route path="/results" element={<PublicResultsPage />} />
-          <Route path="/verify/:token" element={<VerifyQRPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+    <Routes>
+      {/* Public Pages with Navbar + Footer */}
+      <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+      <Route path="/events" element={<PublicLayout><EventsPage /></PublicLayout>} />
+      <Route path="/events/:slug" element={<PublicLayout><EventDetailPage /></PublicLayout>} />
+      <Route path="/results" element={<PublicLayout><PublicResultsPage /></PublicLayout>} />
+      <Route path="/verify/:token" element={<PublicLayout><VerifyQRPage /></PublicLayout>} />
+      <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+      <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
+      <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
+      <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
 
-          {/* Participant Dashboard */}
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <ParticipantDashboardPage />
-              </ProtectedRoute>
-            } 
-          />
+      {/* ===== AUTH PAGES — Minimal, centered ===== */}
+      <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
+      <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
 
-          {/* Admin & Organizer Dashboards */}
-          <Route 
-            path="/admin" 
-            element={
-              <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'ORGANIZER']}>
-                <AdminDashboardPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin/check-in" 
-            element={
-              <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'ORGANIZER']}>
-                <AdminCheckInPage />
-              </ProtectedRoute>
-            } 
-          />
+      {/* ===== PARTICIPANT DASHBOARD — Sidebar layout ===== */}
+      <Route 
+        path="/dashboard" 
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <ParticipantDashboardPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        } 
+      />
 
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </main>
-      <Footer />
-      <ToastContainer />
-      <AutoLogout />
-    </div>
+      {/* ===== ADMIN PAGES — Admin sidebar layout ===== */}
+      <Route 
+        path="/admin" 
+        element={
+          <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'ORGANIZER']}>
+            <AdminLayout>
+              <AdminDashboardPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/check-in" 
+        element={
+          <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'ORGANIZER']}>
+            <AdminLayout>
+              <AdminCheckInPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* ===== STANDALONE PAGES — No layout wrapper ===== */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   );
 };
 

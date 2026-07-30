@@ -11,7 +11,7 @@ app.use(express.json());
 
 // 1. Health check
 app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', app: 'RacePro Platform API', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', app: 'Guwigo Indonesia Platform API', timestamp: new Date().toISOString() });
 });
 
 // 2. Service Abstraction: OAuth2 Endpoint Info
@@ -34,7 +34,7 @@ app.post('/api/payment/webhook', (req: Request, res: Response) => {
 // 4. Public QR Code verification endpoint
 app.get('/api/verify/qr/:token', (req: Request, res: Response) => {
   const { token } = req.params;
-  if (!token || !token.startsWith('RACEPRO_')) {
+  if (!token || !token.startsWith('GUWIGO_')) {
     return res.status(400).json({ valid: false, message: 'Format token QR Code tidak valid.' });
   }
 
@@ -50,7 +50,7 @@ app.get('/api/verify/qr/:token', (req: Request, res: Response) => {
 app.get('/api/export/csv', (req: Request, res: Response) => {
   const { type } = req.query;
   res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', `attachment; filename=racepro_export_${type || 'data'}_${Date.now()}.csv`);
+  res.setHeader('Content-Disposition', `attachment; filename=guwigo_export_${type || 'data'}_${Date.now()}.csv`);
   
   if (type === 'participants') {
     res.send('RegistrationNo,BIB,FullName,Gender,Category,Phone,Email,CheckInStatus\nREG-2026-001,TR50-0001,Budi Santoso,MALE,Trail 50K,08123456789,budi@example.com,VERIFIED\n');
@@ -83,7 +83,7 @@ app.post('/api/notifications/send-registration-email', (req: Request, res: Respo
     <body>
       <div class="card">
         <div class="header">
-          <h2>GUWIGO RACEPRO</h2>
+          <h2>GUWIGO INDONESIA</h2>
           <p>Konfirmasi Pendaftaran Event</p>
         </div>
         <h3>Halo, ${participantName}!</h3>
@@ -132,7 +132,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`RacePro Full-Stack Engine running on http://0.0.0.0:${PORT}`);
+    console.log(`Guwigo Indonesia Full-Stack Engine running on http://0.0.0.0:${PORT}`);
   });
 }
 

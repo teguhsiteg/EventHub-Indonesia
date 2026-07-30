@@ -38,7 +38,7 @@ export async function syncUserProfile(
 
   if (!snap.exists()) {
     // Check if this is the designated super admin email or first account
-    const isFirstAccount = fbUser.email === 'teercard@gmail.com' || fbUser.email?.includes('admin');
+    const isFirstAccount = fbUser.email?.includes('@racepro') || fbUser.email?.includes('admin');
     const assignedRole: UserRole = isFirstAccount ? 'SUPER_ADMIN' : role;
 
     const newProfile: UserProfile = {

@@ -34,6 +34,11 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   const [eventStartDate, setEventStartDate] = useState(initialData?.startDate ? new Date(initialData.startDate).toISOString().slice(0, 16) : '');
   const [eventRegStart, setEventRegStart] = useState(initialData?.registrationStart ? new Date(initialData.registrationStart).toISOString().slice(0, 16) : '');
   const [eventRegEnd, setEventRegEnd] = useState(initialData?.registrationEnd ? new Date(initialData.registrationEnd).toISOString().slice(0, 16) : '');
+  
+  // Form States - Organizer
+  const [organizerName, setOrganizerName] = useState(initialData?.organizerName || '');
+  const [organizerWebsite, setOrganizerWebsite] = useState(initialData?.organizerWebsite || '');
+  const [organizerSocialMedia, setOrganizerSocialMedia] = useState(initialData?.organizerSocialMedia || '');
 
   // Form States - Facilities & Rules
   const [facilities, setFacilities] = useState(initialData?.facilities?.join(', ') || 'Medali Finisher, Jersey Finisher, BIB dengan Timing Chip, Water Station, Asuransi');
@@ -41,6 +46,11 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   const [faqQ, setFaqQ] = useState('');
   const [faqA, setFaqA] = useState('');
   const [faqs, setFaqs] = useState<{question: string, answer: string}[]>(initialData?.faqs || []);
+
+  const [schedules, setSchedules] = useState<{time: string, title: string, description: string}[]>(initialData?.schedule || []);
+  const [scheduleTime, setScheduleTime] = useState('');
+  const [scheduleTitle, setScheduleTitle] = useState('');
+  const [scheduleDesc, setScheduleDesc] = useState('');
 
   // Form States - Categories
   const [categories, setCategories] = useState<any[]>([]);
@@ -51,6 +61,8 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   const [catCutoff, setCatCutoff] = useState('');
   const [catEarlyBirdPrice, setCatEarlyBirdPrice] = useState('');
   const [catEarlyBirdEndDate, setCatEarlyBirdEndDate] = useState('');
+
+  const [editingCategoryIndex, setEditingCategoryIndex] = useState<number | null>(null);
 
   // Form States - Add-ons (Step 4)
   const [addons, setAddons] = useState<any[]>(initialData?.addons || []);
@@ -66,9 +78,18 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
     }
   };
 
+  const handleAddSchedule = () => {
+    if (scheduleTime && scheduleTitle) {
+      setSchedules([...schedules, { time: scheduleTime, title: scheduleTitle, description: scheduleDesc }]);
+      setScheduleTime('');
+      setScheduleTitle('');
+      setScheduleDesc('');
+    }
+  };
+
   const handleAddCategory = () => {
     if (catName && catPrice && catQuota && catDistance) {
-      setCategories([...categories, {
+      const newCat = {
         name: catName,
         slug: catName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
         description: `Kategori ${catName}`,
@@ -83,7 +104,21 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         genderRestriction: 'NONE',
         minimumAge: 12,
         status: 'ACTIVE'
-      }]);
+      };
+      
+      if (editingCategoryIndex !== null) {
+        const updated = [...categories];
+        // Preserve id if editing existing category
+        if (updated[editingCategoryIndex].id) {
+          (newCat as any).id = updated[editingCategoryIndex].id;
+        }
+        updated[editingCategoryIndex] = newCat;
+        setCategories(updated);
+        setEditingCategoryIndex(null);
+      } else {
+        setCategories([...categories, newCat]);
+      }
+      
       setCatName('');
       setCatPrice('');
       setCatQuota('');
@@ -93,6 +128,23 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
       setCatEarlyBirdEndDate('');
     }
   };
+
+  const handleEditCategory = (index: number) => {
+    const c = categories[index];
+    setCatName(c.name || '');
+    setCatPrice(c.price?.toString() || '');
+    setCatQuota(c.quota?.toString() || '');
+    setCatDistance(c.distance || '');
+    setCatCutoff(c.cutoffTime === '4 Jam' ? '' : (c.cutoffTime || ''));
+    setCatEarlyBirdPrice(c.earlyBirdPrice?.toString() || '');
+    if (c.earlyBirdEndDate) {
+      setCatEarlyBirdEndDate(new Date(c.earlyBirdEndDate).toISOString().slice(0, 16));
+    } else {
+      setCatEarlyBirdEndDate('');
+    }
+    setEditingCategoryIndex(index);
+  };
+
 
   const handleRemoveCategory = (index: number) => {
     const cat = categories[index];
@@ -139,10 +191,12 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         registrationEnd: new Date(eventRegEnd).toISOString(),
         status: initialData ? initialData.status : 'REGISTRATION_OPEN',
         organizerId: user.uid,
-        organizerName: user.displayName || 'RacePro Admin',
+        organizerName: organizerName || user.displayName || 'RacePro Admin',
+        organizerWebsite: organizerWebsite,
+        organizerSocialMedia: organizerSocialMedia,
         featured: true,
         facilities: facilities.split(',').map(f => f.trim()).filter(f => f),
-        schedule: initialData?.schedule || [{ time: '05:00 WIB', title: 'Flag-off', description: 'Pelepasan peserta' }],
+        schedule: schedules,
         rules: rules,
         faqs: faqs,
         addons: addons,
@@ -195,12 +249,12 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-blue-950/80 backdrop-blur-md overflow-y-auto">
+      <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto">
         
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 text-slate-400 hover:text-slate-900 dark:hover:text-white"
+          className="absolute top-6 right-6 text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
@@ -216,10 +270,10 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
           {[1, 2, 3, 4].map(i => (
             <React.Fragment key={i}>
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-orange-500 text-white' : step > i ? 'bg-orange-200 text-orange-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-orange-500 text-white' : step > i ? 'bg-orange-200 text-orange-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-500 dark:text-slate-400'}`}>
                 {step > i ? '✓' : i}
               </div>
-              <span className={`text-xs font-bold uppercase tracking-wider whitespace-nowrap ${step === i ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>
+              <span className={`text-xs font-bold uppercase tracking-wider whitespace-nowrap ${step === i ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-500 dark:text-slate-400'}`}>
                 {i === 1 ? 'Info Dasar' : i === 2 ? 'Fasilitas & Aturan' : i === 3 ? 'Kategori Tiket' : 'Add-Ons'}
               </span>
               {i < 4 && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
@@ -234,82 +288,118 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="space-y-4 md:col-span-2">
                 <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Nama Event *</label>
+                  <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Nama Event *</label>
                   <input
                     type="text"
                     required
                     value={eventName}
                     onChange={(e) => setEventName(e.target.value)}
                     placeholder="Contoh: Rinjani Ultra Trail 2026"
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Waktu Pelaksanaan *</label>
+                <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Waktu Pelaksanaan *</label>
                 <input
                   type="datetime-local"
                   required
                   value={eventStartDate}
                   onChange={(e) => setEventStartDate(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                 />
               </div>
               <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Lokasi Event *</label>
+                <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Lokasi Event *</label>
                 <input
                   type="text"
                   required
                   value={eventLocation}
                   onChange={(e) => setEventLocation(e.target.value)}
                   placeholder="Nama Tempat / Kota"
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Awal Pendaftaran *</label>
+                <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Awal Pendaftaran *</label>
                 <input
                   type="datetime-local"
                   required
                   value={eventRegStart}
                   onChange={(e) => setEventRegStart(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                 />
               </div>
               <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Tutup Pendaftaran *</label>
+                <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Tutup Pendaftaran *</label>
                 <input
                   type="datetime-local"
                   required
                   value={eventRegEnd}
                   onChange={(e) => setEventRegEnd(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                 />
               </div>
 
               <div className="md:col-span-2 space-y-4">
                 <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">URL Banner Event</label>
+                  <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">URL Banner Event</label>
                   <input
                     type="url"
                     value={eventBanner}
                     onChange={(e) => setEventBanner(e.target.value)}
                     placeholder="https://..."
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Deskripsi Lengkap *</label>
+                  <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Deskripsi Lengkap *</label>
                   <textarea
                     rows={4}
                     required
                     value={eventDesc}
                     onChange={(e) => setEventDesc(e.target.value)}
                     placeholder="Jelaskan detail event lomba ini..."
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                   />
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                  <h4 className="text-slate-900 dark:text-white font-bold text-sm uppercase mb-4">Informasi Penyelenggara (Opsional)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Nama Organizer</label>
+                      <input
+                        type="text"
+                        value={organizerName}
+                        onChange={(e) => setOrganizerName(e.target.value)}
+                        placeholder="Contoh: RunID, LariYuk"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Website Organizer</label>
+                      <input
+                        type="url"
+                        value={organizerWebsite}
+                        onChange={(e) => setOrganizerWebsite(e.target.value)}
+                        placeholder="https://..."
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Sosial Media</label>
+                      <input
+                        type="url"
+                        value={organizerSocialMedia}
+                        onChange={(e) => setOrganizerSocialMedia(e.target.value)}
+                        placeholder="https://instagram.com/..."
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -319,34 +409,75 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Fasilitas Peserta (Pisahkan dengan koma) *</label>
+                <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Fasilitas Peserta (Pisahkan dengan koma) *</label>
                 <textarea
                   rows={2}
                   required
                   value={facilities}
                   onChange={(e) => setFacilities(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                 />
               </div>
               
               <div>
-                <label className="block text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Aturan Lomba (Rules) *</label>
+                <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Aturan Lomba (Rules) *</label>
                 <textarea
                   rows={3}
                   required
                   value={rules}
                   onChange={(e) => setRules(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
                 />
               </div>
 
-              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+              <div className=" border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+                <label className="block text-slate-900 dark:text-white font-black uppercase mb-4">Susunan Acara (Opsional)</label>
+                {schedules.map((s, i) => (
+                  <div key={i} className="mb-3 p-3 bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl flex justify-between items-start">
+                    <div>
+                      <p className="font-bold text-slate-900 dark:text-white text-xs mb-1">{s.time} - {s.title}</p>
+                      <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-[10px]">{s.description}</p>
+                    </div>
+                    <button type="button" onClick={() => setSchedules(schedules.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold">HAPUS</button>
+                  </div>
+                ))}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+                  <input
+                    type="text"
+                    value={scheduleTime}
+                    onChange={(e) => setScheduleTime(e.target.value)}
+                    placeholder="Waktu (Cth: 05:00 WIB)"
+                    className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
+                  />
+                  <input
+                    type="text"
+                    value={scheduleTitle}
+                    onChange={(e) => setScheduleTitle(e.target.value)}
+                    placeholder="Judul (Cth: Flag-off)"
+                    className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={scheduleDesc}
+                      onChange={(e) => setScheduleDesc(e.target.value)}
+                      placeholder="Deskripsi"
+                      className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
+                    />
+                    <button type="button" onClick={handleAddSchedule} className="px-4 bg-orange-100 text-orange-600 rounded-xl font-bold hover:bg-orange-200 shrink-0 text-xs">
+                      Tambah
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className=" border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
                 <label className="block text-slate-900 dark:text-white font-black uppercase mb-4">FAQ (Pertanyaan Umum)</label>
                 {faqs.map((f, i) => (
-                  <div key={i} className="mb-3 p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex justify-between items-start">
+                  <div key={i} className="mb-3 p-3 bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl flex justify-between items-start">
                     <div>
                       <p className="font-bold text-slate-900 dark:text-white text-xs mb-1">Q: {f.question}</p>
-                      <p className="text-slate-500 dark:text-slate-400 text-xs">A: {f.answer}</p>
+                      <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-xs">A: {f.answer}</p>
                     </div>
                     <button type="button" onClick={() => setFaqs(faqs.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold">HAPUS</button>
                   </div>
@@ -357,7 +488,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={faqQ}
                     onChange={(e) => setFaqQ(e.target.value)}
                     placeholder="Pertanyaan (Cth: Ada Water Station?)"
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
+                    className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
                   />
                   <div className="flex gap-2">
                     <input
@@ -365,7 +496,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       value={faqA}
                       onChange={(e) => setFaqA(e.target.value)}
                       placeholder="Jawaban"
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
+                      className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
                     />
                     <button type="button" onClick={handleAddFaq} className="px-4 bg-orange-100 text-orange-600 rounded-xl font-bold hover:bg-orange-200 shrink-0">
                       Tambah
@@ -383,11 +514,11 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/50 rounded-2xl p-5 mb-6">
                 <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Kategori Tersimpan ({categories.length})</h4>
                 {categories.length === 0 ? (
-                  <p className="text-slate-500 dark:text-slate-400 text-xs text-center py-4">Belum ada kategori. Tambahkan di bawah.</p>
+                  <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-xs text-center py-4">Belum ada kategori. Tambahkan di bawah.</p>
                 ) : (
                   <div className="space-y-2">
                     {categories.map((c, i) => (
-                      <div key={i} className="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div>
                           <span className="font-bold text-slate-900 dark:text-white block">{c.name} ({c.distance})</span>
                           <span className="text-xs text-slate-500">
@@ -395,50 +526,75 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                             {c.earlyBirdPrice && ` | EB: Rp ${c.earlyBirdPrice.toLocaleString('id-ID')}`}
                           </span>
                         </div>
-                        <button type="button" onClick={() => setCategories(categories.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
-                          Hapus
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button type="button" onClick={() => handleEditCategory(i)} className="text-orange-500 text-xs font-bold bg-orange-50 dark:bg-orange-900/20 px-3 py-1.5 rounded-lg hover:bg-orange-100">
+                            Edit
+                          </button>
+                          <button type="button" onClick={() => setCategories(categories.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
+                            Hapus
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
-                <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Tambah Kategori Lomba</h4>
+              <div className=" border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+                <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">
+                  {editingCategoryIndex !== null ? 'Edit Kategori Lomba' : 'Tambah Kategori Lomba'}
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Kategori</label>
-                    <input type="text" value={catName} onChange={e => setCatName(e.target.value)} placeholder="Cth: 10K Open" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={catName} onChange={e => setCatName(e.target.value)} placeholder="Cth: 10K Open" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Jarak</label>
-                    <input type="text" value={catDistance} onChange={e => setCatDistance(e.target.value)} placeholder="Cth: 10 KM" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={catDistance} onChange={e => setCatDistance(e.target.value)} placeholder="Cth: 10 KM" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga (Rp)</label>
-                    <input type="number" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="Cth: 250000" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="number" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="Cth: 250000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kuota Maksimal</label>
-                    <input type="number" value={catQuota} onChange={e => setCatQuota(e.target.value)} placeholder="Cth: 500" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="number" value={catQuota} onChange={e => setCatQuota(e.target.value)} placeholder="Cth: 500" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Waktu (Cut-Off Time)</label>
-                    <input type="text" value={catCutoff} onChange={e => setCatCutoff(e.target.value)} placeholder="Cth: 3 Jam" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={catCutoff} onChange={e => setCatCutoff(e.target.value)} placeholder="Cth: 3 Jam" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga Early Bird (Opsional)</label>
-                    <input type="number" value={catEarlyBirdPrice} onChange={e => setCatEarlyBirdPrice(e.target.value)} placeholder="Cth: 200000" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="number" value={catEarlyBirdPrice} onChange={e => setCatEarlyBirdPrice(e.target.value)} placeholder="Cth: 200000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Waktu Early Bird (Opsional)</label>
-                    <input type="datetime-local" value={catEarlyBirdEndDate} onChange={e => setCatEarlyBirdEndDate(e.target.value)} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="datetime-local" value={catEarlyBirdEndDate} onChange={e => setCatEarlyBirdEndDate(e.target.value)} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
-                  <div className="flex items-end">
-                    <button type="button" onClick={handleAddCategory} className="w-full bg-slate-900 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-800 transition-colors">
-                      Simpan Kategori
+                  <div className="flex items-end gap-2">
+                    <button type="button" onClick={handleAddCategory} className="w-full bg-white dark:bg-blue-950 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-100 dark:bg-slate-800 transition-colors">
+                      {editingCategoryIndex !== null ? 'Simpan Perubahan' : 'Simpan Kategori'}
                     </button>
+                    {editingCategoryIndex !== null && (
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          setEditingCategoryIndex(null);
+                          setCatName('');
+                          setCatPrice('');
+                          setCatQuota('');
+                          setCatDistance('');
+                          setCatCutoff('');
+                          setCatEarlyBirdPrice('');
+                          setCatEarlyBirdEndDate('');
+                        }} 
+                        className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-300 transition-colors"
+                      >
+                        Batal
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -451,13 +607,13 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <div className="space-y-4">
                 <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Daftar Merchandise / Add-Ons</h4>
                 {addons.length === 0 ? (
-                  <div className="text-center p-8 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                  <div className="text-center p-8 bg-slate-50 dark:bg-blue-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-slate-500 font-medium">Belum ada Add-Ons. (Misal: Jersey Tambahan, Topi Finisher)</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {addons.map((addon, i) => (
-                      <div key={i} className="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div>
                           <span className="font-bold text-slate-900 dark:text-white block">{addon.name}</span>
                           <span className="text-xs text-slate-500">Rp {addon.price.toLocaleString('id-ID')} | {addon.description}</span>
@@ -471,23 +627,23 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                 )}
               </div>
 
-              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+              <div className=" border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
                 <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Tambah Add-On Baru</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Item</label>
-                    <input type="text" value={addonName} onChange={e => setAddonName(e.target.value)} placeholder="Cth: Topi Eksklusif Event" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={addonName} onChange={e => setAddonName(e.target.value)} placeholder="Cth: Topi Eksklusif Event" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga (Rp)</label>
-                    <input type="number" value={addonPrice} onChange={e => setAddonPrice(e.target.value)} placeholder="Cth: 150000" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="number" value={addonPrice} onChange={e => setAddonPrice(e.target.value)} placeholder="Cth: 150000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Deskripsi Singkat</label>
-                    <input type="text" value={addonDesc} onChange={e => setAddonDesc(e.target.value)} placeholder="Opsional" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={addonDesc} onChange={e => setAddonDesc(e.target.value)} placeholder="Opsional" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div className="md:col-span-2 flex justify-end mt-2">
-                    <button type="button" onClick={handleAddAddon} className="w-full md:w-auto bg-slate-900 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-800 transition-colors">
+                    <button type="button" onClick={handleAddAddon} className="w-full md:w-auto bg-white dark:bg-blue-950 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-100 dark:bg-slate-800 transition-colors">
                       Simpan Add-On
                     </button>
                   </div>
@@ -502,7 +658,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
-                className="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold uppercase text-xs hover:bg-slate-200 dark:hover:bg-slate-700"
+                className="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase text-xs hover:bg-slate-200 dark:hover:bg-slate-200 dark:bg-slate-700"
               >
                 Kembali
               </button>
@@ -510,7 +666,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold uppercase text-xs"
+                className="px-6 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 font-bold uppercase text-xs"
               >
                 Batal
               </button>

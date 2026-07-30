@@ -6,13 +6,17 @@ import { collection, getDocs } from 'firebase/firestore';
 export const DEFAULT_SYSTEM_SETTINGS: SystemSettings = {
   id: 'general',
   siteName: 'RacePro Indonesia',
-  siteDescription: 'Platform Management Event Lomba & Olahraga Profesional',
+  siteDescription: 'Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia',
   logoUrl: '/logo.svg',
   contactEmail: 'support@racepro.id',
   contactPhone: '+62 812 3456 7890',
   maintenanceMode: false,
   paymentGatewayConfigured: false,
   paymentGatewayName: 'Manual Transfer / Gateway Unconfigured',
+  manualPaymentBank: 'BCA',
+  manualPaymentAccount: '1234567890',
+  manualPaymentName: 'RacePro Indonesia',
+  adminFee: 5000,
   oauthConfigured: false,
   updatedAt: new Date().toISOString()
 };

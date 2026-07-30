@@ -43,7 +43,7 @@ export const PublicResultsPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-12">
+    <div className="min-h-screen  text-slate-900 dark:text-slate-100 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -53,17 +53,17 @@ export const PublicResultsPage: React.FC = () => {
             <span>Papan Klasemen Finisher</span>
           </div>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Hasil Lomba Resmi</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Cari waktu tempuh, peringkat kategori, dan status finisher peserta.</p>
+          <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-xs mt-1">Cari waktu tempuh, peringkat kategori, dan status finisher peserta.</p>
         </div>
 
         {/* Controls */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] p-4 rounded-2xl mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase shrink-0">Pilih Event:</label>
+            <label className="text-xs font-bold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase shrink-0">Pilih Event:</label>
             <select
               value={selectedEventId}
               onChange={(e) => handleEventChange(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 w-full md:w-72"
+              className=" border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 w-full md:w-72"
             >
               <option value="">Semua Event</option>
               {events.map(ev => (
@@ -73,32 +73,32 @@ export const PublicResultsPage: React.FC = () => {
           </div>
 
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute left-3.5 top-3.5" />
+            <Search className="w-4 h-4 text-slate-500 dark:text-slate-500 dark:text-slate-400 absolute left-3.5 top-3.5" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nama peserta atau nomor BIB..."
-              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-orange-500"
+              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-orange-500"
             />
           </div>
         </div>
 
         {/* Results Table */}
         {loading ? (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl h-64 border border-slate-200 dark:border-slate-800 animate-pulse" />
+          <div className="bg-white dark:bg-blue-950 rounded-2xl h-64 border border-slate-200 dark:border-slate-800 animate-pulse" />
         ) : filteredResults.length === 0 ? (
-          <div className="p-16 text-center bg-white dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="p-16 text-center bg-white dark:bg-blue-950/50 rounded-2xl border border-slate-200 dark:border-slate-800">
             <Award className="w-12 h-12 text-slate-600 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">Belum Ada Hasil Resmi</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Hasil lomba belum dipublikasikan oleh komite penilai untuk filter ini.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 mt-1">Hasil lomba belum dipublikasikan oleh komite penilai untuk filter ini.</p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
+                  <tr className=" border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
                     <th className="p-4">Rank Kategori</th>
                     <th className="p-4">BIB</th>
                     <th className="p-4">Nama Peserta</th>
@@ -122,9 +122,9 @@ export const PublicResultsPage: React.FC = () => {
                       </td>
                       <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">{r.bibNumber}</td>
                       <td className="p-4 font-bold text-slate-900 dark:text-white">{r.participantName}</td>
-                      <td className="p-4 text-slate-500 dark:text-slate-400">{r.gender === 'MALE' ? 'Pria' : 'Wanita'}</td>
+                      <td className="p-4 text-slate-500 dark:text-slate-500 dark:text-slate-400">{r.gender === 'MALE' ? 'Pria' : 'Wanita'}</td>
                       <td className="p-4 font-mono text-emerald-400 font-bold">{r.chipTime || '-'}</td>
-                      <td className="p-4 font-mono text-slate-600 dark:text-slate-300">{r.gunTime || '-'}</td>
+                      <td className="p-4 font-mono text-slate-600 dark:text-slate-600 dark:text-slate-300">{r.gunTime || '-'}</td>
                       <td className="p-4">
                         <span className={`px-2.5 py-1 rounded text-[10px] font-black uppercase ${
                           r.status === 'FINISH' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/50' : 'bg-red-950 text-red-400'

@@ -1,57 +1,160 @@
-import React from 'react';
-import { Trophy, ShieldCheck, Zap, Award, ExternalLink } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { Loader2, Info, ChevronRight, Home, Sparkles, Shield, FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import app from '../config/firebase';
+
+const DEFAULT_ABOUT = `# Tentang RacePro
+
+**RacePro** adalah platform manajemen event olahraga terpadu yang dirancang khusus untuk memenuhi kebutuhan penyelenggara dan peserta. Kami hadir untuk membuat pengalaman event olahraga lebih profesional, modern, dan bebas hambatan.
+
+---
+
+## Misi Kami
+
+Kami percaya bahwa setiap event olahraga berhak mendapatkan sistem manajemen yang handal. Mulai dari pendaftaran peserta, manajemen kategori harga, verifikasi QR Code untuk pengambilan Race Pack, hingga penerbitan sertifikat digital — semuanya dapat dikelola dalam satu ekosistem terpadu.
+
+## Fitur Unggulan
+
+### Manajemen Event End-to-End
+Dari pembuatan event, pengaturan kategori lomba, hingga publikasi — semuanya bisa dilakukan dalam hitungan menit.
+
+### Registrasi Peserta Otomatis
+Peserta dapat mendaftar secara mandiri dengan sistem BIB (Back Induk Bertanding) yang terintegrasi. Setiap pendaftar mendapatkan nomor BIB unik dan QR Code untuk keperluan check-in.
+
+### Verifikasi QR Code
+Sistem verifikasi QR Code real-time untuk pengambilan Race Pack, memastikan tidak ada duplikasi atau kesalahan data.
+
+### Sertifikat Digital
+Peserta yang berhasil finish akan mendapatkan e-certificate yang dapat diunduh kapan saja.
+
+---
+
+## Untuk Siapa Platform Ini?
+
+| Pengguna | Manfaat |
+|----------|---------|
+| **Penyelenggara Event** | Kelola pendaftaran, peserta, pembayaran, dan hasil lomba dari satu dashboard |
+| **Peserta Lomba** | Daftar online, cek status pendaftaran, unduh QR Code, dan klaim e-certificate |
+| **Admin & Panitia** | Verifikasi pembayaran, check-in peserta, dan publikasi hasil lomba secara real-time |
+
+---
+
+## Teknologi
+
+Dibangun dengan teknologi modern untuk performa maksimal:
+
+- ⚛ **React** — Antarmuka yang responsif dan interaktif
+- 🔥 **Firebase** — Database real-time dan autentikasi aman
+- ⚡ **Vite** — Performa development dan build yang cepat
+- 🎨 **Tailwind CSS** — Desain yang konsisten dan mudah dikustomisasi
+
+---
+
+> *"Website dan ekosistem ini dibangun secara menyeluruh oleh tim **RacePro**."*
+
+<div align="center" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #334155;">
+  <p style="color: #94a3b8; font-size: 0.8rem;">
+    © {new Date().getFullYear()} RacePro — Platform Management Event Olahraga Profesional
+  </p>
+</div>`;
 
 export const AboutPage: React.FC = () => {
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const db = getFirestore(app);
+        const docRef = doc(db, 'system_settings', 'pages_config');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().about) {
+          setContent(docSnap.data().about);
+        } else if (docSnap.exists() && !docSnap.data().about) {
+          // Seed default jika field kosong
+          await setDoc(docRef, { about: DEFAULT_ABOUT }, { merge: true });
+          setContent(DEFAULT_ABOUT);
+        } else {
+          // Seed full default jika dokumen tidak ada
+          const defaults = {
+            about: DEFAULT_ABOUT,
+            terms: `# Syarat dan Ketentuan\n\n...`,
+            privacy: `# Kebijakan Privasi\n\n...`
+          };
+          await setDoc(docRef, defaults);
+          setContent(DEFAULT_ABOUT);
+        }
+      } catch (error) {
+        console.error("Error fetching about page:", error);
+        setContent(DEFAULT_ABOUT);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-blue-950">
+        <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-16">
-      <div className="max-w-4xl mx-auto px-4 space-y-12">
-        <div className="text-center space-y-3">
-          <span className="text-xs font-extrabold text-orange-500 uppercase tracking-widest block">TENTANG GUWIGO EVENTS</span>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Official Event Platform</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed">
-            GUWIGO EVENTS adalah platform resmi dari PT Guwigo Teknologi Indonesia yang didesain untuk menghubungkan penyelenggara event olahraga dengan peserta secara cepat, transparan, dan terpercaya.
-          </p>
-          <div className="pt-2">
-            <a
-              href="https://guwigo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:bg-slate-800 text-orange-400 border border-slate-200 dark:border-slate-800 text-xs font-bold transition-all"
-            >
-              <span>Kunjungi Corporate Site (guwigo.com)</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+    <div className="min-h-screen  text-slate-900 dark:text-slate-100 pb-16">
+      {/* Breadcrumb */}
+      <div className="max-w-4xl mx-auto px-4 pt-8 pb-0">
+        <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-8">
+          <Link to="/" className="hover:text-orange-400 transition-colors flex items-center gap-1">
+            <Home className="w-3.5 h-3.5" /> Beranda
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <span className="text-orange-400">Tentang Kami</span>
+        </nav>
+      </div>
+
+      {/* Hero Header */}
+      <div className="relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-orange-600/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
+        
+        <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 text-orange-500 dark:text-orange-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
+            <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+            <span>RACEPRO — TENTANG KAMI</span>
           </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight leading-[1.05]">
+            Tentang <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-400 to-amber-200">
+              RacePro
+            </span>
+          </h1>
+          <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-base mt-4 max-w-2xl leading-relaxed">
+            **RacePro** didirikan pada tahun 2026 dengan visi tunggal: *Mendigitalisasi dan menyatukan ekosistem olahraga di seluruh Indonesia*.
+          </p>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-4 pb-24">
+        <div className="bg-white/60 dark:bg-blue-950/50 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-xl prose dark:prose-invert max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-lg prose-h3:mt-8 prose-p:text-slate-600 dark:prose-p:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-a:text-orange-500 dark:prose-a:text-orange-400 prose-a:no-underline hover:prose-a:text-orange-600 dark:hover:prose-a:text-orange-300 prose-strong:text-slate-900 dark:prose-strong:text-white prose-code:text-orange-500 dark:prose-code:text-orange-300 prose-code:bg-slate-100 dark:prose-code:bg-slate-100 dark:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-li:text-slate-600 dark:prose-li:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-hr:border-slate-200 dark:prose-hr:border-slate-300 dark:border-slate-700 prose-blockquote:border-orange-500 prose-blockquote:text-slate-500 dark:prose-blockquote:text-slate-600 dark:text-slate-500 dark:text-slate-400 prose-blockquote:bg-orange-50 dark:prose-blockquote:bg-slate-100 dark:bg-slate-800/50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-2xl backdrop-blur-md">
+          <ReactMarkdown>{content || DEFAULT_ABOUT}</ReactMarkdown>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
-            <Trophy className="w-8 h-8 text-amber-400 mb-3" />
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">Sistem BIB Server-Side</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Algoritma penomoran BIB unik dengan kualifikasi otomatis untuk mencegah terjadinya nomor ganda antar peserta.
-            </p>
-          </div>
-          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
-            <Zap className="w-8 h-8 text-orange-400 mb-3" />
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">QR Code Check-in</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Verifikasi cepat saat pengambilan Race Pack di venue event menggunakan pemindaian QR Code peserta yang aman.
-            </p>
-          </div>
-          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
-            <ShieldCheck className="w-8 h-8 text-emerald-400 mb-3" />
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">Manajemen Data Terproteksi</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Perlindungan data pribadi & rekam medis peserta dengan standar keamanan dan otorisasi terpusat.
-            </p>
-          </div>
-          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
-            <Award className="w-8 h-8 text-blue-400 mb-3" />
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">E-Sertifikat Finisher</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-              Penerbitan otomatis sertifikat digital finisher yang dapat langsung diunduh dari dashboard peserta.
-            </p>
+        {/* Footer CTA */}
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/80 dark:bg-blue-950 border border-slate-200 dark:border-slate-800 shadow-sm backdrop-blur-sm">
+            <Info className="w-5 h-5 text-orange-500 dark:text-orange-400" />
+            <span className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400">
+              Ada pertanyaan? Hubungi kami di{' '}
+              <a href="mailto:support@racepro.id" className="text-orange-500 dark:text-orange-400 font-bold hover:text-orange-600 dark:hover:text-orange-300">
+                support@racepro.id
+              </a>
+            </span>
           </div>
         </div>
       </div>

@@ -1,3 +1,21 @@
+// ============================================================
+// RACEPRO INDONESIA — Type Definitions
+// Platform Manajemen Event & Kompetisi Olahraga Terdepan
+// ============================================================
+
+// ── Constanta Prefix RacePro ──
+export const RACEPRO_QR_PREFIX = 'RACEPRO_QR_' as const;
+export const REGISTRATION_PREFIX = 'REG-' as const;
+export const CERTIFICATE_PREFIX = 'CERT-' as const;
+
+// ── Default Sistem ──
+export const DEFAULT_SITE_NAME = 'RacePro Indonesia' as const;
+export const DEFAULT_SITE_DESCRIPTION =
+  'Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia' as const;
+export const DEFAULT_CONTACT_EMAIL = 'support@racepro.id' as const;
+
+// ============================================================
+
 export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'ORGANIZER' | 'PARTICIPANT';
 
 export interface UserProfile {
@@ -56,6 +74,8 @@ export interface EventItem {
   status: EventStatus;
   organizerId: string;
   organizerName?: string;
+  organizerWebsite?: string;
+  organizerSocialMedia?: string;
   featured: boolean;
   facilities: string[];
   schedule: EventScheduleItem[];
@@ -143,7 +163,7 @@ export interface Participant {
   emergencyContactRelation: string;
   jerseySize: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL';
   bibNumber?: string;
-  qrToken: string;
+  qrToken: string; // Format: RACEPRO_QR_{eventId}_{participantId}_{hash}
   checkInStatus: boolean;
   checkInTime?: string;
   createdAt: string;
@@ -192,7 +212,7 @@ export interface RacePack {
   participantId: string;
   eventId: string;
   bibNumber: string;
-  qrToken: string;
+  qrToken: string; // Format: RACEPRO_QR_{eventId}_{participantId}_{hash}
   pickupStatus: 'PENDING' | 'READY' | 'COLLECTED';
   pickupLocation?: string;
   pickupSchedule?: string;
@@ -224,9 +244,10 @@ export interface RaceResult {
   updatedAt: string;
 }
 
+/** Sertifikat resmi RacePro — diterbitkan setelah peserta menyelesaikan event */
 export interface Certificate {
   id: string;
-  certificateNumber: string; // CERT-2026-XXXXX
+  certificateNumber: string; // CERT-2026-XXXXX (diterbitkan oleh RacePro)
   participantId: string;
   resultId: string;
   eventName: string;
@@ -280,17 +301,22 @@ export interface AuditLog {
   createdAt: string;
 }
 
+/** Pengaturan sistem RacePro Indonesia */
 export interface SystemSettings {
   id: string;
-  siteName: string;
-  siteDescription: string;
+  siteName: string;          // Default: "RacePro Indonesia"
+  siteDescription: string;   // Default: "Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia"
   logoUrl: string;
-  contactEmail: string;
+  contactEmail: string;      // Default: "support@racepro.id"
   contactPhone: string;
   maintenanceMode: boolean;
   paymentGatewayConfigured: boolean;
   paymentGatewayName: string;
   midtransServerKey?: string;
+  manualPaymentBank?: string;
+  manualPaymentAccount?: string;
+  manualPaymentName?: string;
+  adminFee?: number;
   oauthConfigured: boolean;
   updatedAt: string;
 }

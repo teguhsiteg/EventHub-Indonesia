@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   port: parseInt(process.env.SMTP_PORT || '587'),
   secure: process.env.SMTP_SECURE === 'true',
   auth: {
-    user: process.env.SMTP_USER || 'notifications@guwigo.com',
+    user: process.env.SMTP_USER || 'notifications@racepro.com',
     pass: process.env.SMTP_PASS || 'your-app-password',
   },
 });
@@ -50,7 +50,7 @@ function buildRegistrationEmailHtml(data) {
     <body>
       <div class="container">
         <div class="header">
-          <h1>GUWIGO RACEPRO</h1>
+          <h1>RACEPRO RACEPRO</h1>
           <p>Konfirmasi Pendaftaran Event</p>
         </div>
         <div class="content">
@@ -86,7 +86,7 @@ function buildRegistrationEmailHtml(data) {
             📌 <strong>Petunjuk Check-In Race Pack:</strong> Tunjukkan E-Ticket & QR Code di bawah ini saat pengambilan Race Pack Collection (RPC) di venue.
           </p>
 
-          <a href="https://guwigo.com/dashboard/checkin?qr=${qrToken}" class="cta-button">Lihat E-Ticket & QR Check-In</a>
+          <a href="https://racepro.com/dashboard/checkin?qr=${qrToken}" class="cta-button">Lihat E-Ticket & QR Check-In</a>
         </div>
         <div class="footer">
           &copy; ${new Date().getFullYear()} GuwiGo Event Platform. Semua hak dilindungi.<br>
@@ -164,7 +164,7 @@ exports.sendRegistrationConfirmationEmail = onDocumentCreated(
       });
 
       const mailOptions = {
-        from: `"GuwiGo RacePro Notifications" <${process.env.SMTP_USER || 'no-reply@guwigo.com'}>`,
+        from: `"GuwiGo RacePro Notifications" <${process.env.SMTP_USER || 'no-reply@racepro.com'}>`,
         to: recipientEmail,
         subject: `[GuwiGo] Konfirmasi Pendaftaran: ${eventData.name} (${participantData.bibNumber})`,
         html: emailHtml,

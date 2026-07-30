@@ -14,7 +14,7 @@ export async function ensureInitialSeed(): Promise<void> {
       return; // Already initialized with data
     }
 
-    console.log('Seeding initial RacePro showcase events to Firestore...');
+    console.log('Seeding initial RacePro Indonesia showcase events to Firestore...');
 
     const now = new Date().toISOString();
 

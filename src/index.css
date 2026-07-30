@@ -2,10 +2,265 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Basic base settings for the html and body */
+/* ============================================================
+   GUWIGO INDONESIA — Premium Design System
+   Platform Manajemen Event & Kompetisi Olahraga Terdepan
+   ============================================================ */
+
 @layer base {
+  :root {
+    --bg-main: #F0F4F9; /* Google Workspace style canvas */
+    --text-main: #1F1F1F; /* Google Material text color */
+  }
+
+  .dark {
+    --bg-main: #000000; /* Hitam pekat (AMOLED Black) */
+    --text-main: #E3E3E3; /* Material dark text */
+  }
+
+  /* ── Root Typography & Smooth Scrolling ── */
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   html, body {
-    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                 Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* ── Selection Colors ── */
+  ::selection {
+    @apply bg-blue-900/30 text-blue-900 dark:bg-amber-500/30 dark:text-amber-100;
+  }
+
+  ::-moz-selection {
+    @apply bg-blue-900/30 text-blue-900 dark:bg-amber-500/30 dark:text-amber-100;
+  }
+
+  /* ── Focus Ring ── */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-orange-500/60 ring-offset-2 ring-offset-slate-950;
   }
 }
+
+/* ============================================================
+   CUSTOM UTILITIES
+   ============================================================ */
+
+@layer utilities {
+  /* ── Glass Morphism ── */
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg;
+  }
+
+  .glass-dark {
+    @apply bg-slate-900/60 backdrop-blur-xl border border-slate-700/30 shadow-xl;
+  }
+
+  .glass-card {
+    @apply bg-white border border-slate-200/60 dark:bg-white/[0.04] backdrop-blur-2xl dark:border-white/[0.06] rounded-2xl
+           shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:shadow-md dark:hover:shadow-[0_8px_40px_rgba(245,158,11,0.08)]
+           transition-all duration-300;
+  }
+
+  .glass-card-interactive {
+    @apply bg-white border border-slate-200/60 dark:bg-white/[0.04] backdrop-blur-2xl dark:border-white/[0.06] rounded-2xl
+           shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] cursor-pointer
+           transition-all duration-300;
+    &:hover {
+      @apply bg-slate-50 dark:bg-white/[0.08] border-amber-500/30 dark:border-amber-500/20 -translate-y-0.5;
+      box-shadow: 0 8px 40px rgba(245, 158, 11, 0.08);
+    }
+  }
+
+  /* ── Gradient Text ── */
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-700 via-blue-600 to-amber-500
+           dark:from-blue-400 dark:via-amber-400 dark:to-orange-400
+           bg-clip-text text-transparent;
+  }
+
+  .text-gradient-white {
+    @apply bg-gradient-to-b from-white via-white/90 to-white/60
+           bg-clip-text text-transparent;
+  }
+
+  /* ── Animated Gradient Backgrounds ── */
+  .bg-animated-gradient {
+    background: linear-gradient(
+      -45deg,
+      #1e3a8a 0%,    /* blue-900 */
+      #2563eb 25%,   /* blue-600 */
+      #f59e0b 50%,   /* amber-500 */
+      #ea580c 75%,   /* orange-600 */
+      #1e3a8a 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient-shift 12s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .bg-radial-glow {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -20%, rgba(249, 115, 22, 0.15), transparent),
+      radial-gradient(ellipse 50% 80% at 80% 80%, rgba(245, 158, 11, 0.08), transparent);
+  }
+
+  /* ── Premium Shadows ── */
+  .shadow-premium {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.4),
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      0 8px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .shadow-glow-orange {
+    box-shadow: 0 0 40px -8px rgba(249, 115, 22, 0.3),
+                0 0 80px -16px rgba(249, 115, 22, 0.15);
+  }
+
+  /* ── Brand Gradients ── */
+  .bg-brand {
+    @apply bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400;
+  }
+
+  .bg-brand-vertical {
+    @apply bg-gradient-to-b from-orange-500 via-amber-500 to-yellow-400;
+  }
+
+  .border-brand {
+    border-image: linear-gradient(to right, #f97316, #f59e0b, #eab308) 1;
+  }
+
+  /* ── Subtle hover overlays ── */
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 30px -5px rgba(249, 115, 22, 0.2);
+  }
+
+  /* ── Skeleton loading ── */
+  .skeleton {
+    @apply animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800/50;
+  }
+}
+
+/* ============================================================
+   CUSTOM SCROLLBAR
+   ============================================================ */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(249, 115, 22, 0.3) transparent;
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-orange-500/20 rounded-full;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-orange-500/40;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse-orange {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+.animate-pulse-orange {
+  animation: pulse-orange 2s ease-in-out infinite;
+}
+
+/* Stagger children */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.30s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.40s; }
+
+/* ============================================================
+   MARKDOWN LIVE PREVIEW STYLES
+   ============================================================ */
+.prose h1, .prose h2, .prose h3 {
+  @apply font-black mt-6 mb-4 text-slate-900 dark:text-white;
+}
+.prose h1 { @apply text-2xl border-b border-slate-200 dark:border-white/[0.06] pb-2; }
+.prose h2 { @apply text-xl; }
+.prose h3 { @apply text-lg; }
+.prose p { @apply my-4 leading-relaxed; }
+.prose ul { @apply list-disc list-inside my-4 space-y-1; }
+.prose ol { @apply list-decimal list-inside my-4 space-y-1; }
+.prose strong { @apply font-bold text-slate-900 dark:text-white; }
+.prose em { @apply italic; }
+.prose a { @apply text-orange-500 hover:text-orange-600 underline underline-offset-2; }
+.prose hr { @apply my-6 border-slate-200 dark:border-white/[0.06]; }
+.prose blockquote { @apply border-l-4 border-slate-300 dark:border-slate-700 pl-4 italic text-slate-600 dark:text-slate-400 my-4; }
+.prose code { @apply bg-slate-100 dark:bg-slate-800 text-orange-500 font-mono text-sm px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700; }
 

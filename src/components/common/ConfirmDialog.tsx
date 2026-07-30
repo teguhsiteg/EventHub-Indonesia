@@ -24,8 +24,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl border border-slate-200 dark:border-slate-800 text-center zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-blue-950/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-blue-950 rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl border border-slate-200 dark:border-slate-800 text-center zoom-in-95 duration-200">
         
         <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
           isDanger ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-orange-100 dark:bg-orange-900/30 text-orange-600'
@@ -42,14 +42,14 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </div>
 
         <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase mb-2">{title}</h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
+        <p className="text-sm text-slate-500 dark:text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
           {message}
         </p>
 
         <div className="flex gap-3 w-full">
           <button
             onClick={onCancel}
-            className="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-colors"
+            className="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-600 dark:text-slate-300 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-colors"
           >
             {cancelText}
           </button>

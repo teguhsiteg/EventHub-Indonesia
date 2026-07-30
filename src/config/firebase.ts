@@ -1,10 +1,15 @@
+// ============================================================
+// RACEPRO INDONESIA — Konfigurasi Firebase
+// Inisialisasi koneksi Firebase untuk frontend RacePro.
+// ============================================================
+
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, initializeFirestore, doc, getDocFromServer, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 import firebaseConfigJson from '../../firebase-applet-config.json';
 
-// Use firebase-applet-config.json as primary or env vars as fallback
+// Gunakan firebase-applet-config.json sebagai sumber utama, fallback ke environment variable
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseConfigJson.apiKey,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfigJson.authDomain,
@@ -37,17 +42,16 @@ try {
 export const db: Firestore = firestoreInstance;
 export const storage: FirebaseStorage = getStorage(app);
 
-// Test connection on boot per Firebase skill guideline
+// Tes koneksi Firestore saat startup — fallback ke mode offline jika tidak tersedia
 async function testConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
   } catch (error) {
     if (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('unavailable'))) {
-      console.warn("Firestore running in offline resilience mode.");
+      console.warn("Firestore berjalan dalam mode offline resilience.");
     }
   }
 }
 testConnection();
 
 export default app;
-

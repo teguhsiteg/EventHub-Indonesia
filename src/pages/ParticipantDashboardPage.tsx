@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { 
@@ -46,7 +47,10 @@ export const ParticipantDashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { addNotification } = useSettings();
   
-  const [activeTab, setActiveTab] = useState<'overview' | 'registrations' | 'medical' | 'result'>('overview');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const activeTab = (searchParams.get('tab') || 'overview') as 'overview' | 'registrations' | 'medical' | 'result';
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [selectedReg, setSelectedReg] = useState<Registration | null>(null);
   const [participant, setParticipant] = useState<Participant | null>(null);
@@ -171,11 +175,11 @@ export const ParticipantDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-10">
+    <div className="min-h-screen  text-slate-900 dark:text-slate-100 py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Profile Header */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
+        <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-slate-900 dark:text-white text-2xl font-black uppercase shadow-lg shadow-orange-600/30">
               {user?.displayName ? user.displayName[0] : 'P'}
@@ -183,7 +187,7 @@ export const ParticipantDashboardPage: React.FC = () => {
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest bg-orange-950 px-2.5 py-1 rounded border border-orange-800/40">
-                  GUWIGO EVENTS PESERTA
+                  RACEPRO PESERTA
                 </span>
                 {eventData && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) <= 48 && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) >= -24 && (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/60 text-amber-400 text-[10px] font-black uppercase tracking-wider animate-pulse">
@@ -216,14 +220,14 @@ export const ParticipantDashboardPage: React.FC = () => {
             event={eventData}
             participant={participant}
             onOpenQr={() => setShowQrModal(true)}
-            onOpenMedical={() => setActiveTab('medical')}
-            hasCompletedMedical={!!medical && medical.agreeRisk}
+            onOpenMedical={() => navigate('?tab=medical')}
+            hasCompletedMedical={!!medical && medical.declarationAccepted}
           />
         )}
 
         {/* Registrations Switcher Dropdown if Multiple */}
         {registrations.length > 0 && (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Pilih Pendaftaran Event:</span>
             <select
               value={selectedReg?.id || ''}
@@ -231,7 +235,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                 const found = registrations.find(r => r.id === e.target.value);
                 if (found) loadRegistrationDetails(found);
               }}
-              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 w-full sm:w-auto"
+              className=" border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 w-full sm:w-auto"
             >
               {registrations.map(r => (
                 <option key={r.id} value={r.id}>
@@ -242,46 +246,11 @@ export const ParticipantDashboardPage: React.FC = () => {
           </div>
         )}
 
-        {/* Layout Wrapper */}
-        <div className="flex flex-col md:flex-row gap-8">
-          
-          {/* Sidebar */}
-          <div className="w-full md:w-64 shrink-0">
-            <div className="flex md:flex-col overflow-x-auto md:overflow-visible gap-2 md:sticky md:top-28 pb-4 md:pb-0 scrollbar-hide">
-              {[
-                { id: 'overview', label: 'Ringkasan Event', icon: Trophy },
-                { id: 'registrations', label: 'Pembayaran & Invoice', icon: CreditCard },
-                { id: 'medical', label: 'Asesmen Medis', icon: Activity },
-                { id: 'result', label: 'Hasil & E-Sertifikat', icon: Award }
-              ].map(tab => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center gap-3 px-5 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider whitespace-nowrap transition-all text-left ${
-                      isActive 
-                        ? 'bg-orange-500 text-slate-900 dark:text-white shadow-lg shadow-orange-500/20' 
-                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-200 hover:border-orange-500/50'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Main Content Area */}
-          <div className="flex-1 min-w-0">
-
         {/* Tab Contents */}
         {loading ? (
-          <div className="bg-white dark:bg-slate-900 h-64 rounded-3xl animate-pulse border border-slate-200 dark:border-slate-800" />
+          <div className="bg-white dark:bg-blue-950 h-64 rounded-3xl animate-pulse border border-slate-200 dark:border-slate-800" />
         ) : registrations.length === 0 ? (
-          <div className="p-16 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl">
+          <div className="p-16 text-center bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl">
             <Trophy className="w-12 h-12 text-slate-600 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">Belum Memiliki Pendaftaran Lomba</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-sm mx-auto">
@@ -296,7 +265,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                 
                 {/* Status Card */}
                 <div className="lg:col-span-2 space-y-6">
-                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+                  <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
                     <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
                       <div>
                         <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">NOMOR REGISTRASI</span>
@@ -312,19 +281,19 @@ export const ParticipantDashboardPage: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
-                      <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800">
+                      <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800">
                         <span className="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">NOMOR BIB</span>
                         <span className="block text-2xl font-black text-amber-400 font-mono mt-1">
                           {participant?.bibNumber || 'DIPROSES'}
                         </span>
                       </div>
-                      <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800">
+                      <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800">
                         <span className="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">UKURAN JERSEY</span>
                         <span className="block text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
                           {participant?.jerseySize || '-'}
                         </span>
                       </div>
-                      <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800">
+                      <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800">
                         <span className="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">CHECK-IN RACE PACK</span>
                         <span className={`block text-xs font-black mt-2 ${participant?.checkInStatus ? 'text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
                           {participant?.checkInStatus ? 'SUDAH AMBIL' : 'SIAP AMBIL'}
@@ -334,7 +303,7 @@ export const ParticipantDashboardPage: React.FC = () => {
 
                     {/* Event Banner Summary */}
                     {eventData && (
-                      <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-4">
+                      <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-4">
                         <img src={eventData.banner} alt={eventData.name} className="w-16 h-16 rounded-xl object-cover shrink-0" />
                         <div>
                           <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase">{eventData.name}</h4>
@@ -358,7 +327,7 @@ export const ParticipantDashboardPage: React.FC = () => {
 
             {/* INVOICE & PAYMENT TAB */}
             {activeTab === 'registrations' && payment && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto space-y-6">
+              <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
                   <div>
                     <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">TAGIHAN INVOICE</span>
@@ -371,7 +340,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+                <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
                   <div className="flex justify-between text-slate-600 dark:text-slate-300">
                     <span>Total Pembayaran:</span>
                     <span className="font-black text-amber-400 text-base">{formatRupiah(payment.amount)}</span>
@@ -392,7 +361,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                         value={proofUrl}
                         onChange={(e) => setProofUrl(e.target.value)}
                         placeholder="https://drive.google.com/..."
-                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
                       />
                     </div>
                     <button
@@ -410,7 +379,7 @@ export const ParticipantDashboardPage: React.FC = () => {
 
             {/* MEDICAL TAB */}
             {activeTab === 'medical' && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto space-y-6">
+              <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto space-y-6">
                 <div className="space-y-1">
                   <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase">Asesmen Kondisi Kesehatan Peserta</h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400">Pernyataan medis wajib untuk keselamatan dan pertolongan tim medis di lintasan.</p>
@@ -423,11 +392,11 @@ export const ParticipantDashboardPage: React.FC = () => {
                       rows={3}
                       value={allergies}
                       onChange={(e) => setAllergies(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
                     />
                   </div>
 
-                  <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-start gap-3">
+                  <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800 flex items-start gap-3">
                     <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                     <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
                       Saya menyatakan bahwa data kesehatan yang diisi adalah benar, serta menyetujui standar keselamatan dan pertolongan medis dari penyelenggara RacePro.
@@ -446,13 +415,13 @@ export const ParticipantDashboardPage: React.FC = () => {
 
             {/* RESULT & CERTIFICATE TAB */}
             {activeTab === 'result' && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto text-center space-y-6">
+              <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto text-center space-y-6">
                 <Award className="w-16 h-16 text-amber-400 mx-auto" />
                 
                 {result ? (
                   <div className="space-y-4">
                     <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase">{result.participantName}</h3>
-                    <div className="grid grid-cols-2 gap-4 text-left p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs">
+                    <div className="grid grid-cols-2 gap-4 text-left p-4  rounded-2xl border border-slate-200 dark:border-slate-800 text-xs">
                       <div>
                         <span className="text-slate-500 dark:text-slate-400 font-bold uppercase">Gun Time:</span>
                         <span className="block text-lg font-mono font-bold text-slate-900 dark:text-white">{result.gunTime}</span>
@@ -485,15 +454,12 @@ export const ParticipantDashboardPage: React.FC = () => {
           </>
         )}
 
-          </div>
-        </div>
-
       </div>
 
       {/* QR Modal */}
       {showQrModal && participant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950/80 backdrop-blur-md">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-sm w-full relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-blue-950/80 backdrop-blur-md">
+          <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-sm w-full relative">
             <button
               onClick={() => setShowQrModal(false)}
               className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white"
