@@ -63,7 +63,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-slate-50 dark:bg-[#0a0f1e]">
+    <div className="h-[100dvh] lg:min-h-screen w-full flex overflow-hidden bg-slate-50 dark:bg-[#0a0f1e]">
       {/* Animated background blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute top-0 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-blue-600/10 via-yellow-500/5 to-transparent blur-3xl" />
@@ -123,21 +123,21 @@ export const RegisterPage: React.FC = () => {
       </div>
 
       {/* Right: Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md space-y-8">
+      <div className="w-full h-full lg:w-1/2 flex flex-col justify-center overflow-y-auto px-6 py-4 sm:p-12">
+        <div className="w-full max-w-md mx-auto space-y-4 sm:space-y-6 my-auto">
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-4">
-            <div className="inline-flex mb-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-yellow-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <Trophy className="w-7 h-7 text-white" />
+            <div className="inline-flex mb-3">
+              <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Trophy className="w-6 h-6 text-white" />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500">PRO</span></h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">RACE<span className="text-blue-600">PRO</span></h2>
           </div>
 
-          <div>
+          <div className="text-center lg:text-left">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Daftar</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
               Isi data diri Anda untuk membuat akun baru
             </p>
           </div>
