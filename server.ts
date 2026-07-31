@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
+import nodemailer from 'nodemailer';
 
 const app = express();
 const PORT = 3000;
@@ -99,7 +100,7 @@ app.get('/api/export/csv', (req: Request, res: Response) => {
 });
 
 // 6. Automated Registration Email Trigger API
-app.post('/api/notifications/send-registration-email', (req: Request, res: Response) => {
+app.post('/api/notifications/send-registration-email', async (req: Request, res: Response) => {
   const { recipientEmail, participantName, registrationNumber, bibNumber, eventName, categoryName, eventDate, location, qrToken } = req.body;
 
   if (!recipientEmail || !participantName || !eventName) {
@@ -140,18 +141,37 @@ app.post('/api/notifications/send-registration-email', (req: Request, res: Respo
     </html>
   `;
 
-  console.log(`[Email Service Triggered] Sent automated email to: ${recipientEmail} for Event: ${eventName} (BIB: ${bibNumber})`);
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'parthner@guwigo.com',
+        pass: 'iiwh kcgf bkdo kxop'
+      }
+    });
 
-  return res.json({
-    success: true,
-    message: `Email konfirmasi pendaftaran berhasil dikirim ke ${recipientEmail}`,
-    emailDetails: {
-      recipient: recipientEmail,
-      subject: `[GuwiGo] Konfirmasi Pendaftaran: ${eventName} (${bibNumber})`,
-      sentAt: new Date().toISOString(),
-      previewHtml: emailHtml,
-    }
-  });
+    const info = await transporter.sendMail({
+      from: '"GuwiGo Events" <parthner@guwigo.com>',
+      to: recipientEmail,
+      subject: `[GuwiGo] Konfirmasi Pendaftaran: ${eventName} (${bibNumber || 'PENDING'})`,
+      html: emailHtml
+    });
+
+    console.log(`[Email Service] Sent automated email to: ${recipientEmail} for Event: ${eventName}. MessageId: ${info.messageId}`);
+
+    return res.json({
+      success: true,
+      message: `Email konfirmasi pendaftaran berhasil dikirim ke ${recipientEmail}`,
+      emailDetails: {
+        recipient: recipientEmail,
+        subject: `[GuwiGo] Konfirmasi Pendaftaran: ${eventName} (${bibNumber})`,
+        sentAt: new Date().toISOString()
+      }
+    });
+  } catch (error: any) {
+    console.error('[Email Service Error]', error);
+    return res.status(500).json({ success: false, message: 'Gagal mengirim email konfirmasi.', error: error.message });
+  }
 });
 
 // Mount Vite middleware for dev / static for production
