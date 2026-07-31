@@ -122,7 +122,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {mobileSidebarOpen && (
           <div className="fixed inset-0 z-40 xl:hidden">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileSidebarOpen(false)} />
-            <aside className="absolute top-16 left-0 bottom-0 w-64  border-r border-slate-200 dark:border-white/[0.06] p-3 flex flex-col gap-1 animate-in slide-in-from-left">
+            <aside className="absolute top-16 left-0 bottom-0 w-64 bg-slate-50 dark:bg-blue-950 border-r border-slate-200 dark:border-white/[0.06] p-3 flex flex-col gap-1 animate-in slide-in-from-left">
               {adminTabs.map(tab => {
                 const Icon = tab.icon;
                 const tabParam = new URLSearchParams(tab.href.includes('?') ? tab.href.split('?')[1] : '').get('tab');
