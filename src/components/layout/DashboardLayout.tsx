@@ -117,7 +117,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         {mobileSidebarOpen && (
           <div className="fixed inset-0 z-40 lg:hidden">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileSidebarOpen(false)} />
-            <aside className="absolute top-16 left-0 bottom-0 w-64  border-r border-slate-200 dark:border-white/[0.06] p-4 flex flex-col gap-1 animate-in slide-in-from-left">
+            <aside className="absolute top-16 left-0 bottom-0 w-64 bg-white dark:bg-[#0a0f1e] border-r border-slate-200 dark:border-white/[0.06] p-4 flex flex-col gap-1 animate-in slide-in-from-left">
               {sidebarTabs.map(tab => {
                 const Icon = tab.icon;
                 const isActive = location.pathname + location.search === tab.href || 
