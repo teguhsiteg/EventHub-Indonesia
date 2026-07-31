@@ -1,27 +1,29 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper functions
+    
+    // ==========================================
+    // FUNGSI BANTUAN (HELPERS)
+    // ==========================================
     function isAuthenticated() {
       return request.auth != null;
     }
-
+    
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
-
+    
     function getUserData() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
-
+    
     function isAdmin() {
       return isAuthenticated() && (
         getUserData().role == 'SUPER_ADMIN' || 
         getUserData().role == 'ADMIN'
       );
     }
-
+    
     function isOrganizer() {
       return isAuthenticated() && (
         getUserData().role == 'ORGANIZER' || 
@@ -29,57 +31,38 @@ service cloud.firestore {
       );
     }
 
-    // Users Collection
+    // ==========================================
+    // 1. DATA PUBLIK (Semua Boleh Baca, Admin/Organizer Boleh Tulis)
+    // ==========================================
+    match /system_settings/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /events/{document=**} { allow read: if true; allow write: if isOrganizer(); }
+    match /event_categories/{document=**} { allow read: if true; allow write: if isOrganizer(); }
+    match /sponsors/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /pages/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /faqs/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /galleries/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /announcements/{document=**} { allow read: if true; allow write: if isAdmin(); }
+    match /race_results/{document=**} { allow read: if true; allow write: if isOrganizer(); }
+    match /certificates/{document=**} { allow read: if true; allow write: if isOrganizer(); }
+    match /participants/{document=**} { allow read: if true; allow create: if isAuthenticated(); allow update: if isAuthenticated(); allow delete: if isAdmin(); }
+
+    // ==========================================
+    // 2. DATA SENSITIF PENGGUNA (Hanya Pemilik & Admin)
+    // ==========================================
     match /users/{userId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() && request.auth.uid == userId;
       allow update: if isOwner(userId) || isAdmin();
       allow delete: if isAdmin();
     }
-
-    // Events Collection
-    match /events/{eventId} {
-      allow read: if true; // Public read
-      allow create: if isOrganizer();
-      allow update, delete: if isAdmin() || (isOrganizer() && resource.data.organizerId == request.auth.uid);
-    }
-
-    // Event Categories Collection
-    match /event_categories/{categoryId} {
-      allow read: if true;
-      allow write: if isOrganizer();
-    }
-
-    // Registrations Collection
+    
     match /registrations/{registrationId} {
       allow read: if isAuthenticated() && (isAdmin() || isOwner(resource.data.userId) || isOrganizer());
       allow create: if isAuthenticated();
       allow update: if isAuthenticated() && (isAdmin() || isOwner(resource.data.userId) || isOrganizer());
       allow delete: if isAdmin();
     }
-
-    // Participants Collection
-    match /participants/{participantId} {
-      allow read: if true; // Public results check basic non-sensitive fields or verified token
-      allow create: if isAuthenticated();
-      // Only admins/organizers can modify checkIn fields. Owner can update other fields.
-      allow update: if isAuthenticated() && (
-        isAdmin() || isOrganizer() || 
-        (isOwner(resource.data.userId) && 
-         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['jerseySize', 'emergencyContactName', 'emergencyContactPhone', 'emergencyContactRelation', 'address', 'city', 'province', 'bloodType']))
-      );
-      allow delete: if isAdmin();
-    }
-
-    // Payments Collection
-    match /payments/{paymentId} {
-      allow read: if isAuthenticated() && (isAdmin() || isOwner(resource.data.userId) || isOrganizer());
-      allow create: if isAuthenticated();
-      allow update: if isAdmin() || isOrganizer();
-      allow delete: if isAdmin();
-    }
-
-    // Medical Assessments Collection
+    
     match /medical_assessments/{assessmentId} {
       allow read: if isAuthenticated() && (isAdmin() || isOwner(resource.data.userId));
       allow create: if isAuthenticated();
@@ -87,59 +70,36 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Race Packs Collection
+    // ==========================================
+    // 3. PEMBAYARAN, AUDIT, & SISTEM INTERNAL (Sangat Ketat)
+    // ==========================================
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && (isAdmin() || isOwner(resource.data.userId) || isOrganizer());
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin() || isOrganizer();
+    }
+    
     match /race_packs/{packId} {
       allow read: if isAuthenticated();
       allow write: if isAdmin() || isOrganizer();
     }
-
-    // Race Results Collection
-    match /race_results/{resultId} {
-      allow read: if true; // Public results
-      allow write: if isAdmin() || isOrganizer();
-    }
-
-    // Certificates Collection
-    match /certificates/{certId} {
-      allow read: if true;
-      allow write: if isAdmin() || isOrganizer();
-    }
-
-    // Sponsors, Galleries, FAQs, Announcements
-    match /sponsors/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    match /galleries/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    match /faqs/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    match /announcements/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    // Payouts
+    
     match /payouts/{id} {
-      allow read: if isAuthenticated() && (isAdmin() || isOrganizer());
-      allow write: if isAuthenticated() && (isAdmin() || isOrganizer());
+      allow read, write: if isAuthenticated() && (isAdmin() || isOrganizer());
     }
-
-    // Audit Logs
+    
     match /audit_logs/{id} {
       allow read: if isAdmin();
       allow create: if isAuthenticated();
-      allow update, delete: if false; // Immutable audit log
+      allow update, delete: if false; // Immutable (Tidak bisa diubah/dihapus)
     }
 
-    // System Settings
-    match /system_settings/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
+    // ==========================================
+    // 4. ATURAN PENYELAMAT (Sapu Jagat)
+    // ==========================================
+    // Memastikan tidak ada koleksi tertinggal yang membuat error jika diakses Admin.
+    match /{document=**} {
+      allow read, write: if isAdmin();
     }
   }
 }

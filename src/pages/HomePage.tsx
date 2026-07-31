@@ -46,77 +46,76 @@ export const HomePage: React.FC = () => {
     <div className="min-h-screen  text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-blue-500 selection:text-slate-900">
 
       {/* HERO SECTION */}
-      <section className="relative pt-16 pb-28 md:pt-24 md:pb-36 overflow-hidden">
-        {/* Animated gradient blobs */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-blue-600/20 blur-[150px] rounded-full animate-pulse" />
-          <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-yellow-500/15 blur-[130px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
-          <div className="absolute -bottom-20 left-1/3 w-[350px] h-[350px] bg-blue-600/10 blur-[140px] rounded-full animate-pulse" style={{ animationDelay: '4s' }} />
+      <section className="relative pt-24 pb-32 md:pt-36 md:pb-48 overflow-hidden bg-[#020617]">
+        {/* Cinematic Background */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1920&q=80" 
+            alt="Runners" 
+            className="w-full h-full object-cover opacity-30 mix-blend-overlay"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#020617] via-transparent to-[#020617]" />
         </div>
 
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(249,115,22,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        {/* Animated Glows */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-blue-600/30 blur-[150px] rounded-full animate-pulse" />
+          <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-yellow-500/20 blur-[130px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-4xl mx-auto space-y-8">
-
+          <div className="text-center max-w-5xl mx-auto space-y-10">
             {/* Brand badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 text-blue-500 dark:text-blue-400 text-xs font-bold uppercase tracking-[0.2em] shadow-xl shadow-blue-500/5 dark:shadow-blue-500/10">
+            <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-blue-400 text-xs font-bold uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:bg-white/10 transition-colors cursor-default">
               <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
-              <span>RACEPRO — Platform Tiket Event Olahraga Premium</span>
+              <span>RACEPRO — THE ULTIMATE SPORTS PLATFORM</span>
             </div>
 
             {/* Main headline */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.05]">
+            <h1 className="text-5xl sm:text-7xl md:text-8xl font-black text-white tracking-tighter leading-[1.1]">
               TEMUKAN EVENT<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-blue-600 to-yellow-500 dark:from-blue-400 dark:via-yellow-400 dark:to-blue-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-yellow-400 drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]">
                 OLAHRAGA TERBAIKMU
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl mx-auto font-normal">
+            <p className="text-slate-300 text-lg md:text-2xl leading-relaxed max-w-3xl mx-auto font-light">
               RacePro menghubungkan kamu dengan ribuan event olahraga terbaik di Indonesia.
-              Dari lari marathon hingga trail run — satu platform, semua event.
+              Dari lari marathon hingga trail run — <span className="font-semibold text-white">satu platform, semua event.</span>
             </p>
 
             {/* Hero CTAs */}
-            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-6">
               <Link
                 to="/events"
-                className="w-full sm:w-auto group px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-xl shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto group px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black text-sm uppercase tracking-widest shadow-[0_0_40px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 border border-blue-400/50"
               >
                 <span>Jelajahi Event</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
               </Link>
               <Link
                 to="/register"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white/80 dark:bg-blue-950/80 backdrop-blur-sm hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs uppercase tracking-wider transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white/5 backdrop-blur-md hover:bg-white/10 border border-white/20 text-white font-bold text-sm uppercase tracking-widest transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3"
               >
-                <Users className="w-4 h-4 text-blue-400" />
+                <Users className="w-5 h-5 text-blue-400" />
                 <span>Daftar Sebagai Peserta</span>
-              </Link>
-              <Link
-                to="/host-event"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white dark:bg-blue-950/60 backdrop-blur-sm hover:bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-800/60 text-slate-600 dark:text-slate-500 dark:text-slate-400 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2"
-              >
-                <Trophy className="w-4 h-4 text-yellow-400" />
-                <span>Selenggarakan Event</span>
               </Link>
             </div>
 
-            {/* Feature highlights */}
-            <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 text-left max-w-4xl mx-auto">
+            {/* Premium Features Bento Box */}
+            <div className="pt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-left max-w-5xl mx-auto">
               {[
-                { icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', title: 'BIB System Terverifikasi', desc: 'Verifikasi otomatis tanpa duplikasi' },
-                { icon: Zap, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20', title: 'QR Check-In Instan', desc: 'Pengambilan Race Pack cepat' },
-                { icon: ShieldCheck, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20', title: 'Akses Peserta Aman', desc: 'Privasi data medis & pribadi terjaga' },
-                { icon: Award, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20', title: 'Sertifikat Digital', desc: 'E-Certificate resmi hasil lomba' },
+                { icon: CheckCircle2, bg: 'bg-gradient-to-br from-emerald-500/20 to-emerald-900/40', border: 'border-emerald-500/30', color: 'text-emerald-400', title: 'BIB Verifikasi', desc: 'Sistem anti duplikasi canggih' },
+                { icon: Zap, bg: 'bg-gradient-to-br from-yellow-500/20 to-yellow-900/40', border: 'border-yellow-500/30', color: 'text-yellow-400', title: 'QR Check-In', desc: 'Scan instan Race Pack' },
+                { icon: ShieldCheck, bg: 'bg-gradient-to-br from-blue-500/20 to-blue-900/40', border: 'border-blue-500/30', color: 'text-blue-400', title: 'Akses Aman', desc: 'Privasi data level bank' },
+                { icon: Award, bg: 'bg-gradient-to-br from-pink-500/20 to-pink-900/40', border: 'border-pink-500/30', color: 'text-pink-400', title: 'E-Certificate', desc: 'Sertifikat digital terverifikasi' },
               ].map((feat, idx) => (
-                <div key={idx} className={`p-4 rounded-xl bg-white dark:bg-blue-950/60 backdrop-blur-sm border ${feat.bg} hover:border-slate-300 dark:border-slate-700 transition-colors group`}>
-                  <feat.icon className={`w-5 h-5 ${feat.color.replace('400', '600 dark:text-' + feat.color.split('-')[1] + '-400')} mb-2`} />
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{feat.title}</h4>
-                  <p className="text-[11px] text-slate-600 dark:text-slate-500">{feat.desc}</p>
+                <div key={idx} className={`p-6 rounded-3xl backdrop-blur-lg border ${feat.bg} ${feat.border} hover:border-white/50 hover:bg-white/10 transition-all duration-300 group`}>
+                  <feat.icon className={`w-8 h-8 ${feat.color} mb-4 group-hover:scale-110 transition-transform`} />
+                  <h4 className="text-sm font-black text-white uppercase tracking-wider mb-2">{feat.title}</h4>
+                  <p className="text-xs text-slate-400 leading-relaxed">{feat.desc}</p>
                 </div>
               ))}
             </div>
@@ -125,19 +124,21 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* STATS BAR */}
-      <section className="relative -mt-8 mb-8 z-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-slate-900 via-slate-900/95 to-slate-900 border border-slate-300 dark:border-slate-800 rounded-2xl p-6 md:p-8 backdrop-blur-xl shadow-2xl shadow-black/40">
-            <div className="grid grid-cols-3 gap-6 text-center">
+      <section className="relative -mt-16 mb-20 z-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="glass-dark rounded-3xl p-8 md:p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] border-t border-white/10 bg-[#0a0f25]/80 backdrop-blur-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 divide-y md:divide-y-0 md:divide-x divide-white/10 text-center">
               {[
-                { value: '500+', label: 'Event', icon: Trophy, color: 'text-blue-400' },
-                { value: '50.000+', label: 'Peserta', icon: Users, color: 'text-yellow-400' },
-                { value: '100+', label: 'Kota', icon: MapPin, color: 'text-emerald-400' },
+                { value: '500+', label: 'Event Sukses', icon: Trophy, color: 'text-blue-400' },
+                { value: '50.000+', label: 'Peserta Aktif', icon: Users, color: 'text-yellow-400' },
+                { value: '100+', label: 'Kota Jangkauan', icon: MapPin, color: 'text-emerald-400' },
               ].map((stat, idx) => (
-                <div key={idx} className="space-y-1">
-                  <stat.icon className={`w-5 h-5 ${stat.color} mx-auto`} />
-                  <div className="text-2xl md:text-3xl font-black text-white">{stat.value}</div>
-                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</div>
+                <div key={idx} className="space-y-3 pt-6 md:pt-0 first:pt-0 flex flex-col items-center">
+                  <div className={`p-3 rounded-2xl bg-white/5 border border-white/10 ${stat.color} shadow-[0_0_15px_rgba(255,255,255,0.05)]`}>
+                    <stat.icon className="w-6 h-6" />
+                  </div>
+                  <div className="text-4xl md:text-5xl font-black text-white tracking-tighter">{stat.value}</div>
+                  <div className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -192,26 +193,26 @@ export const HomePage: React.FC = () => {
               <p className="text-xs text-slate-500 mt-2">Jadwal event olahraga terbaru akan segera diperbarui di RacePro.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredEvents.map((event, idx) => (
                 <Link
                   key={event.id}
                   to={`/events/${event.slug}`}
-                  className={`group glass-card-interactive overflow-hidden flex flex-col animate-fade-in-up stagger-${(idx % 8) + 1}`}
+                  className="group relative rounded-3xl overflow-hidden bg-[#0a0f25] border border-white/10 hover:border-blue-500/50 shadow-lg hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] transition-all duration-500 hover:-translate-y-2 flex flex-col"
                 >
                   {/* Banner */}
-                  <div className="relative h-52  overflow-hidden">
+                  <div className="relative h-60 overflow-hidden">
                     <img
                       src={event.banner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=800&q=80'}
                       alt={event.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-50 dark:from-[#020617] via-slate-50/40 dark:via-[#020617]/40 to-transparent" />
-                    <div className="absolute top-4 left-4">
-                      <span className={`text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-md backdrop-blur-md shadow-lg ${
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f25] via-[#0a0f25]/40 to-transparent" />
+                    <div className="absolute top-5 left-5">
+                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-xl backdrop-blur-md shadow-xl border border-white/20 ${
                         event.status === 'REGISTRATION_OPEN' 
-                          ? 'bg-blue-500/90 text-white' 
-                          : 'bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-600 dark:text-slate-300'
+                          ? 'bg-blue-600/90 text-white' 
+                          : 'bg-slate-800/90 text-slate-300'
                       }`}>
                         {event.status === 'REGISTRATION_OPEN' ? 'Pendaftaran Buka' : event.status}
                       </span>
@@ -219,29 +220,31 @@ export const HomePage: React.FC = () => {
                   </div>
 
                   {/* Body */}
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                    <div>
-                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-500 dark:text-slate-400 mb-2">
-                        <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
+                  <div className="p-6 flex-1 flex flex-col justify-between relative z-10 -mt-6">
+                    <div className="space-y-3">
+                      <div className="inline-flex items-center gap-2 text-[11px] font-bold text-yellow-400 bg-yellow-400/10 px-3 py-1.5 rounded-lg border border-yellow-400/20">
+                        <MapPin className="w-3.5 h-3.5" />
                         <span className="truncate">{event.location}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                      <h3 className="text-xl font-black text-white group-hover:text-blue-400 transition-colors line-clamp-2 leading-tight">
                         {event.name}
                       </h3>
-                      <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed">
                         {event.description}
                       </p>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 font-medium">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 uppercase tracking-wider group-hover:gap-2 transition-all">
-                        <span>Detail</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </span>
+                    <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Tanggal Event</span>
+                        <span className="flex items-center gap-2 text-sm text-white font-bold">
+                          <Calendar className="w-4 h-4 text-blue-400" />
+                          {new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:border-blue-400 group-hover:text-white text-slate-400 transition-all">
+                        <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -251,24 +254,32 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* SPONSOR TIERS */}
+      {/* SPONSOR MARQUEE */}
       {sponsors.length > 0 && (
-        <section className="py-16 border-t border-slate-300 dark:border-slate-800/60">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-[10px] font-black uppercase tracking-widest mb-6">
-              <Star className="w-3 h-3" />
+        <section className="py-24 border-y border-white/5 bg-[#050b1a] overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-black uppercase tracking-[0.2em] mb-4">
+              <Star className="w-4 h-4 animate-pulse" />
               <span>Mitra & Sponsor RacePro</span>
             </div>
-            <h3 className="text-xl font-black text-white uppercase mb-10">
-              Dipercaya Oleh <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">Partner Terbaik</span>
+            <h3 className="text-2xl font-black text-white uppercase tracking-widest">
+              Dipercaya Oleh <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-yellow-400">Partner Terbaik</span>
             </h3>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              {sponsors.map(sp => (
-                <div key={sp.id} className="flex items-center gap-3 bg-white dark:bg-blue-950/60 backdrop-blur-sm px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-800 hover:border-blue-500/30 transition-all hover:scale-105">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-yellow-500/20 border border-blue-500/20 flex items-center justify-center">
-                    <Trophy className="w-4 h-4 text-blue-400" />
+          </div>
+          
+          <div className="relative w-full flex overflow-x-hidden group">
+            {/* Left and Right fades */}
+            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#050b1a] to-transparent z-10" />
+            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#050b1a] to-transparent z-10" />
+            
+            <div className="animate-marquee flex whitespace-nowrap gap-8 py-4 items-center pl-8">
+              {/* Duplicate array 3 times for smooth infinite scroll */}
+              {[...sponsors, ...sponsors, ...sponsors].map((sp, i) => (
+                <div key={`${sp.id}-${i}`} className="flex-shrink-0 flex items-center gap-4 bg-white/5 backdrop-blur-xl px-8 py-5 rounded-2xl border border-white/10 hover:border-blue-500/40 hover:bg-white/10 transition-colors shadow-lg">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-yellow-500/20 border border-white/10 flex items-center justify-center">
+                    <Trophy className="w-5 h-5 text-blue-400" />
                   </div>
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-600 dark:text-slate-300 uppercase">{sp.name}</span>
+                  <span className="text-sm font-black text-white uppercase tracking-widest">{sp.name}</span>
                 </div>
               ))}
             </div>
@@ -277,38 +288,44 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* BOTTOM CTA */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#020617] to-slate-950" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-500/10 blur-[150px] rounded-full pointer-events-none" />
+      <section className="py-32 relative overflow-hidden bg-[#020617]">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1571008840902-27b2fa1eb13c?auto=format&fit=crop&w=1920&q=80" 
+            alt="Finish Line" 
+            className="w-full h-full object-cover opacity-10 mix-blend-overlay"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050b1a] via-[#020617]/90 to-[#020617]" />
+        </div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-600/20 blur-[200px] rounded-full pointer-events-none z-0" />
         
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-4 space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest">
-            <Zap className="w-3.5 h-3.5" />
-            <span>Siap Berlaga?</span>
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-4 space-y-10">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+            <Zap className="w-4 h-4 animate-pulse" />
+            <span>Siap Menembus Batas?</span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight leading-tight">
+          <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-[1.1]">
             Daftar Event<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">Sekarang</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-yellow-400 drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]">Sekarang</span>
           </h2>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto leading-relaxed">
-            Daftar akun peserta sekarang untuk kemudahan pendaftaran event, verifikasi QR Code Race Pack, dan klaim sertifikat finisher resmi — semua dalam satu platform RacePro.
+          <p className="text-slate-300 text-lg max-w-2xl mx-auto leading-relaxed font-light">
+            Buat akun peserta sekarang untuk kemudahan pendaftaran event, verifikasi QR Code Race Pack, dan klaim sertifikat finisher resmi — semua dalam satu platform RacePro.
           </p>
-          <div className="pt-2 flex flex-col sm:flex-row justify-center gap-4">
+          <div className="pt-6 flex flex-col sm:flex-row justify-center gap-6">
             <Link
               to="/register"
-              className="group px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-xl shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+              className="group px-10 py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black text-sm uppercase tracking-widest shadow-[0_0_40px_rgba(59,130,246,0.4)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 border border-blue-400/50"
             >
+              <Zap className="w-5 h-5" />
               <span>Daftar Akun Peserta</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
-            <a
-              href="https://racepro.com"
-              target="_blank"
-              rel="noreferrer"
-              className="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-black/30 transition-all transform hover:-translate-y-0.5 border border-white/20 hover:border-white/40"
+            <Link
+              to="/host-event"
+              className="px-10 py-5 rounded-2xl bg-white/5 backdrop-blur-md hover:bg-white/10 text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-black/30 transition-all transform hover:-translate-y-1 border border-white/20 hover:border-white/40 flex items-center justify-center gap-3"
             >
-              Buat Event Sendiri
-            </a>
+              <Trophy className="w-5 h-5 text-yellow-400" />
+              <span>Buat Event Sendiri</span>
+            </Link>
           </div>
         </div>
       </section>
