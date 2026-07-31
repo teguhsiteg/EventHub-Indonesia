@@ -8,7 +8,8 @@ import {
   updateDoc, 
   query, 
   where, 
-  limit 
+  limit,
+  orderBy
 } from 'firebase/firestore';
 import { RacePack, Participant } from '../types';
 import { logAuditEvent } from './auditService';
@@ -89,4 +90,16 @@ export async function checkInParticipantByQr(
     participant: { ...partData, checkInStatus: true, checkInTime: now },
     message: `Check-in BERHASIL untuk ${partData.fullName} (BIB: ${partData.bibNumber}). Race Pack diserahkan.`
   };
+}
+
+export async function getRecentCheckIns(limitCount: number = 20): Promise<Participant[]> {
+  const q = query(
+    collection(db, 'participants'), 
+    where('checkInStatus', '==', true), 
+    orderBy('checkInTime', 'desc'), 
+    limit(limitCount)
+  );
+  
+  const snap = await getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Participant));
 }

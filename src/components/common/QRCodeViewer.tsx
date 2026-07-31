@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import QRCode from 'qrcode';
+import QRCodeStyling from 'qr-code-styling';
 import { QrCode, ShieldCheck } from 'lucide-react';
 
 interface QRCodeViewerProps {
@@ -13,20 +13,44 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
   size = 240, 
   label = 'Tunjukkan QR Code ini kepada panitia saat pengambilan Race Pack' 
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const qrCodeRef = useRef<QRCodeStyling | null>(null);
 
   useEffect(() => {
-    if (canvasRef.current && value) {
-      QRCode.toCanvas(canvasRef.current, value, {
+    if (!qrCodeRef.current) {
+      qrCodeRef.current = new QRCodeStyling({
         width: size,
-        margin: 2,
-        color: {
-          dark: '#f97316',
-          light: '#0f172a',
+        height: size,
+        data: value,
+        dotsOptions: {
+          color: "#3b82f6", // blue-500
+          type: "rounded"
         },
-      }, (error) => {
-        if (error) console.error('Error rendering QR Code:', error);
+        backgroundOptions: {
+          color: "transparent",
+        },
+        cornersSquareOptions: {
+          color: "#eab308", // yellow-500
+          type: "extra-rounded"
+        },
+        cornersDotOptions: {
+          color: "#3b82f6", // blue-500
+          type: "dot"
+        },
+        imageOptions: {
+          crossOrigin: "anonymous",
+          margin: 10
+        }
       });
+    } else {
+      qrCodeRef.current.update({ data: value, width: size, height: size });
+    }
+  }, [value, size]);
+
+  useEffect(() => {
+    if (containerRef.current && qrCodeRef.current) {
+      containerRef.current.innerHTML = ''; // clear previous rendering
+      qrCodeRef.current.append(containerRef.current);
     }
   }, [value, size]);
 
@@ -44,14 +68,14 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
       </div>
 
       {/* QR Code Canvas with Logo Overlay */}
-      <div className="p-4 bg-white dark:bg-blue-950 rounded-2xl border border-slate-300 dark:border-slate-800 relative inline-block shadow-inner">
-        <div className="relative inline-block">
-          <canvas ref={canvasRef} className="block" />
+      <div className="p-4 bg-white dark:bg-white rounded-2xl border border-slate-300 dark:border-slate-800 relative inline-block shadow-inner overflow-hidden">
+        <div className="relative inline-block flex justify-center items-center">
+          <div ref={containerRef} className="block" />
           
           {/* RacePro Logo Overlay */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div 
-              className="rounded-full bg-gradient-to-br from-blue-500 to-yellow-400 shadow-lg shadow-blue-500/30 flex items-center justify-center border-2 border-white/20"
+              className="rounded-full bg-gradient-to-br from-blue-500 to-yellow-400 shadow-lg shadow-blue-500/30 flex items-center justify-center border-4 border-white"
               style={{ width: logoSize, height: logoSize }}
             >
               <span 

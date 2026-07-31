@@ -23,7 +23,8 @@ import {
   Certificate,
   EventItem 
 } from '../types';
-import { QRCodeViewer } from '../components/common/QRCodeViewer';
+import { ETicketTemplate } from '../components/common/ETicketTemplate';
+import * as htmlToImage from 'html-to-image';
 import { CertificateModal } from '../components/common/CertificateModal';
 import { 
   Trophy, 
@@ -40,7 +41,8 @@ import {
   FileText,
   User,
   Bell,
-  AlertTriangle
+  AlertTriangle,
+  Download
 } from 'lucide-react';
 
 export const ParticipantDashboardPage: React.FC = () => {
@@ -64,6 +66,34 @@ export const ParticipantDashboardPage: React.FC = () => {
 
   // Modal States
   const [showQrModal, setShowQrModal] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadTicket = async () => {
+    const node = document.getElementById('eticket-container');
+    if (!node || !participant || !eventData) return;
+    
+    try {
+      setIsDownloading(true);
+      // We use html-to-image to generate the ticket.
+      const dataUrl = await htmlToImage.toPng(node, { 
+        quality: 1, 
+        pixelRatio: 2, 
+        skipAutoScale: true 
+      });
+      
+      const link = document.createElement('a');
+      link.download = `Ticket_${eventData.name}_${participant.bibNumber || participant.id}.png`;
+      link.href = dataUrl;
+      link.click();
+      
+      addNotification('success', 'Berhasil', 'E-Ticket berhasil diunduh!');
+    } catch (err) {
+      console.error('Failed to download ticket', err);
+      addNotification('error', 'Gagal', 'Terjadi kesalahan saat mengunduh tiket.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
   const [showCertModal, setShowCertModal] = useState(false);
   const [proofUrl, setProofUrl] = useState('');
   const [submittingProof, setSubmittingProof] = useState(false);
@@ -203,16 +233,39 @@ export const ParticipantDashboardPage: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-3">
             {participant && (
-              <button
-                onClick={() => setShowQrModal(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 transition-all"
-              >
-                <QrCode className="w-4 h-4" />
-                <span>Buka QR Check-In</span>
-              </button>
+              <>
+                <button
+                  onClick={() => setShowQrModal(true)}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 transition-all"
+                >
+                  <QrCode className="w-4 h-4" />
+                  <span>Buka QR Check-In</span>
+                </button>
+                <button
+                  onClick={handleDownloadTicket}
+                  disabled={isDownloading || !eventData}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-black/5 transition-all disabled:opacity-50"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>{isDownloading ? 'Mengunduh...' : 'Download E-Ticket'}</span>
+                </button>
+              </>
             )}
           </div>
         </div>
+
+        {/* Hidden E-Ticket Render Container */}
+        {participant && eventData && (
+          <div className="absolute -left-[9999px] top-0">
+            <div id="eticket-container" className="p-4 bg-transparent inline-block">
+              <ETicketTemplate 
+                participant={participant} 
+                event={eventData} 
+                category={eventData.categories?.find((c: any) => c.id === participant.categoryId) || null} 
+              />
+            </div>
+          </div>
+        )}
 
         {/* 48-Hour Race Day Warning Notification Indicator Banner */}
         {eventData && (

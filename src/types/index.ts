@@ -351,7 +351,13 @@ export interface SystemSettings {
   maintenanceMode: boolean;
   paymentGatewayConfigured: boolean;
   paymentGatewayName: string;
-  midtransServerKey?: string;
+  midtransEnvironment?: 'sandbox' | 'production';
+  midtransServerKey?: string; // legacy or currently active key
+  midtransClientKey?: string;
+  midtransSandboxServerKey?: string;
+  midtransSandboxClientKey?: string;
+  midtransProductionServerKey?: string;
+  midtransProductionClientKey?: string;
   manualPaymentBank?: string;
   manualPaymentAccount?: string;
   manualPaymentName?: string;

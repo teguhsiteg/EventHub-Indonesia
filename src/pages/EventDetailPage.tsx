@@ -45,7 +45,18 @@ export const EventDetailPage: React.FC = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('QRIS');
 
   const { user } = useAuth();
-  const { addNotification } = useSettings();
+  const { settings, addNotification } = useSettings();
+  
+  // Set default payment method based on available settings if none is selected or default is QRIS
+  useEffect(() => {
+    if (settings) {
+      if (settings.paymentGatewayConfigured) {
+        setSelectedPaymentMethod('MIDTRANS');
+      } else if (settings.manualPaymentBank) {
+        setSelectedPaymentMethod('MANUAL_TRANSFER');
+      }
+    }
+  }, [settings]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -228,7 +239,12 @@ export const EventDetailPage: React.FC = () => {
     webFee = event.webFeeAmount;
   }
   
-  let grandTotal = subTotal + addonsTotal + hotelsTotal + webFee;
+  let adminFee = 0;
+  if (settings?.adminFee && settings.adminFee > 0) {
+    adminFee = settings.adminFee;
+  }
+  
+  let grandTotal = subTotal + addonsTotal + hotelsTotal + webFee + adminFee;
   let discountAmount = 0;
 
   if (promoCode && event?.promoCodes) {
@@ -1049,7 +1065,48 @@ export const EventDetailPage: React.FC = () => {
                             <span>{formatRupiah(webFee)}</span>
                           </div>
                         )}
+                        {adminFee > 0 && (
+                          <div className="flex justify-between text-xs text-slate-500">
+                            <span>Biaya Admin</span>
+                            <span>{formatRupiah(adminFee)}</span>
+                          </div>
+                        )}
 
+                        {checkoutStep === 4 && (
+                          <div className="pt-4 border-t border-slate-300 dark:border-slate-800">
+                            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase mb-3">Metode Pembayaran</h4>
+                            <div className="space-y-2">
+                              {settings?.paymentGatewayConfigured && (
+                                <label 
+                                  onClick={() => setSelectedPaymentMethod('MIDTRANS')}
+                                  className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-all ${selectedPaymentMethod === 'MIDTRANS' ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10' : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'}`}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedPaymentMethod === 'MIDTRANS' ? 'border-blue-500' : 'border-slate-300'}`}>
+                                      {selectedPaymentMethod === 'MIDTRANS' && <div className="w-2 h-2 rounded-full bg-blue-500" />}
+                                    </div>
+                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Otomatis (Midtrans)</span>
+                                  </div>
+                                  <CreditCard className={`w-5 h-5 ${selectedPaymentMethod === 'MIDTRANS' ? 'text-blue-500' : 'text-slate-400'}`} />
+                                </label>
+                              )}
+                              {settings?.manualPaymentBank && (
+                                <label 
+                                  onClick={() => setSelectedPaymentMethod('MANUAL_TRANSFER')}
+                                  className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-all ${selectedPaymentMethod === 'MANUAL_TRANSFER' ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10' : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'}`}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedPaymentMethod === 'MANUAL_TRANSFER' ? 'border-blue-500' : 'border-slate-300'}`}>
+                                      {selectedPaymentMethod === 'MANUAL_TRANSFER' && <div className="w-2 h-2 rounded-full bg-blue-500" />}
+                                    </div>
+                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Transfer Manual ({settings.manualPaymentBank})</span>
+                                  </div>
+                                  <svg className={`w-5 h-5 ${selectedPaymentMethod === 'MANUAL_TRANSFER' ? 'text-blue-500' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
+                                </label>
+                              )}
+                            </div>
+                          </div>
+                        )}
                         {checkoutStep === 4 && (
                           <div className="pt-3 border-t border-slate-300 dark:border-slate-800">
                             <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Promo</label>

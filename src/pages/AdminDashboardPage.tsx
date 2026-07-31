@@ -1228,16 +1228,77 @@ export const AdminDashboardPage: React.FC = () => {
                             </p>
                           </div>
                           
-                          <div>
-                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Midtrans Server Key</label>
-                            <div className="flex flex-col sm:flex-row gap-3">
-                              <input
-                                type="password"
-                                id="midtrans-server-key-input"
-                                defaultValue={settings.midtransServerKey || ''}
-                                className="flex-1 bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
-                                placeholder="SB-Mid-server-..."
-                              />
+                          <div className="grid grid-cols-1 gap-6">
+                            <div>
+                              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Midtrans Environment</label>
+                              <select
+                                id="midtrans-environment-select"
+                                defaultValue={settings.midtransEnvironment || 'sandbox'}
+                                className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                              >
+                                <option value="sandbox">Sandbox (Testing)</option>
+                                <option value="production">Production (Live)</option>
+                              </select>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-blue-900/20">
+                                <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                  <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                                  Sandbox Keys
+                                </h4>
+                                <div className="space-y-4">
+                                  <div>
+                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Server Key</label>
+                                    <input
+                                      type="password"
+                                      id="midtrans-sandbox-server-key-input"
+                                      defaultValue={settings.midtransSandboxServerKey || ''}
+                                      className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                      placeholder="SB-Mid-server-..."
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Client Key</label>
+                                    <input
+                                      type="text"
+                                      id="midtrans-sandbox-client-key-input"
+                                      defaultValue={settings.midtransSandboxClientKey || ''}
+                                      className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                      placeholder="SB-Mid-client-..."
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-blue-900/20">
+                                <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                  Production Keys
+                                </h4>
+                                <div className="space-y-4">
+                                  <div>
+                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Server Key</label>
+                                    <input
+                                      type="password"
+                                      id="midtrans-production-server-key-input"
+                                      defaultValue={settings.midtransProductionServerKey || ''}
+                                      className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                      placeholder="Mid-server-..."
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Client Key</label>
+                                    <input
+                                      type="text"
+                                      id="midtrans-production-client-key-input"
+                                      defaultValue={settings.midtransProductionClientKey || ''}
+                                      className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                      placeholder="Mid-client-..."
+                                    />
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
 
@@ -1294,20 +1355,36 @@ export const AdminDashboardPage: React.FC = () => {
                               <button
                                 onClick={async () => {
                                   if (!user) return;
-                                  const midtransInput = document.getElementById('midtrans-server-key-input') as HTMLInputElement;
+                                  const envSelect = document.getElementById('midtrans-environment-select') as HTMLSelectElement;
+                                  const sbServerInput = document.getElementById('midtrans-sandbox-server-key-input') as HTMLInputElement;
+                                  const sbClientInput = document.getElementById('midtrans-sandbox-client-key-input') as HTMLInputElement;
+                                  const prodServerInput = document.getElementById('midtrans-production-server-key-input') as HTMLInputElement;
+                                  const prodClientInput = document.getElementById('midtrans-production-client-key-input') as HTMLInputElement;
                                   const bankInput = document.getElementById('manual-bank-input') as HTMLInputElement;
                                   const accountInput = document.getElementById('manual-account-input') as HTMLInputElement;
                                   const nameInput = document.getElementById('manual-name-input') as HTMLInputElement;
                                   const feeInput = document.getElementById('admin-fee-input') as HTMLInputElement;
                                   
-                                  if (!midtransInput || !bankInput || !accountInput || !nameInput || !feeInput) return;
+                                  if (!envSelect || !sbServerInput || !prodServerInput || !bankInput || !accountInput || !nameInput || !feeInput) return;
                                   
                                   try {
                                     setLoading(true);
+                                    
+                                    const env = envSelect.value as 'sandbox' | 'production';
+                                    const activeServerKey = env === 'production' ? prodServerInput.value : sbServerInput.value;
+                                    const activeClientKey = env === 'production' ? prodClientInput.value : sbClientInput.value;
+                                    const isConfigured = !!activeServerKey;
+
                                     await updateSystemSettings({
-                                      midtransServerKey: midtransInput.value,
-                                      paymentGatewayConfigured: !!midtransInput.value,
-                                      paymentGatewayName: midtransInput.value ? 'MIDTRANS' : '',
+                                      midtransEnvironment: env,
+                                      midtransSandboxServerKey: sbServerInput.value,
+                                      midtransSandboxClientKey: sbClientInput.value,
+                                      midtransProductionServerKey: prodServerInput.value,
+                                      midtransProductionClientKey: prodClientInput.value,
+                                      midtransServerKey: activeServerKey,
+                                      midtransClientKey: activeClientKey,
+                                      paymentGatewayConfigured: isConfigured,
+                                      paymentGatewayName: isConfigured ? 'MIDTRANS' : '',
                                       manualPaymentBank: bankInput.value,
                                       manualPaymentAccount: accountInput.value,
                                       manualPaymentName: nameInput.value,

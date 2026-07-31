@@ -152,7 +152,13 @@ export async function createRegistration(
   for (let i = 0; i < formsData.length; i++) {
     const formData = formsData[i];
     const partRef = doc(collection(db, 'participants'));
-    const qrToken = `RACEPRO_QR_${eventId.substring(0, 5)}_${regRef.id}_${i}_${randomSuffix}`;
+    
+    // Generate Secure QR Token
+    const secureRandomSuffix = typeof crypto !== 'undefined' && crypto.randomUUID 
+      ? crypto.randomUUID().split('-').join('').substring(0, 16)
+      : Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+    
+    const qrToken = `RACEPRO_QR_${eventId.substring(0, 5)}_${regRef.id}_${i}_${secureRandomSuffix}`;
 
     participants.push({
       id: partRef.id,
