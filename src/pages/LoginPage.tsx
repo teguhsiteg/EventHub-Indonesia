@@ -139,12 +139,12 @@ export const LoginPage: React.FC = () => {
                 <Trophy className="w-7 h-7 text-white" />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-white">RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">PRO</span></h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500">PRO</span></h2>
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-white mb-1">Masuk</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Masuk</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Masukkan kredensial Anda untuk melanjutkan
             </p>
           </div>
@@ -174,7 +174,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
                 />
               </div>
             </div>
@@ -206,7 +206,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -237,9 +237,9 @@ export const LoginPage: React.FC = () => {
 
           {/* Divider */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-white/[0.06]" />
-            <span className="text-xs text-slate-500 font-medium">ATAU</span>
-            <div className="flex-1 h-px bg-white/[0.06]" />
+            <div className="flex-1 h-px bg-slate-200 dark:bg-white/[0.06]" />
+            <span className="text-xs text-slate-400 font-medium">ATAU</span>
+            <div className="flex-1 h-px bg-slate-200 dark:bg-white/[0.06]" />
           </div>
 
           {/* Google login */}
@@ -247,7 +247,7 @@ export const LoginPage: React.FC = () => {
             type="button"
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-slate-700 dark:text-slate-600 dark:text-slate-300 font-medium text-sm hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-50 dark:hover:bg-white/[0.06] hover:border-slate-300 dark:hover:border-white/[0.12] shadow-sm dark:shadow-none transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent dark:border-white/30 dark:border-t-white rounded-full animate-spin" />
@@ -265,9 +265,9 @@ export const LoginPage: React.FC = () => {
           </button>
 
           {/* Register link */}
-          <p className="text-center text-sm text-slate-500">
-            Belum memiliki akun?{' '}
-            <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+          <p className="text-center text-sm text-slate-600 dark:text-slate-400">
+            Belum punya akun?{' '}
+            <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-semibold transition-colors">
               Daftar Sekarang
             </Link>
           </p>

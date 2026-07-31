@@ -132,12 +132,12 @@ export const RegisterPage: React.FC = () => {
                 <Trophy className="w-7 h-7 text-white" />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-white">RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">PRO</span></h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500">PRO</span></h2>
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-white mb-1">Daftar</h2>
-            <p className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Daftar</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Isi data diri Anda untuk membuat akun baru
             </p>
           </div>
@@ -167,7 +167,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="Nama lengkap Anda"
                   required
                   autoComplete="name"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
                 />
               </div>
             </div>
@@ -187,7 +187,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="+62 812-XXXX-XXXX"
                   required
                   autoComplete="tel"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
                 />
               </div>
             </div>
@@ -207,7 +207,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
                 />
               </div>
             </div>
@@ -227,7 +227,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="Minimal 6 karakter"
                   required
                   autoComplete="new-password"
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -259,16 +259,16 @@ export const RegisterPage: React.FC = () => {
 
           {/* Divider */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-white/[0.06]" />
-            <span className="text-xs text-slate-500 font-medium">ATAU</span>
-            <div className="flex-1 h-px bg-white/[0.06]" />
+            <div className="flex-1 h-px bg-slate-200 dark:bg-white/[0.06]" />
+            <span className="text-xs text-slate-400 font-medium">ATAU</span>
+            <div className="flex-1 h-px bg-slate-200 dark:bg-white/[0.06]" />
           </div>
 
           {/* Google register */}
           <button
             type="button"
             onClick={handleGoogleRegister}
-            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-slate-700 dark:text-slate-600 dark:text-slate-300 font-medium text-sm hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300"
+            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-50 dark:hover:bg-white/[0.06] hover:border-slate-300 dark:hover:border-white/[0.12] shadow-sm dark:shadow-none transition-all duration-300"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -280,9 +280,9 @@ export const RegisterPage: React.FC = () => {
           </button>
 
           {/* Login link */}
-          <p className="text-center text-sm text-slate-500">
+          <p className="text-center text-sm text-slate-600 dark:text-slate-400">
             Sudah memiliki akun?{' '}
-            <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+            <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-semibold transition-colors">
               Masuk Di Sini
             </Link>
           </p>
