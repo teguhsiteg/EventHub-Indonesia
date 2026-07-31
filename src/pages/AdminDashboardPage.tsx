@@ -1066,7 +1066,12 @@ export const AdminDashboardPage: React.FC = () => {
                               )}
                             </td>
                             <td className="py-4 px-6">
-                              <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border bg-yellow-500/10 text-yellow-600 dark:text--600 dark:text--400 border-yellow-500/20">
+                              <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border ${
+                                u.role === 'SUPER_ADMIN' ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20' :
+                                u.role === 'ADMIN' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20' :
+                                u.role === 'ORGANIZER' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20' :
+                                'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20'
+                              }`}>
                                 {u.role}
                               </span>
                             </td>
@@ -1074,21 +1079,21 @@ export const AdminDashboardPage: React.FC = () => {
                               <div className="flex flex-wrap items-center gap-1.5">
                                 <button
                                   onClick={() => handleRoleChange(u.id, 'ADMIN')}
-                                  className="px-2.5 py-1.5 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-yellow-500/20 transition-all"
+                                  className="px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold text-[10px] uppercase tracking-wider border border-rose-500/20 transition-all"
                                 >
                                   <Shield className="w-3 h-3 inline mr-1" />
                                   ADMIN
                                 </button>
                                 <button
                                   onClick={() => handleRoleChange(u.id, 'ORGANIZER')}
-                                  className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-blue-500/20 transition-all"
+                                  className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold text-[10px] uppercase tracking-wider border border-blue-500/20 transition-all"
                                 >
                                   <UserCheck className="w-3 h-3 inline mr-1" />
                                   ORGANIZER
                                 </button>
                                 <button
                                   onClick={() => handleRoleChange(u.id, 'PARTICIPANT')}
-                                  className="px-2.5 py-1.5 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 text-slate-600 dark:text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-slate-500/20 transition-all"
+                                  className="px-2.5 py-1.5 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 text-slate-600 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wider border border-slate-500/20 transition-all"
                                 >
                                   PARTICIPANT
                                 </button>
@@ -1108,8 +1113,8 @@ export const AdminDashboardPage: React.FC = () => {
                                   }}
                                   className={`px-2.5 py-1.5 rounded-lg font-bold text-[10px] uppercase tracking-wider border transition-all ${
                                     u.banned
-                                      ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text--600 dark:text--400 border-emerald-500/20'
-                                      : 'bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text--600 dark:text--400 border-red-500/20'
+                                      ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                      : 'bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border-red-500/20'
                                   }`}
                                 >
                                   <Ban className="w-3 h-3 inline mr-1" />
