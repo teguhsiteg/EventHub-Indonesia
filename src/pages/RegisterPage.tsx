@@ -63,7 +63,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex bg-slate-50 dark:bg-blue-950">
+    <div className="min-h-screen w-full flex bg-slate-50 dark:bg-[#0a0f1e]">
       {/* Animated background blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute top-0 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-blue-600/10 via-yellow-500/5 to-transparent blur-3xl" />
