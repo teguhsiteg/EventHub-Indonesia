@@ -209,48 +209,68 @@ export const ParticipantDashboardPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Profile Header */}
-        <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-yellow-500 flex items-center justify-center text-slate-900 dark:text-white text-2xl font-black uppercase shadow-lg shadow-blue-600/30">
-              {user?.displayName ? user.displayName[0] : 'P'}
-            </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-black text--600 dark:text--400 uppercase tracking-widest bg-blue-950 px-2.5 py-1 rounded border border-blue-800/40">
-                  RACEPRO PESERTA
-                </span>
-                {eventData && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) <= 48 && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) >= -24 && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-yellow-500/20 border border-yellow-500/60 text--600 dark:text--400 text-[10px] font-black uppercase tracking-wider animate-pulse">
-                    <Bell className="w-3 h-3 text--600 dark:text--400" />
-                    <span>RACE DAY &lt; 48 JAM</span>
-                  </span>
-                )}
-              </div>
-              <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase mt-1">{user?.displayName}</h1>
-              <p className="text-xs text-slate-500 dark:text--600 dark:text--400 font-mono">{user?.email}</p>
-            </div>
-          </div>
+        <div className="relative overflow-hidden rounded-3xl mb-8 shadow-2xl shadow-blue-900/5 dark:shadow-none border border-slate-200/60 dark:border-white/10 group">
+          {/* Glass background layers */}
+          <div className="absolute inset-0 bg-white dark:bg-[#0a0f1e] z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-orange-50/50 dark:from-blue-900/20 dark:to-orange-900/10 z-0 opacity-80"></div>
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-gradient-to-br from-blue-500/20 to-transparent blur-3xl rounded-full z-0 group-hover:scale-110 transition-transform duration-700"></div>
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-gradient-to-tr from-orange-500/20 to-transparent blur-3xl rounded-full z-0 group-hover:scale-110 transition-transform duration-700"></div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            {participant && (
-              <>
-                <button
-                  onClick={() => setShowQrModal(true)}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 transition-all"
-                >
-                  <QrCode className="w-4 h-4" />
-                  <span>Buka QR Check-In</span>
-                </button>
-                <button
-                  onClick={handleDownloadTicket}
-                  disabled={isDownloading || !eventData}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-black/5 transition-all disabled:opacity-50"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>{isDownloading ? 'Mengunduh...' : 'Download E-Ticket'}</span>
-                </button>
-              </>
-            )}
+          <div className="relative z-10 p-6 sm:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex items-center gap-6">
+              {/* Avatar */}
+              <div className="relative">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-orange-500 p-[3px] shadow-xl shadow-blue-500/20">
+                  <div className="w-full h-full rounded-xl bg-white dark:bg-[#0a0f1e] flex items-center justify-center">
+                    <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-tr from-blue-600 to-orange-500 uppercase">
+                      {user?.displayName ? user.displayName[0] : 'P'}
+                    </span>
+                  </div>
+                </div>
+                <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white dark:border-[#0a0f1e] flex items-center justify-center shadow-md">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                </div>
+              </div>
+              
+              {/* Info */}
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <span className="text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/50 px-2.5 py-1 rounded-md border border-blue-200 dark:border-blue-800/40">
+                    RACEPRO PESERTA
+                  </span>
+                  {eventData && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) <= 48 && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) >= -24 && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-orange-100 dark:bg-orange-500/20 border border-orange-200 dark:border-orange-500/40 text-orange-700 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider animate-pulse">
+                      <Bell className="w-3 h-3" />
+                      <span>RACE DAY &lt; 48 JAM</span>
+                    </span>
+                  )}
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{user?.displayName}</h1>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-mono mt-0.5">{user?.email}</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
+              {participant && (
+                <>
+                  <button
+                    onClick={() => setShowQrModal(true)}
+                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-slate-900/20 dark:shadow-blue-600/25 transition-all hover:-translate-y-0.5"
+                  >
+                    <QrCode className="w-4 h-4" />
+                    <span>QR Check-In</span>
+                  </button>
+                  <button
+                    onClick={handleDownloadTicket}
+                    disabled={isDownloading || !eventData}
+                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-slate-200/50 dark:shadow-none border border-slate-200/80 dark:border-slate-700 transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>{isDownloading ? 'Proses...' : 'Unduh Tiket'}</span>
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -303,12 +323,20 @@ export const ParticipantDashboardPage: React.FC = () => {
         {loading ? (
           <div className="bg-white dark:bg-blue-950 h-64 rounded-3xl animate-pulse border border-slate-200 dark:border-slate-800" />
         ) : registrations.length === 0 ? (
-          <div className="p-16 text-center bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl">
-            <Trophy className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">Belum Memiliki Pendaftaran Lomba</h3>
-            <p className="text-xs text-slate-500 dark:text--600 dark:text--400 mt-2 max-w-sm mx-auto">
-              Anda belum terdaftar pada event apapun. Jelajahi katalog event lomba dan daftar sekarang!
-            </p>
+          <div className="relative overflow-hidden p-12 sm:p-20 text-center bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/60 rounded-3xl shadow-xl shadow-slate-200/40 dark:shadow-none group">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-orange-50/50 dark:from-blue-900/10 dark:to-orange-900/10 opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-24 h-24 mb-6 rounded-full bg-gradient-to-tr from-blue-100 to-orange-100 dark:from-blue-900/40 dark:to-orange-900/40 flex items-center justify-center shadow-inner">
+                <Trophy className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-3">Belum Ada Pendaftaran Lomba</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-8 leading-relaxed">
+                Anda belum terdaftar pada event apapun saat ini. Mari mulai perjalanan Anda dengan menjelajahi katalog event kami.
+              </p>
+              <button onClick={() => navigate('/events')} className="px-8 py-3.5 bg-slate-900 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-sm font-bold uppercase tracking-wider rounded-xl shadow-xl shadow-slate-900/20 dark:shadow-blue-900/20 transition-all hover:-translate-y-1">
+                Jelajahi Katalog Event
+              </button>
+            </div>
           </div>
         ) : (
           <>
