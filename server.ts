@@ -31,6 +31,45 @@ app.post('/api/payment/webhook', (req: Request, res: Response) => {
   });
 });
 
+// 3.5. Midtrans Snap Token Generator
+app.post('/api/payment/midtrans-token', async (req: Request, res: Response) => {
+  const { serverKey, isProduction, transactionDetails } = req.body;
+
+  if (!serverKey || !transactionDetails) {
+    return res.status(400).json({ error: 'serverKey and transactionDetails are required' });
+  }
+
+  const midtransUrl = isProduction 
+    ? 'https://app.midtrans.com/snap/v1/transactions' 
+    : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+
+  try {
+    const authString = Buffer.from(`${serverKey}:`).toString('base64');
+    
+    const response = await fetch(midtransUrl, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${authString}`
+      },
+      body: JSON.stringify(transactionDetails)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Midtrans API Error:', data);
+      return res.status(response.status).json({ error: data.error_messages || 'Failed to generate token' });
+    }
+
+    return res.json(data);
+  } catch (error: any) {
+    console.error('Midtrans Snap Error:', error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 // 4. Public QR Code verification endpoint
 app.get('/api/verify/qr/:token', (req: Request, res: Response) => {
   const { token } = req.params;

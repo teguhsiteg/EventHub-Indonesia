@@ -54,6 +54,19 @@ export const EventDetailPage: React.FC = () => {
     if (settings) {
       if (settings.paymentGatewayConfigured) {
         setSelectedPaymentMethod('MIDTRANS');
+        
+        // Dynamically load Midtrans Snap JS
+        const isProduction = settings.midtransEnvironment === 'production';
+        const clientKey = isProduction ? settings.midtransProductionClientKey || settings.midtransClientKey : settings.midtransSandboxClientKey || settings.midtransClientKey;
+        const scriptUrl = isProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js';
+        
+        if (clientKey && !document.getElementById('midtrans-script')) {
+          const script = document.createElement('script');
+          script.id = 'midtrans-script';
+          script.src = scriptUrl;
+          script.setAttribute('data-client-key', clientKey);
+          document.body.appendChild(script);
+        }
       } else if (settings.manualPaymentBank) {
         setSelectedPaymentMethod('MANUAL_TRANSFER');
       }
@@ -163,6 +176,35 @@ export const EventDetailPage: React.FC = () => {
     });
   };
 
+  const subTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const addonsTotal = selectedAddons.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const hotelsTotal = selectedHotels.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  let webFee = 0;
+  if (event?.paymentType === 'WEB' && event?.webFeeBearer === 'BUYER' && event?.webFeeAmount) {
+    webFee = event.webFeeAmount;
+  }
+  
+  let adminFee = 0;
+  if (settings?.adminFee && settings.adminFee > 0) {
+    adminFee = settings.adminFee;
+  }
+  
+  let grandTotal = subTotal + addonsTotal + hotelsTotal + webFee + adminFee;
+  let discountAmount = 0;
+
+  if (promoCode && event?.promoCodes) {
+    const promo = event.promoCodes.find(p => p.code === promoCode.toUpperCase());
+    if (promo) {
+      if (promo.discountType === 'PERCENTAGE') {
+        discountAmount = grandTotal * (promo.discountValue / 100);
+      } else if (promo.discountType === 'FIXED') {
+        discountAmount = promo.discountValue;
+      }
+      grandTotal = Math.max(0, grandTotal - discountAmount);
+    }
+  }
+
   const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!event || cartItems.length === 0) return;
@@ -228,46 +270,79 @@ export const EventDetailPage: React.FC = () => {
         }
       }
 
-
       if (!currentUserId) throw new Error('Gagal mengidentifikasi sesi pengguna.');
 
       const result = await createRegistration(currentUserId, event.id, cartItems, formsData, selectedAddons, specialVoucherCode, promoCode, selectedHotels, selectedPaymentMethod);
-      addNotification('success', 'Pendaftaran Berhasil!', `Nomor Registrasi: ${result.registration.registrationNumber}. Harap selesaikan pembayaran.`);
-      navigate('/dashboard');
+      
+      if (selectedPaymentMethod === 'MIDTRANS') {
+        const isProduction = settings?.midtransEnvironment === 'production';
+        const serverKey = isProduction ? settings?.midtransProductionServerKey || settings?.midtransServerKey : settings?.midtransSandboxServerKey || settings?.midtransServerKey;
+
+        if (!serverKey) {
+          addNotification('error', 'Konfigurasi Pembayaran Gagal', 'Midtrans Server Key belum dikonfigurasi oleh Admin.');
+          setSubmitting(false);
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/payment/midtrans-token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              serverKey,
+              isProduction,
+              transactionDetails: {
+                transaction_details: {
+                  order_id: result.registration.registrationNumber,
+                  gross_amount: grandTotal
+                },
+                customer_details: {
+                  first_name: formsData[0].fullName,
+                  email: formsData[0].email,
+                  phone: formsData[0].phone
+                }
+              }
+            })
+          });
+          
+          const snapData = await response.json();
+          
+          if (snapData.token && (window as any).snap) {
+            (window as any).snap.pay(snapData.token, {
+              onSuccess: function(midtransResult: any) {
+                addNotification('success', 'Pembayaran Berhasil!', `Registrasi ${result.registration.registrationNumber} berhasil dibayar.`);
+                navigate('/dashboard');
+              },
+              onPending: function(midtransResult: any) {
+                addNotification('warning', 'Pembayaran Tertunda', 'Silakan selesaikan pembayaran Anda.');
+                navigate('/dashboard');
+              },
+              onError: function(midtransResult: any) {
+                addNotification('error', 'Pembayaran Gagal', 'Terjadi kesalahan saat memproses pembayaran.');
+                navigate('/dashboard');
+              },
+              onClose: function() {
+                addNotification('warning', 'Pembayaran Belum Selesai', 'Anda menutup popup pembayaran sebelum menyelesaikannya.');
+                navigate('/dashboard');
+              }
+            });
+          } else {
+             addNotification('error', 'Gagal Memuat Pembayaran', snapData.error || 'Snap token tidak ditemukan atau script belum dimuat.');
+             navigate('/dashboard');
+          }
+        } catch (midtransError: any) {
+           addNotification('error', 'Sistem Pembayaran Error', midtransError.message);
+           navigate('/dashboard');
+        }
+      } else {
+        addNotification('success', 'Pendaftaran Berhasil!', `Nomor Registrasi: ${result.registration.registrationNumber}. Harap selesaikan pembayaran.`);
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       addNotification('error', 'Pendaftaran Gagal', err.message || 'Terjadi kesalahan sistem saat mendaftar.');
     }
     setSubmitting(false);
   };
-
-  const subTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const addonsTotal = selectedAddons.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const hotelsTotal = selectedHotels.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
-  let webFee = 0;
-  if (event?.paymentType === 'WEB' && event?.webFeeBearer === 'BUYER' && event?.webFeeAmount) {
-    webFee = event.webFeeAmount;
-  }
-  
-  let adminFee = 0;
-  if (settings?.adminFee && settings.adminFee > 0) {
-    adminFee = settings.adminFee;
-  }
-  
-  let grandTotal = subTotal + addonsTotal + hotelsTotal + webFee + adminFee;
-  let discountAmount = 0;
-
-  if (promoCode && event?.promoCodes) {
-    const promo = event.promoCodes.find(p => p.code === promoCode.toUpperCase());
-    if (promo) {
-      if (promo.discountType === 'PERCENTAGE') {
-        discountAmount = grandTotal * (promo.discountValue / 100);
-      } else if (promo.discountType === 'FIXED') {
-        discountAmount = promo.discountValue;
-      }
-      grandTotal = Math.max(0, grandTotal - discountAmount);
-    }
-  }
 
   const formatRupiah = (val: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);

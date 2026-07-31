@@ -1,9 +1,9 @@
 {
-  "apiKey": "AIzaSyDS4J3BKR5MPDYU6yQEQr1LVBsoHblzJ5I",
-  "authDomain": "raceproevent.firebaseapp.com",
-  "projectId": "raceproevent",
-  "storageBucket": "raceproevent.firebasestorage.app",
-  "messagingSenderId": "357279458015",
-  "appId": "1:357279458015:web:ff54401c8368c9e22fbf6a",
-  "measurementId": "G-B6ZRFGQVDZ"
+  "apiKey": "AIzaSyA_Ys2CVfwRfPfyN5LL6OfUq6fWj34wg7w",
+  "authDomain": "auth.guwigo.com",
+  "projectId": "profilcode",
+  "storageBucket": "profilcode.firebasestorage.app",
+  "messagingSenderId": "1022959282460",
+  "appId": "1:1022959282460:web:2a8e71f35f1248ec2232d9",
+  "measurementId": "G-66CGDZ176M"
 }
