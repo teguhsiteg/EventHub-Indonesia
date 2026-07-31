@@ -60,12 +60,12 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="lg:col-span-1 space-y-4">
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-yellow-400 flex items-center justify-center shadow-md shadow-blue-500/20">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20">
                 <Trophy className="w-4.5 h-4.5 text-white" />
               </div>
               <div className="leading-tight">
                 <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
-                  RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">PRO</span>
+                  RACE<span className="text-blue-600">PRO</span>
                 </span>
                 <span className="block text-[9px] font-medium text-slate-500 tracking-wider uppercase">
                   Platform Event Olahraga Terdepan di Indonesia

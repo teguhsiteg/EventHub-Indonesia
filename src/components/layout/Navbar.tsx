@@ -61,14 +61,12 @@ export const Navbar: React.FC = () => {
 
           {/* Brand */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-blue-400 to-yellow-400 p-[1.5px] shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
-              <div className="w-full h-full  rounded-[10px] flex items-center justify-center">
-                <Trophy className="w-4.5 h-4.5 text-transparent bg-clip-text bg-gradient-to-br from-blue-400 to-yellow-300 group-hover:scale-110 transition-transform duration-300" style={{ color: '#fb923c' }} />
-              </div>
+            <div className="relative w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
+               <Trophy className="w-4.5 h-4.5 text-white group-hover:scale-110 transition-transform duration-300" />
             </div>
             <div className="leading-tight">
               <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
-                RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">PRO</span>
+                RACE<span className="text-blue-600">PRO</span>
               </span>
               <span className="block text-[9px] font-medium text-slate-600 dark:text-slate-500 tracking-wider uppercase">
                 Platform Event Indonesia

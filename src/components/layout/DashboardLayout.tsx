@@ -51,11 +51,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-orange-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Trophy className="w-5 h-5 text-white" />
               </div>
               <span className="text-base font-black text-slate-900 dark:text-white uppercase tracking-widest hidden sm:block">
-                RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500">PRO</span>
+                RACE<span className="text-blue-600">PRO</span>
               </span>
             </Link>
           </div>

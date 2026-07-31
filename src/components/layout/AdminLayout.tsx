@@ -55,11 +55,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <Link to="/admin" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-yellow-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
                 <ShieldAlert className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                RACE<span className="text-blue-500">PRO</span>
+                RACE<span className="text-blue-600">PRO</span>
               </span>
               <span className="hidden sm:inline text-[10px] font-black text-blue-400 uppercase tracking-widest bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded ml-2">
                 ADMIN
