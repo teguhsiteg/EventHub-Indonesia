@@ -216,18 +216,18 @@ export const ParticipantDashboardPage: React.FC = () => {
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest bg-blue-950 px-2.5 py-1 rounded border border-blue-800/40">
+                <span className="text-[10px] font-black text--600 dark:text--400 uppercase tracking-widest bg-blue-950 px-2.5 py-1 rounded border border-blue-800/40">
                   RACEPRO PESERTA
                 </span>
                 {eventData && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) <= 48 && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) >= -24 && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-yellow-500/20 border border-yellow-500/60 text-yellow-400 text-[10px] font-black uppercase tracking-wider animate-pulse">
-                    <Bell className="w-3 h-3 text-yellow-400" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-yellow-500/20 border border-yellow-500/60 text--600 dark:text--400 text-[10px] font-black uppercase tracking-wider animate-pulse">
+                    <Bell className="w-3 h-3 text--600 dark:text--400" />
                     <span>RACE DAY &lt; 48 JAM</span>
                   </span>
                 )}
               </div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase mt-1">{user?.displayName}</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">{user?.email}</p>
+              <p className="text-xs text-slate-500 dark:text--600 dark:text--400 font-mono">{user?.email}</p>
             </div>
           </div>
 
@@ -281,7 +281,7 @@ export const ParticipantDashboardPage: React.FC = () => {
         {/* Registrations Switcher Dropdown if Multiple */}
         {registrations.length > 0 && (
           <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Pilih Pendaftaran Event:</span>
+            <span className="text-xs font-bold text-slate-500 dark:text--600 dark:text--400 uppercase">Pilih Pendaftaran Event:</span>
             <select
               value={selectedReg?.id || ''}
               onChange={(e) => {
@@ -306,7 +306,7 @@ export const ParticipantDashboardPage: React.FC = () => {
           <div className="p-16 text-center bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl">
             <Trophy className="w-12 h-12 text-slate-600 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">Belum Memiliki Pendaftaran Lomba</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-sm mx-auto">
+            <p className="text-xs text-slate-500 dark:text--600 dark:text--400 mt-2 max-w-sm mx-auto">
               Anda belum terdaftar pada event apapun. Jelajahi katalog event lomba dan daftar sekarang!
             </p>
           </div>
@@ -321,12 +321,12 @@ export const ParticipantDashboardPage: React.FC = () => {
                   <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
                     <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
                       <div>
-                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">NOMOR REGISTRASI</span>
+                        <span className="text-[10px] font-bold text-slate-500 dark:text--600 dark:text--400 uppercase">NOMOR REGISTRASI</span>
                         <h3 className="text-xl font-mono font-black text-slate-900 dark:text-white">{selectedReg.registrationNumber}</h3>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-black uppercase border ${
-                        selectedReg.status === 'VERIFIED' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' :
-                        selectedReg.status === 'WAITING_PAYMENT' ? 'bg-yellow-950 text-yellow-400 border-yellow-800' :
+                        selectedReg.status === 'VERIFIED' ? 'bg-emerald-950 text--600 dark:text--400 border-emerald-800' :
+                        selectedReg.status === 'WAITING_PAYMENT' ? 'bg-yellow-950 text--600 dark:text--400 border-yellow-800' :
                         'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700'
                       }`}>
                         STATUS: {selectedReg.status}
@@ -335,20 +335,20 @@ export const ParticipantDashboardPage: React.FC = () => {
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
                       <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800">
-                        <span className="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">NOMOR BIB</span>
-                        <span className="block text-2xl font-black text-yellow-400 font-mono mt-1">
+                        <span className="block text-slate-500 dark:text--600 dark:text--400 text-[10px] uppercase font-bold">NOMOR BIB</span>
+                        <span className="block text-2xl font-black text--600 dark:text--400 font-mono mt-1">
                           {participant?.bibNumber || 'DIPROSES'}
                         </span>
                       </div>
                       <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800">
-                        <span className="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">UKURAN JERSEY</span>
+                        <span className="block text-slate-500 dark:text--600 dark:text--400 text-[10px] uppercase font-bold">UKURAN JERSEY</span>
                         <span className="block text-2xl font-black text-slate-900 dark:text-white font-mono mt-1">
                           {participant?.jerseySize || '-'}
                         </span>
                       </div>
                       <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800">
-                        <span className="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">CHECK-IN RACE PACK</span>
-                        <span className={`block text-xs font-black mt-2 ${participant?.checkInStatus ? 'text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <span className="block text-slate-500 dark:text--600 dark:text--400 text-[10px] uppercase font-bold">CHECK-IN RACE PACK</span>
+                        <span className={`block text-xs font-black mt-2 ${participant?.checkInStatus ? 'text--600 dark:text--400' : 'text-slate-500 dark:text--600 dark:text--400'}`}>
                           {participant?.checkInStatus ? 'SUDAH AMBIL' : 'SIAP AMBIL'}
                         </span>
                       </div>
@@ -360,7 +360,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                         <img src={eventData.banner} alt={eventData.name} className="w-16 h-16 rounded-xl object-cover shrink-0" />
                         <div>
                           <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase">{eventData.name}</h4>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{eventData.location} • {new Date(eventData.startDate).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</p>
+                          <p className="text-xs text-slate-500 dark:text--600 dark:text--400 mt-0.5">{eventData.location} • {new Date(eventData.startDate).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</p>
                         </div>
                       </div>
                     )}
@@ -383,11 +383,11 @@ export const ParticipantDashboardPage: React.FC = () => {
               <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
                   <div>
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">TAGIHAN INVOICE</span>
+                    <span className="text-[10px] font-bold text-slate-500 dark:text--600 dark:text--400 uppercase">TAGIHAN INVOICE</span>
                     <h3 className="text-xl font-mono font-black text-slate-900 dark:text-white">{payment.invoiceId}</h3>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${
-                    payment.status === 'PAID' ? 'bg-emerald-950 text-emerald-400' : 'bg-yellow-950 text-yellow-400'
+                    payment.status === 'PAID' ? 'bg-emerald-950 text--600 dark:text--400' : 'bg-yellow-950 text--600 dark:text--400'
                   }`}>
                     {payment.status}
                   </span>
@@ -396,9 +396,9 @@ export const ParticipantDashboardPage: React.FC = () => {
                 <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
                   <div className="flex justify-between text-slate-600 dark:text-slate-300">
                     <span>Total Pembayaran:</span>
-                    <span className="font-black text-yellow-400 text-base">{formatRupiah(payment.amount)}</span>
+                    <span className="font-black text--600 dark:text--400 text-base">{formatRupiah(payment.amount)}</span>
                   </div>
-                  <div className="flex justify-between text-slate-500 dark:text-slate-400 text-[11px]">
+                  <div className="flex justify-between text-slate-500 dark:text--600 dark:text--400 text-[11px]">
                     <span>Metode:</span>
                     <span>{payment.paymentMethod}</span>
                   </div>
@@ -435,7 +435,7 @@ export const ParticipantDashboardPage: React.FC = () => {
               <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto space-y-6">
                 <div className="space-y-1">
                   <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase">Asesmen Kondisi Kesehatan Peserta</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Pernyataan medis wajib untuk keselamatan dan pertolongan tim medis di lintasan.</p>
+                  <p className="text-xs text-slate-500 dark:text--600 dark:text--400">Pernyataan medis wajib untuk keselamatan dan pertolongan tim medis di lintasan.</p>
                 </div>
 
                 <form onSubmit={handleSaveMedical} className="space-y-4 text-xs">
@@ -450,7 +450,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                   </div>
 
                   <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800 flex items-start gap-3">
-                    <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <ShieldCheck className="w-5 h-5 text--600 dark:text--400 shrink-0 mt-0.5" />
                     <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
                       Saya menyatakan bahwa data kesehatan yang diisi adalah benar, serta menyetujui standar keselamatan dan pertolongan medis dari penyelenggara RacePro.
                     </p>
@@ -469,26 +469,26 @@ export const ParticipantDashboardPage: React.FC = () => {
             {/* RESULT & CERTIFICATE TAB */}
             {activeTab === 'result' && (
               <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto text-center space-y-6">
-                <Award className="w-16 h-16 text-yellow-400 mx-auto" />
+                <Award className="w-16 h-16 text--600 dark:text--400 mx-auto" />
                 
                 {result ? (
                   <div className="space-y-4">
                     <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase">{result.participantName}</h3>
                     <div className="grid grid-cols-2 gap-4 text-left p-4  rounded-2xl border border-slate-200 dark:border-slate-800 text-xs">
                       <div>
-                        <span className="text-slate-500 dark:text-slate-400 font-bold uppercase">Gun Time:</span>
+                        <span className="text-slate-500 dark:text--600 dark:text--400 font-bold uppercase">Gun Time:</span>
                         <span className="block text-lg font-mono font-bold text-slate-900 dark:text-white">{result.gunTime}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 dark:text-slate-400 font-bold uppercase">Chip Time:</span>
-                        <span className="block text-lg font-mono font-bold text-emerald-400">{result.chipTime}</span>
+                        <span className="text-slate-500 dark:text--600 dark:text--400 font-bold uppercase">Chip Time:</span>
+                        <span className="block text-lg font-mono font-bold text--600 dark:text--400">{result.chipTime}</span>
                       </div>
                     </div>
 
                     {certificate && (
                       <button
                         onClick={() => setShowCertModal(true)}
-                        className="w-full py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-blue-500 hover:from-yellow-400 hover:to-blue-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-yellow-500/20"
+                        className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-colors"
                       >
                         Buka E-Sertifikat Finisher
                       </button>
@@ -497,7 +497,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                 ) : (
                   <div className="space-y-2">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase">Hasil Belum Diterbitkan</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text--600 dark:text--400">
                       Waktu finisher akan diperbarui otomatis oleh juri setelah Anda menuntaskan garis finish.
                     </p>
                   </div>
@@ -515,7 +515,7 @@ export const ParticipantDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-sm w-full relative">
             <button
               onClick={() => setShowQrModal(false)}
-              className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white"
+              className="absolute top-4 right-4 text-slate-500 dark:text--600 dark:text--400 hover:text-slate-900 dark:text-white"
             >
               ✕
             </button>

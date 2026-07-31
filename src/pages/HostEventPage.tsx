@@ -181,7 +181,7 @@ Mohon untuk ditinjau. Terima kasih!`;
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-xl shadow-blue-500/20 transition-all flex justify-center items-center gap-2 disabled:opacity-50"
+            className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-xl shadow-blue-500/20 transition-all flex justify-center items-center gap-2 disabled:opacity-50"
           >
             {isSubmitting ? (
               'Mengirim Permohonan...'

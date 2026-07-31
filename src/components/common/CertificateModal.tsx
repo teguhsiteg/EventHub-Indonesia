@@ -126,7 +126,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-blue-500 hover:from-yellow-400 hover:to-blue-400 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-yellow-500/20 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
             >
               <Download className="w-4 h-4" />
               <span>Unduh Sertifikat</span>

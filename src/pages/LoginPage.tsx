@@ -106,7 +106,7 @@ export const LoginPage: React.FC = () => {
                 className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.05] text-left"
               >
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/10 to-yellow-500/10 flex items-center justify-center shrink-0">
-                  <item.icon className="w-4 h-4 text-blue-400" />
+                  <item.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">{item.text}</span>
               </div>
@@ -220,7 +220,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white font-semibold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -312,7 +312,7 @@ export const LoginPage: React.FC = () => {
                     <button
                       onClick={handleResetPassword}
                       disabled={!resetEmail}
-                      className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 text-white text-sm font-semibold disabled:opacity-50 transition-all"
+                      className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold disabled:opacity-50 transition-all"
                     >
                       Kirim Tautan
                     </button>

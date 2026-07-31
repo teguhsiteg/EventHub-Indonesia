@@ -6,6 +6,11 @@ import { db } from '../../config/firebase';
 export const FooterSettings: React.FC<{ addNotification: (type: 'success' | 'error' | 'info' | 'warning', title: string, message: string) => void }> = ({ addNotification }) => {
   const [about, setAbout] = useState('');
   const [copyright, setCopyright] = useState('');
+  const [contactAddress, setContactAddress] = useState('Jakarta, Indonesia');
+  const [contactEmail, setContactEmail] = useState('support@racepro.id');
+  const [contactPhone, setContactPhone] = useState('+62 812-XXXX-XXXX');
+  const [navLinksText, setNavLinksText] = useState("Jelajahi Event : /events\\nHasil & Klasemen : /results\\nTentang Kami : /about\\nBantuan : /contact");
+  const [legalLinksText, setLegalLinksText] = useState("Syarat & Ketentuan : /terms\\nKebijakan Privasi : /privacy\\nLaporkan Masalah : /contact");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -13,8 +18,14 @@ export const FooterSettings: React.FC<{ addNotification: (type: 'success' | 'err
       try {
         const snap = await getDoc(doc(db, 'system_settings', 'footer_config'));
         if (snap.exists()) {
-          setAbout(snap.data().about || '');
-          setCopyright(snap.data().copyright || '');
+          const d = snap.data();
+          setAbout(d.about || '');
+          setCopyright(d.copyright || '');
+          if (d.contactAddress) setContactAddress(d.contactAddress);
+          if (d.contactEmail) setContactEmail(d.contactEmail);
+          if (d.contactPhone) setContactPhone(d.contactPhone);
+          if (d.navLinks) setNavLinksText(d.navLinks.map((l:any) => `${l.label} : ${l.to}`).join('\\n'));
+          if (d.legalLinks) setLegalLinksText(d.legalLinks.map((l:any) => `${l.label} : ${l.to}`).join('\\n'));
         }
       } catch (e) {
         console.error(e);
@@ -26,9 +37,23 @@ export const FooterSettings: React.FC<{ addNotification: (type: 'success' | 'err
   const handleSave = async () => {
     setLoading(true);
     try {
+      const parseLinks = (text: string) => text.split('\\n').filter(Boolean).map(l => { 
+        const parts = l.split(/[:;,]/); 
+        const label = parts[0]?.trim() || '';
+        const to = parts.slice(1).join(':')?.trim() || '';
+        return { label, to };
+      });
+      const navLinks = parseLinks(navLinksText);
+      const legalLinks = parseLinks(legalLinksText);
+      
       await setDoc(doc(db, 'system_settings', 'footer_config'), {
         about,
         copyright,
+        contactAddress,
+        contactEmail,
+        contactPhone,
+        navLinks,
+        legalLinks,
         updatedAt: new Date().toISOString()
       }, { merge: true });
       addNotification('success', 'Berhasil', 'Pengaturan Footer telah disimpan. Refresh halaman utama untuk melihat perubahan.');
@@ -78,6 +103,38 @@ export const FooterSettings: React.FC<{ addNotification: (type: 'success' | 'err
             className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500/50 transition-all shadow-sm"
             placeholder="© 2026 RacePro. Seluruh Hak Cipta Dilindungi."
           />
+        </div>
+
+        <div className="pt-6 border-t border-slate-200 dark:border-white/[0.06]">
+          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-4">Informasi Kontak</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Alamat Lengkap</label>
+              <input type="text" value={contactAddress} onChange={e => setContactAddress(e.target.value)} className="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-pink-500 focus:outline-none bg-transparent" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Email Support</label>
+              <input type="text" value={contactEmail} onChange={e => setContactEmail(e.target.value)} className="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-pink-500 focus:outline-none bg-transparent" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Nomor Telepon/WA</label>
+              <input type="text" value={contactPhone} onChange={e => setContactPhone(e.target.value)} className="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-pink-500 focus:outline-none bg-transparent" />
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-slate-200 dark:border-white/[0.06]">
+          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-4">Pengaturan Link Navigasi</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Link Navigasi (Format: Teks : /url)</label>
+              <textarea rows={4} value={navLinksText} onChange={e => setNavLinksText(e.target.value)} className="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-pink-500 focus:outline-none bg-transparent font-mono text-xs whitespace-pre" placeholder="Jelajahi Event : /events" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Link Legal (Format: Teks : /url)</label>
+              <textarea rows={4} value={legalLinksText} onChange={e => setLegalLinksText(e.target.value)} className="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-pink-500 focus:outline-none bg-transparent font-mono text-xs whitespace-pre" placeholder="Syarat & Ketentuan : /terms" />
+            </div>
+          </div>
         </div>
 
         <div className="pt-4 border-t border-slate-200 dark:border-white/[0.06] flex justify-end">

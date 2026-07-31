@@ -89,7 +89,7 @@ export const Navbar: React.FC = () => {
                 }`}
               >
                 {isActive(link.path) && (
-                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 to-yellow-500/20 border border-blue-500/30" />
+                  <span className="absolute inset-0 rounded-full bg-blue-500/10 border border-blue-500/20" />
                 )}
                 <span className="relative z-10">{link.label}</span>
               </Link>
@@ -119,7 +119,7 @@ export const Navbar: React.FC = () => {
                 {(isAdmin || isOrganizer) && (
                   <Link
                     to="/admin"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-yellow-500/10 to-blue-500/10 border border-blue-500/20 text-yellow-400 text-xs font-semibold hover:from-yellow-500/20 hover:to-blue-500/20 transition-all duration-300"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold hover:bg-blue-500/20 transition-all duration-300"
                   >
                     <ShieldAlert className="w-3.5 h-3.5" />
                     <span>Admin</span>
@@ -200,7 +200,7 @@ export const Navbar: React.FC = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white text-sm font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold shadow-lg shadow-blue-500/20 transition-all duration-300"
                 >
                   <span>Daftar</span>
                   <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
@@ -242,7 +242,7 @@ export const Navbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                   isActive(link.path)
-                    ? 'bg-gradient-to-r from-blue-500/10 to-yellow-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
+                    ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
                     : 'text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/[0.03]'
                 }`}
               >
@@ -258,7 +258,7 @@ export const Navbar: React.FC = () => {
                       {user.displayName?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-white">{user.displayName}</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">{user.displayName}</p>
                       <p className="text-[10px] text-slate-500">{user.email}</p>
                     </div>
                   </div>
@@ -266,7 +266,7 @@ export const Navbar: React.FC = () => {
                     <Link
                       to="/admin"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-yellow-400 bg-yellow-500/10 border border-yellow-500/20"
+                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 border border-yellow-500/20"
                     >
                       <ShieldAlert className="w-4 h-4" />
                       Panel Admin
@@ -276,7 +276,7 @@ export const Navbar: React.FC = () => {
                     <Link
                       to="/dashboard"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-blue-400 bg-blue-500/10 border border-blue-500/20"
+                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20"
                     >
                       <Medal className="w-4 h-4" />
                       Dashboard Saya
@@ -284,7 +284,7 @@ export const Navbar: React.FC = () => {
                   )}
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
                     Keluar
@@ -302,7 +302,7 @@ export const Navbar: React.FC = () => {
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-yellow-500 shadow-lg shadow-blue-500/20"
+                    className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/20 transition-colors"
                   >
                     Daftar Akun
                   </Link>

@@ -250,16 +250,16 @@ export const AdminDashboardPage: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const map: Record<string, string> = {
-      'PUBLISHED': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-      'DRAFT': 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/30',
-      'CANCELLED': 'bg-red-500/10 text-red-400 border-red-500/30',
-      'PENDING': 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30',
-      'PAID': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-      'REJECTED': 'bg-red-500/10 text-red-400 border-red-500/30',
-      'APPROVED': 'bg-blue-500/10 text-blue-400 border-blue-500/30',
-      'ACTIVE': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+      'PUBLISHED': 'bg-emerald-500/10 text--600 dark:text--400 border-emerald-500/30',
+      'DRAFT': 'bg-slate-500/10 text-slate-600 dark:text--600 dark:text--400 border-slate-500/30',
+      'CANCELLED': 'bg-red-500/10 text--600 dark:text--400 border-red-500/30',
+      'PENDING': 'bg-yellow-500/10 text--600 dark:text--400 border-yellow-500/30',
+      'PAID': 'bg-emerald-500/10 text--600 dark:text--400 border-emerald-500/30',
+      'REJECTED': 'bg-red-500/10 text--600 dark:text--400 border-red-500/30',
+      'APPROVED': 'bg-blue-500/10 text--600 dark:text--400 border-blue-500/30',
+      'ACTIVE': 'bg-emerald-500/10 text--600 dark:text--400 border-emerald-500/30',
     };
-    return map[status] || 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/30';
+    return map[status] || 'bg-slate-500/10 text-slate-600 dark:text--600 dark:text--400 border-slate-500/30';
   };
 
   const statCards = [
@@ -268,7 +268,7 @@ export const AdminDashboardPage: React.FC = () => {
       value: events.length,
       icon: Calendar,
       accent: 'border-l-blue-500',
-      iconBg: 'bg-blue-500/10 text-blue-400',
+      iconBg: 'bg-blue-500/10 text--600 dark:text--400',
       gradient: 'from-blue-500/5 to-transparent',
     },
     {
@@ -276,7 +276,7 @@ export const AdminDashboardPage: React.FC = () => {
       value: registrations.length,
       icon: Users,
       accent: 'border-l-emerald-500',
-      iconBg: 'bg-emerald-500/10 text-emerald-400',
+      iconBg: 'bg-emerald-500/10 text--600 dark:text--400',
       gradient: 'from-emerald-500/5 to-transparent',
     },
     {
@@ -284,7 +284,7 @@ export const AdminDashboardPage: React.FC = () => {
       value: pendingPaymentsCount,
       icon: Clock,
       accent: 'border-l-yellow-500',
-      iconBg: 'bg-yellow-500/10 text-yellow-400',
+      iconBg: 'bg-yellow-500/10 text--600 dark:text--400',
       gradient: 'from-yellow-500/5 to-transparent',
     },
     {
@@ -293,7 +293,7 @@ export const AdminDashboardPage: React.FC = () => {
       icon: TrendingUp,
       isCurrency: true,
       accent: 'border-l-blue-500',
-      iconBg: 'bg-blue-500/10 text-blue-400',
+      iconBg: 'bg-blue-500/10 text--600 dark:text--400',
       gradient: 'from-blue-500/5 to-transparent',
     },
   ];
@@ -306,7 +306,7 @@ export const AdminDashboardPage: React.FC = () => {
             {/* Page Header */}
             <div className="mb-8">
               <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">RacePro Management</h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Pengelolaan real-time event, pendaftaran, pembayaran, dan hasil lomba.</p>
+              <p className="text-sm text-slate-600 dark:text--600 dark:text--400 mt-1">Pengelolaan real-time event, pendaftaran, pembayaran, dan hasil lomba.</p>
             </div>
 
             {/* Loading State */}
@@ -352,7 +352,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-3">
                   <button
                     onClick={() => setShowEventModal(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Buat Event Baru</span>
@@ -371,7 +371,7 @@ export const AdminDashboardPage: React.FC = () => {
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <Activity className="w-4 h-4 text-blue-400" />
+                        <Activity className="w-4 h-4 text--600 dark:text--400" />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Audit Logs</h3>
@@ -396,7 +396,7 @@ export const AdminDashboardPage: React.FC = () => {
                             <td className="py-3 px-6 text-xs text-slate-500 font-mono">{new Date(log.createdAt).toLocaleString('id-ID')}</td>
                             <td className="py-3 px-6 text-xs text-slate-700 dark:text-slate-300">{log.actorEmail}</td>
                             <td className="py-3 px-6">
-                              <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-bold uppercase border border-blue-500/20">
+                              <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text--600 dark:text--400 text-[10px] font-bold uppercase border border-blue-500/20">
                                 {log.action}
                               </span>
                             </td>
@@ -417,7 +417,7 @@ export const AdminDashboardPage: React.FC = () => {
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <Calendar className="w-4 h-4 text-blue-400" />
+                        <Calendar className="w-4 h-4 text--600 dark:text--400" />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Manajemen Event</h3>
@@ -481,12 +481,12 @@ export const AdminDashboardPage: React.FC = () => {
                                 <p className="text-xs font-bold text-slate-900 dark:text-white">{ev.name}</p>
                               </td>
                               <td className="py-4 px-6">
-                                <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                                <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text--600 dark:text--400">
                                   <MapPin className="w-3 h-3 text-slate-600" />
                                   {ev.location}
                                 </div>
                               </td>
-                              <td className="py-4 px-6 text-xs text-slate-600 dark:text-slate-400">
+                              <td className="py-4 px-6 text-xs text-slate-600 dark:text--600 dark:text--400">
                                 {new Date(ev.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </td>
                               <td className="py-4 px-6">
@@ -501,7 +501,7 @@ export const AdminDashboardPage: React.FC = () => {
                                       setEditingEvent(ev);
                                       setShowEventModal(true);
                                     }}
-                                    className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all"
+                                    className="p-2 rounded-lg text-slate-600 dark:text--600 dark:text--400 hover:text--600 dark:text--400 hover:bg-blue-500/10 transition-all"
                                     title="Edit"
                                   >
                                     <Edit className="w-3.5 h-3.5" />
@@ -520,7 +520,7 @@ export const AdminDashboardPage: React.FC = () => {
                                         );
                                       }
                                     }}
-                                    className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                    className="p-2 rounded-lg text-slate-600 dark:text--600 dark:text--400 hover:text--600 dark:text--400 hover:bg-red-500/10 transition-all"
                                     title="Hapus"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -556,7 +556,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl">
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                      <ClipboardList className="w-4 h-4 text-emerald-400" />
+                      <ClipboardList className="w-4 h-4 text--600 dark:text--400" />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Permohonan Event</h3>
@@ -613,7 +613,7 @@ export const AdminDashboardPage: React.FC = () => {
                               </td>
                               <td className="py-4 px-6 text-right">
                                 <button
-                                  className="text-[10px] font-bold text-blue-500 hover:text-blue-400 uppercase tracking-wider"
+                                  className="text-[10px] font-bold text-blue-500 hover:text--600 dark:text--400 uppercase tracking-wider"
                                 >
                                   Detail
                                 </button>
@@ -634,7 +634,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl">
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-                      <CreditCard className="w-4 h-4 text-yellow-400" />
+                      <CreditCard className="w-4 h-4 text--600 dark:text--400" />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Verifikasi Pembayaran</h3>
@@ -675,7 +675,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 })()}
                               </td>
                               <td className="py-4 px-6">
-                                <span className="text-xs font-bold text-yellow-400">{formatRupiah(pay.amount)}</span>
+                                <span className="text-xs font-bold text--600 dark:text--400">{formatRupiah(pay.amount)}</span>
                               </td>
                               <td className="py-4 px-6">
                                 {pay.proofUrl ? (
@@ -683,7 +683,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     href={pay.proofUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                                    className="flex items-center gap-1.5 text-xs text--600 dark:text--400 hover:text-blue-300 font-semibold transition-colors"
                                   >
                                     <Eye className="w-3 h-3" />
                                     Lihat Bukti
@@ -702,7 +702,7 @@ export const AdminDashboardPage: React.FC = () => {
                                   {settings.paymentGatewayConfigured ? (
                                     <button
                                       onClick={() => handleSyncMidtransPayment(pay.id, pay.registrationId)}
-                                      className="px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-bold text-[10px] uppercase tracking-wider border border-blue-500/20 transition-all"
+                                      className="px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-blue-500/20 transition-all"
                                     >
                                       Cek Gateway
                                     </button>
@@ -710,14 +710,14 @@ export const AdminDashboardPage: React.FC = () => {
                                     <>
                                       <button
                                         onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'APPROVE')}
-                                        className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold text-[10px] uppercase tracking-wider border border-emerald-500/20 transition-all"
+                                        className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-emerald-500/20 transition-all"
                                       >
                                         <CheckCircle2 className="w-3 h-3 inline mr-1" />
                                         Setujui
                                       </button>
                                       <button
                                         onClick={() => handleVerifyPayment(pay.id, pay.registrationId, 'REJECT')}
-                                        className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
+                                        className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
                                       >
                                         <XCircle className="w-3 h-3 inline mr-1" />
                                         Tolak
@@ -743,7 +743,7 @@ export const AdminDashboardPage: React.FC = () => {
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <DollarSign className="w-4 h-4 text-blue-400" />
+                        <DollarSign className="w-4 h-4 text--600 dark:text--400" />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Pencairan Dana</h3>
@@ -784,7 +784,7 @@ export const AdminDashboardPage: React.FC = () => {
                         }}
                       >
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Pilih Event</label>
+                          <label className="block text-[10px] font-bold text-slate-600 dark:text--600 dark:text--400 uppercase tracking-wider mb-1.5">Pilih Event</label>
                           <select
                             required
                             value={payoutEventId}
@@ -796,7 +796,7 @@ export const AdminDashboardPage: React.FC = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Nominal (Rp)</label>
+                          <label className="block text-[10px] font-bold text-slate-600 dark:text--600 dark:text--400 uppercase tracking-wider mb-1.5">Nominal (Rp)</label>
                           <input
                             required type="number" min="1"
                             value={payoutAmount} onChange={e => setPayoutAmount(e.target.value)}
@@ -805,7 +805,7 @@ export const AdminDashboardPage: React.FC = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Nama Bank</label>
+                          <label className="block text-[10px] font-bold text-slate-600 dark:text--600 dark:text--400 uppercase tracking-wider mb-1.5">Nama Bank</label>
                           <input
                             required
                             value={payoutBank} onChange={e => setPayoutBank(e.target.value)}
@@ -814,7 +814,7 @@ export const AdminDashboardPage: React.FC = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Nomor Rekening</label>
+                          <label className="block text-[10px] font-bold text-slate-600 dark:text--600 dark:text--400 uppercase tracking-wider mb-1.5">Nomor Rekening</label>
                           <input
                             required
                             value={payoutAccount} onChange={e => setPayoutAccount(e.target.value)}
@@ -823,7 +823,7 @@ export const AdminDashboardPage: React.FC = () => {
                           />
                         </div>
                         <div className="sm:col-span-2">
-                          <label className="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">Nama Pemilik Rekening</label>
+                          <label className="block text-[10px] font-bold text-slate-600 dark:text--600 dark:text--400 uppercase tracking-wider mb-1.5">Nama Pemilik Rekening</label>
                           <input
                             required
                             value={payoutHolder} onChange={e => setPayoutHolder(e.target.value)}
@@ -835,7 +835,7 @@ export const AdminDashboardPage: React.FC = () => {
                           <button
                             type="submit"
                             disabled={payoutLoading}
-                            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 disabled:opacity-50 transition-all"
+                            className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 disabled:opacity-50 transition-all"
                           >
                             {payoutLoading ? 'Mengajukan...' : 'Kirim Permintaan Pencairan'}
                           </button>
@@ -874,12 +874,12 @@ export const AdminDashboardPage: React.FC = () => {
                               <td className="py-4 px-6 text-xs font-mono text-slate-700 dark:text-slate-300">
                                 {new Date(payout.requestedAt).toLocaleDateString('id-ID')}
                               </td>
-                              <td className="py-4 px-6 text-xs text-slate-600 dark:text-slate-400 font-mono truncate max-w-[150px]">{payout.eventId}</td>
+                              <td className="py-4 px-6 text-xs text-slate-600 dark:text--600 dark:text--400 font-mono truncate max-w-[150px]">{payout.eventId}</td>
                               <td className="py-4 px-6">
                                 <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{payout.bankName} — {payout.accountNumber}</p>
                                 <p className="text-[10px] text-slate-500">{payout.accountHolderName}</p>
                               </td>
-                              <td className="py-4 px-6 text-xs font-bold text-yellow-400">{formatRupiah(payout.amount)}</td>
+                              <td className="py-4 px-6 text-xs font-bold text--600 dark:text--400">{formatRupiah(payout.amount)}</td>
                               <td className="py-4 px-6">
                                 <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border ${getStatusBadge(payout.status)}`}>
                                   {payout.status}
@@ -902,7 +902,7 @@ export const AdminDashboardPage: React.FC = () => {
                                             }
                                           }
                                         }}
-                                        className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold text-[10px] uppercase tracking-wider border border-emerald-500/20 transition-all"
+                                        className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-emerald-500/20 transition-all"
                                       >
                                         <CheckCircle2 className="w-3 h-3 inline mr-1" />
                                         Selesai (Paid)
@@ -920,7 +920,7 @@ export const AdminDashboardPage: React.FC = () => {
                                             }
                                           }
                                         }}
-                                        className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
+                                        className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
                                       >
                                         <XCircle className="w-3 h-3 inline mr-1" />
                                         Tolak
@@ -932,7 +932,7 @@ export const AdminDashboardPage: React.FC = () => {
                                         href={payout.proofUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-semibold transition-colors"
+                                        className="flex items-center gap-1.5 text-xs text--600 dark:text--400 hover:text-emerald-300 font-semibold transition-colors"
                                       >
                                         <Eye className="w-3 h-3" />
                                         Bukti Transfer
@@ -957,7 +957,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl max-w-xl mx-auto">
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                      <Trophy className="w-4 h-4 text-blue-400" />
+                      <Trophy className="w-4 h-4 text--600 dark:text--400" />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Input Hasil Lomba</h3>
@@ -967,7 +967,7 @@ export const AdminDashboardPage: React.FC = () => {
                   <div className="p-6">
                     <form onSubmit={handleSubmitResult} className="space-y-4 text-xs">
                       <div>
-                        <label className="block text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Pilih Event</label>
+                        <label className="block text-slate-600 dark:text--600 dark:text--400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Pilih Event</label>
                         <select
                           value={resEventId}
                           onChange={(e) => setResEventId(e.target.value)}
@@ -978,7 +978,7 @@ export const AdminDashboardPage: React.FC = () => {
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Nomor BIB</label>
+                          <label className="block text-slate-600 dark:text--600 dark:text--400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Nomor BIB</label>
                           <input
                             type="text"
                             required
@@ -989,7 +989,7 @@ export const AdminDashboardPage: React.FC = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Nama Peserta</label>
+                          <label className="block text-slate-600 dark:text--600 dark:text--400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Nama Peserta</label>
                           <input
                             type="text"
                             required
@@ -1002,7 +1002,7 @@ export const AdminDashboardPage: React.FC = () => {
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Chip Time</label>
+                          <label className="block text-slate-600 dark:text--600 dark:text--400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Chip Time</label>
                           <input
                             type="text"
                             required
@@ -1012,7 +1012,7 @@ export const AdminDashboardPage: React.FC = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Rank Finisher</label>
+                          <label className="block text-slate-600 dark:text--600 dark:text--400 font-bold uppercase tracking-wider mb-1.5 text-[10px]">Rank Finisher</label>
                           <input
                             type="number"
                             required
@@ -1024,7 +1024,7 @@ export const AdminDashboardPage: React.FC = () => {
                       </div>
                       <button
                         type="submit"
-                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
+                        className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
                       >
                         Publikasikan Hasil Finisher
                       </button>
@@ -1062,11 +1062,11 @@ export const AdminDashboardPage: React.FC = () => {
                             <td className="py-4 px-6">
                               <p className="text-xs font-bold text-slate-900 dark:text-white">{u.email}</p>
                               {u.banned && (
-                                <span className="text-[9px] text-red-400 font-bold uppercase tracking-wider">BANNED</span>
+                                <span className="text-[9px] text--600 dark:text--400 font-bold uppercase tracking-wider">BANNED</span>
                               )}
                             </td>
                             <td className="py-4 px-6">
-                              <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
+                              <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border bg-yellow-500/10 text-yellow-600 dark:text--600 dark:text--400 border-yellow-500/20">
                                 {u.role}
                               </span>
                             </td>
@@ -1074,21 +1074,21 @@ export const AdminDashboardPage: React.FC = () => {
                               <div className="flex flex-wrap items-center gap-1.5">
                                 <button
                                   onClick={() => handleRoleChange(u.id, 'ADMIN')}
-                                  className="px-2.5 py-1.5 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 font-bold text-[10px] uppercase tracking-wider border border-yellow-500/20 transition-all"
+                                  className="px-2.5 py-1.5 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-yellow-500/20 transition-all"
                                 >
                                   <Shield className="w-3 h-3 inline mr-1" />
                                   ADMIN
                                 </button>
                                 <button
                                   onClick={() => handleRoleChange(u.id, 'ORGANIZER')}
-                                  className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-bold text-[10px] uppercase tracking-wider border border-blue-500/20 transition-all"
+                                  className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-blue-500/20 transition-all"
                                 >
                                   <UserCheck className="w-3 h-3 inline mr-1" />
                                   ORGANIZER
                                 </button>
                                 <button
                                   onClick={() => handleRoleChange(u.id, 'PARTICIPANT')}
-                                  className="px-2.5 py-1.5 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 text-slate-600 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wider border border-slate-500/20 transition-all"
+                                  className="px-2.5 py-1.5 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 text-slate-600 dark:text--600 dark:text--400 font-bold text-[10px] uppercase tracking-wider border border-slate-500/20 transition-all"
                                 >
                                   PARTICIPANT
                                 </button>
@@ -1108,8 +1108,8 @@ export const AdminDashboardPage: React.FC = () => {
                                   }}
                                   className={`px-2.5 py-1.5 rounded-lg font-bold text-[10px] uppercase tracking-wider border transition-all ${
                                     u.banned
-                                      ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-emerald-500/20'
-                                      : 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/20'
+                                      ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text--600 dark:text--400 border-emerald-500/20'
+                                      : 'bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text--600 dark:text--400 border-red-500/20'
                                   }`}
                                 >
                                   <Ban className="w-3 h-3 inline mr-1" />
@@ -1130,7 +1130,7 @@ export const AdminDashboardPage: React.FC = () => {
             {activeTab === 'users' && !loading && !isSuperAdmin && (
               <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl p-12 text-center shadow-xl">
                 <Shield className="w-12 h-12 mx-auto mb-4 text-slate-600" />
-                <p className="text-sm font-bold text-slate-600 dark:text-slate-400">Akses Terbatas</p>
+                <p className="text-sm font-bold text-slate-600 dark:text--600 dark:text--400">Akses Terbatas</p>
                 <p className="text-xs text-slate-600 mt-1">Hanya Super Admin yang dapat mengelola pengguna.</p>
               </div>
             )}
@@ -1159,7 +1159,7 @@ export const AdminDashboardPage: React.FC = () => {
                             className={`flex items-center gap-3 px-5 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider whitespace-nowrap transition-all text-left ${
                               isActive 
                                 ? 'bg-blue-500 text-slate-900 dark:text-white shadow-lg shadow-blue-500/20' 
-                                : 'bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-200 hover:border-blue-500/50'
+                                : 'bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text--600 dark:text--400 hover:text-slate-900 dark:text-slate-200 hover:border-blue-500/50'
                             }`}
                           >
                             <Icon className="w-4 h-4 shrink-0" />

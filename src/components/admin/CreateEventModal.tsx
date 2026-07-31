@@ -285,7 +285,6 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         schedule: schedules,
         rules: rules,
         faqs: faqs,
-        faqs: faqs,
         addons: addons,
         enableVoucherCode: enableVoucherCode,
         specialVouchers: specialVouchers,

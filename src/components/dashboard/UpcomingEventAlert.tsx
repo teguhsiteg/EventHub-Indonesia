@@ -94,7 +94,7 @@ export const UpcomingEventAlert: React.FC<UpcomingEventAlertProps> = ({
             <button
               type="button"
               onClick={onOpenQr}
-              className="px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-yellow-500 hover:from-blue-500 hover:to-yellow-400 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
+              className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
             >
               <QrCode className="w-4 h-4" />
               <span>Tampilkan QR Check-In</span>

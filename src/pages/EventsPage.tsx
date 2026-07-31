@@ -35,14 +35,14 @@ export const EventsPage: React.FC = () => {
         {/* HEADER */}
         <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text-yellow-400" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text--600 dark:text--400 text-[10px] font-black uppercase tracking-wider mb-3">
+              <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text--600 dark:text--400" />
               <span>RacePro Search</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight">
               Jelajahi <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">Event Olahraga</span>
             </h1>
-            <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-xs mt-2 max-w-xl">
+            <p className="text-slate-600 dark:text-slate-500 dark:text--600 dark:text--400 text-xs mt-2 max-w-xl">
               Filter dan cari event lari, trail run, marathon, atau cycling langsung dari database RacePro.
             </p>
           </div>
@@ -120,7 +120,7 @@ export const EventsPage: React.FC = () => {
 
                     {/* Category badge */}
                     {event.category && (
-                      <div className="absolute top-3 right-3 bg-white/80 dark:bg-blue-950/80 backdrop-blur-md border border-slate-200 dark:border-slate-700/50 text-yellow-500 dark:text-yellow-400 text-[10px] font-bold uppercase px-2.5 py-1 rounded-md flex items-center gap-1">
+                      <div className="absolute top-3 right-3 bg-white/80 dark:bg-blue-950/80 backdrop-blur-md border border-slate-200 dark:border-slate-700/50 text-yellow-500 dark:text--600 dark:text--400 text-[10px] font-bold uppercase px-2.5 py-1 rounded-md flex items-center gap-1">
                         <Tag className="w-3 h-3" />
                         <span>{event.category}</span>
                       </div>
@@ -130,11 +130,11 @@ export const EventsPage: React.FC = () => {
                   {/* Content */}
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-500 dark:text-slate-400 mb-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                      <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-500 dark:text--600 dark:text--400 mb-1.5">
+                        <MapPin className="w-3.5 h-3.5 text--600 dark:text--400 shrink-0" />
                         <span className="truncate">{event.location}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-1 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-1 group-hover:text-blue-500 dark:group-hover:text--600 dark:text--400 transition-colors">
                         {event.name}
                       </h3>
                       <p className="text-xs text-slate-600 dark:text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
@@ -145,7 +145,7 @@ export const EventsPage: React.FC = () => {
                       {event.categories && event.categories.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-3">
                           {event.categories.slice(0, 3).map((cat, idx) => (
-                            <span key={idx} className="text-[10px] bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700/50">
+                            <span key={idx} className="text-[10px] bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-500 dark:text--600 dark:text--400 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700/50">
                               {cat}
                             </span>
                           ))}
@@ -154,13 +154,13 @@ export const EventsPage: React.FC = () => {
                     </div>
 
                     <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 font-medium">
+                      <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 dark:text--600 dark:text--400 font-medium">
                         <Calendar className="w-3.5 h-3.5" />
                         {new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'medium' })}
                       </span>
                       <Link
                         to={`/events/${event.slug}`}
-                        className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-500 hover:from-blue-400 hover:to-blue-400 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all group/link"
+                        className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all group/link"
                       >
                         <span>Detail</span>
                         <ChevronRight className="w-4 h-4 group-hover/link:translate-x-0.5 transition-transform" />

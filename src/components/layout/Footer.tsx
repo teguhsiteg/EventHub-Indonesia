@@ -9,6 +9,20 @@ export const Footer: React.FC = () => {
   const [footerData, setFooterData] = useState({
     about: 'RacePro adalah platform resmi manajemen event & olahraga. Temukan, daftar, dan kelola pengalaman event olahraga Anda bersama RacePro.',
     copyright: `© ${currentYear} RacePro. All rights reserved.`,
+    contactAddress: 'Jakarta, Indonesia',
+    contactEmail: 'support@racepro.id',
+    contactPhone: '+62 812-XXXX-XXXX',
+    navLinks: [
+      { to: '/events', label: 'Jelajahi Event' },
+      { to: '/results', label: 'Hasil & Klasemen' },
+      { to: '/about', label: 'Tentang Kami' },
+      { to: '/contact', label: 'Bantuan' },
+    ],
+    legalLinks: [
+      { to: '/terms', label: 'Syarat & Ketentuan' },
+      { to: '/privacy', label: 'Kebijakan Privasi' },
+      { to: '/contact', label: 'Laporkan Masalah' },
+    ]
   });
 
   useEffect(() => {
@@ -17,8 +31,16 @@ export const Footer: React.FC = () => {
         const snap = await getDoc(doc(db, 'system_settings', 'footer_config'));
         if (snap.exists()) {
           const data = snap.data();
-          if (data.about) setFooterData(p => ({...p, about: data.about}));
-          if (data.copyright) setFooterData(p => ({...p, copyright: data.copyright}));
+          setFooterData(p => ({
+            ...p,
+            about: data.about || p.about,
+            copyright: data.copyright || p.copyright,
+            contactAddress: data.contactAddress || p.contactAddress,
+            contactEmail: data.contactEmail || p.contactEmail,
+            contactPhone: data.contactPhone || p.contactPhone,
+            navLinks: data.navLinks || p.navLinks,
+            legalLinks: data.legalLinks || p.legalLinks
+          }));
         }
       } catch (e) {
         console.error('Error loading footer config', e);
@@ -63,12 +85,7 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider mb-4">Navigasi</h4>
             <ul className="space-y-3">
-              {[
-                { to: '/events', label: 'Jelajahi Event' },
-                { to: '/results', label: 'Hasil & Klasemen' },
-                { to: '/about', label: 'Tentang Kami' },
-                { to: '/contact', label: 'Bantuan' },
-              ].map(link => (
+              {footerData.navLinks.map(link => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
@@ -86,11 +103,7 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider mb-4">Legal</h4>
             <ul className="space-y-3">
-              {[
-                { to: '/terms', label: 'Syarat & Ketentuan' },
-                { to: '/privacy', label: 'Kebijakan Privasi' },
-                { to: '/contact', label: 'Laporkan Masalah' },
-              ].map(link => (
+              {footerData.legalLinks.map(link => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
@@ -105,22 +118,22 @@ export const Footer: React.FC = () => {
 
           {/* Kontak */}
           <div>
-            <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-4">Kontak</h4>
+            <h4 className="text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider mb-4">Kontak</h4>
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">
                 <MapPin className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
-                <span>Jakarta, Indonesia</span>
+                <span>{footerData.contactAddress}</span>
               </li>
               <li className="flex items-center gap-2.5 text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">
                 <Mail className="w-4 h-4 text-slate-500 shrink-0" />
-                <a href="mailto:support@racepro.id" className="hover:text-blue-400 transition-colors">
-                  support@racepro.id
+                <a href={`mailto:${footerData.contactEmail}`} className="hover:text-blue-400 transition-colors">
+                  {footerData.contactEmail}
                 </a>
               </li>
               <li className="flex items-center gap-2.5 text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">
                 <Phone className="w-4 h-4 text-slate-500 shrink-0" />
-                <a href="tel:+6281234567890" className="hover:text-blue-400 transition-colors">
-                  +62 812-XXXX-XXXX
+                <a href={`tel:${footerData.contactPhone.replace(/[^0-9+]/g, '')}`} className="hover:text-blue-400 transition-colors">
+                  {footerData.contactPhone}
                 </a>
               </li>
             </ul>

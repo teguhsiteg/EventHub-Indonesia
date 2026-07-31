@@ -84,7 +84,7 @@ export const HomePage: React.FC = () => {
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/events"
-                className="w-full sm:w-auto group px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 via-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white font-black text-xs uppercase tracking-wider shadow-xl shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-500/30 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto group px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-xl shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 <span>Jelajahi Event</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -114,9 +114,9 @@ export const HomePage: React.FC = () => {
                 { icon: Award, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20', title: 'Sertifikat Digital', desc: 'E-Certificate resmi hasil lomba' },
               ].map((feat, idx) => (
                 <div key={idx} className={`p-4 rounded-xl bg-white dark:bg-blue-950/60 backdrop-blur-sm border ${feat.bg} hover:border-slate-300 dark:border-slate-700 transition-colors group`}>
-                  <feat.icon className={`w-5 h-5 ${feat.color} mb-2`} />
-                  <h4 className="text-xs font-bold text-white uppercase group-hover:text-blue-400 transition-colors">{feat.title}</h4>
-                  <p className="text-[11px] text-slate-500">{feat.desc}</p>
+                  <feat.icon className={`w-5 h-5 ${feat.color.replace('400', '600 dark:text-' + feat.color.split('-')[1] + '-400')} mb-2`} />
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{feat.title}</h4>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-500">{feat.desc}</p>
                 </div>
               ))}
             </div>
@@ -286,17 +286,17 @@ export const HomePage: React.FC = () => {
             <Zap className="w-3.5 h-3.5" />
             <span>Siap Berlaga?</span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight leading-tight">
             Daftar Event<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">Sekarang</span>
           </h2>
-          <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-sm max-w-xl mx-auto leading-relaxed">
+          <p className="text-slate-400 text-sm max-w-xl mx-auto leading-relaxed">
             Daftar akun peserta sekarang untuk kemudahan pendaftaran event, verifikasi QR Code Race Pack, dan klaim sertifikat finisher resmi — semua dalam satu platform RacePro.
           </p>
           <div className="pt-2 flex flex-col sm:flex-row justify-center gap-4">
             <Link
               to="/register"
-              className="group px-8 py-4 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white font-black text-xs uppercase tracking-wider shadow-xl shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-500/30 flex items-center justify-center gap-2"
+              className="group px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-xl shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
             >
               <span>Daftar Akun Peserta</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -305,7 +305,7 @@ export const HomePage: React.FC = () => {
               href="https://racepro.com"
               target="_blank"
               rel="noreferrer"
-              className="px-8 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:bg-slate-700 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-black/30 transition-all transform hover:-translate-y-0.5 border border-slate-300 dark:border-slate-700 hover:border-slate-600"
+              className="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-black/30 transition-all transform hover:-translate-y-0.5 border border-white/20 hover:border-white/40"
             >
               Buat Event Sendiri
             </a>
