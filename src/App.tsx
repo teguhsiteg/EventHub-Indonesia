@@ -29,6 +29,7 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { AdminCheckInPage } from './pages/AdminCheckInPage';
 import { MaintenancePage } from './pages/MaintenancePage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 
 const AppRoutes: React.FC = () => {
   const { settings } = useSettings();
@@ -54,6 +55,7 @@ const AppRoutes: React.FC = () => {
       {/* ===== AUTH PAGES — Minimal, centered ===== */}
       <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
       <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
+      <Route path="/reset-password" element={<AuthLayout><ResetPasswordPage /></AuthLayout>} />
 
       {/* ===== PARTICIPANT DASHBOARD — Sidebar layout ===== */}
       <Route 

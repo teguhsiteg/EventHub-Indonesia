@@ -272,6 +272,20 @@ export async function getAllRegistrationsAdmin(): Promise<Registration[]> {
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Registration));
 }
 
+export async function getRegistrationsByEventIds(eventIds: string[]): Promise<Registration[]> {
+  if (eventIds.length === 0) return [];
+  const chunkSize = 30;
+  let allRegistrations: Registration[] = [];
+  for (let i = 0; i < eventIds.length; i += chunkSize) {
+    const chunk = eventIds.slice(i, i + chunkSize);
+    const q = query(collection(db, 'registrations'), where('eventId', 'in', chunk));
+    const snap = await getDocs(q);
+    const chunkRegs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Registration));
+    allRegistrations = [...allRegistrations, ...chunkRegs];
+  }
+  return allRegistrations;
+}
+
 export async function getParticipantByRegistrationId(regId: string): Promise<Participant | null> {
   const q = query(collection(db, 'participants'), where('registrationId', '==', regId), limit(1));
   const snap = await getDocs(q);

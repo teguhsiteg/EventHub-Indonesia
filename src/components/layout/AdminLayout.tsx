@@ -94,7 +94,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       <div className="flex">
         {/* Sidebar - Desktop */}
         <aside className="hidden xl:flex flex-col w-60 shrink-0 min-h-[calc(100vh-4rem)] sticky top-16 border-r border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-blue-950/50 backdrop-blur-sm p-3 gap-1">
-          {adminTabs.map(tab => {
+          {(isSuperAdmin ? adminTabs : adminTabs.filter(tab => !['requests', 'users', 'settings'].includes(tab.id))).map(tab => {
             const Icon = tab.icon;
             const tabParam = new URLSearchParams(tab.href.includes('?') ? tab.href.split('?')[1] : '').get('tab');
             const currentParam = location.search ? new URLSearchParams(location.search).get('tab') : null;
@@ -123,7 +123,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           <div className="fixed inset-0 z-40 xl:hidden">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileSidebarOpen(false)} />
             <aside className="absolute top-16 left-0 bottom-0 w-64 bg-slate-50 dark:bg-blue-950 border-r border-slate-200 dark:border-white/[0.06] p-3 flex flex-col gap-1 animate-in slide-in-from-left">
-              {adminTabs.map(tab => {
+              {(isSuperAdmin ? adminTabs : adminTabs.filter(tab => !['requests', 'users', 'settings'].includes(tab.id))).map(tab => {
                 const Icon = tab.icon;
                 const tabParam = new URLSearchParams(tab.href.includes('?') ? tab.href.split('?')[1] : '').get('tab');
                 const currentParam = location.search ? new URLSearchParams(location.search).get('tab') : null;

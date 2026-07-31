@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, Filter, X, RotateCcw, Loader2, Tag, Sparkles } from 'lucide-react';
+import { Search, MapPin, Filter, X, RotateCcw, Loader2, Tag, Star } from 'lucide-react';
 import { EventSearchParams } from '../../services/eventService';
 import { EVENT_CATEGORIES } from '../../utils/constants';
 

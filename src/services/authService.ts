@@ -116,7 +116,14 @@ export async function registerWithEmail(
 
   // Send email verification
   try {
-    await sendEmailVerification(cred.user);
+    const response = await fetch('/api/auth/send-verification-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (!response.ok) {
+      console.warn('Could not send verification email (API returned error)');
+    }
   } catch (err) {
     console.warn('Could not send verification email:', err);
   }
@@ -147,14 +154,31 @@ export async function logoutUser(): Promise<void> {
 }
 
 export async function requestPasswordReset(email: string): Promise<void> {
-  await sendPasswordResetEmail(auth, email);
+  const response = await fetch('/api/auth/send-reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Gagal mengirim email reset password');
+  }
 }
 
 export async function sendUserEmailVerification(): Promise<void> {
-  if (auth.currentUser) {
-    await sendEmailVerification(auth.currentUser);
+  if (auth.currentUser && auth.currentUser.email) {
+    const response = await fetch('/api/auth/send-verification-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: auth.currentUser.email })
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Gagal mengirim email verifikasi');
+    }
   } else {
-    throw new Error('Tidak ada pengguna yang terautentikasi.');
+    throw new Error('Tidak ada pengguna yang terautentikasi atau email tidak ditemukan.');
   }
 }
 

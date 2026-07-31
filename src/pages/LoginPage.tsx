@@ -9,7 +9,7 @@ import {
   EyeOff,
   ArrowRight,
   AlertCircle,
-  Sparkles,
+  MailCheck,
   Medal,
   CalendarCheck,
   Users,
@@ -30,6 +30,7 @@ export const LoginPage: React.FC = () => {
   const [resetSent, setResetSent] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [showResetModal, setShowResetModal] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,39 +62,35 @@ export const LoginPage: React.FC = () => {
 
   const handleResetPassword = async () => {
     if (!resetEmail) return;
+    setResetLoading(true);
+    setError('');
     try {
       await resetPassword(resetEmail);
       setResetSent(true);
     } catch (err: any) {
       setError(err.message || 'Gagal mengirim email reset kata sandi.');
+    } finally {
+      setResetLoading(false);
     }
   };
 
   return (
-    <div className="h-[100dvh] lg:min-h-screen w-full flex overflow-hidden bg-slate-50 dark:bg-[#0a0f1e]">
-      {/* Animated background blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute top-0 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-blue-600/10 via-yellow-500/5 to-transparent blur-3xl" />
-        <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-blue-500/8 to-transparent blur-3xl" />
-      </div>
-
+    <div className="h-[100dvh] lg:min-h-screen w-full flex overflow-hidden bg-white dark:bg-[#0f172a]">
       {/* Left: Brand Section */}
-      <div className="hidden lg:flex w-1/2 relative bg-gradient-to-br from-[#0a0f1e] via-[#020617] to-[#0a0f1e] items-center justify-center p-12 border-r border-slate-200 dark:border-white/[0.04]">
+      <div className="hidden lg:flex w-1/2 relative bg-slate-900 dark:bg-[#020617] items-center justify-center p-12">
         <div className="relative z-10 max-w-md text-center">
           {/* Logo */}
           <div className="inline-flex mb-8">
-            <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-400 to-yellow-400 p-[2px] shadow-2xl shadow-blue-500/30">
-              <div className="w-full h-full  rounded-2xl flex items-center justify-center">
-                <Trophy className="w-10 h-10 text-transparent" style={{ color: '#fb923c' }} />
-              </div>
+            <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
+              <Trophy className="w-8 h-8 text-white" />
             </div>
           </div>
 
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">
+          <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">
             Selamat Datang Kembali
           </h1>
-          <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-10 max-w-sm mx-auto">
-            Masuk ke akun RacePro Anda untuk melanjutkan. Kelola pendaftaran event, lacak hasil, dan dapatkan pengalaman terbaik.
+          <p className="text-slate-400 text-sm leading-relaxed mb-10 max-w-sm mx-auto">
+            Masuk ke akun Guwigo Anda untuk melanjutkan. Kelola pendaftaran event, lacak hasil, dan dapatkan pengalaman terbaik.
           </p>
 
           {/* Feature pills */}
@@ -105,41 +102,35 @@ export const LoginPage: React.FC = () => {
             ].map((item, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.05] text-left"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-left"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/10 to-yellow-500/10 flex items-center justify-center shrink-0">
-                  <item.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                  <item.icon className="w-4 h-4 text-blue-400" />
                 </div>
-                <span className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">{item.text}</span>
+                <span className="text-sm text-slate-300">{item.text}</span>
               </div>
             ))}
           </div>
 
           {/* Trust badge */}
-          <div className="mt-8 flex items-center justify-center gap-2 text-xs text-slate-500">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <div className="mt-10 flex items-center justify-center gap-2 text-xs text-slate-500">
+            <ShieldCheck className="w-4 h-4 text-emerald-500" />
             <span>Platform Terverifikasi & Terenkripsi</span>
           </div>
         </div>
-
-        {/* Decorative grid */}
-        <div className="absolute inset-0 opacity-[0.02]" style={{
-          backgroundImage: 'linear-gradient(rgba(249,115,22,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.3) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }} />
       </div>
 
       {/* Right: Form Section */}
       <div className="w-full h-full lg:w-1/2 flex flex-col justify-center overflow-y-auto px-6 py-4 sm:p-12">
-        <div className="w-full max-w-md mx-auto space-y-5 sm:space-y-8 my-auto">
+        <div className="w-full max-w-md mx-auto space-y-6 sm:space-y-8 my-auto">
           {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-4">
+          <div className="lg:hidden text-center mb-2">
             <div className="inline-flex mb-3">
-              <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-md">
                 <Trophy className="w-6 h-6 text-white" />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">RACE<span className="text-blue-600">PRO</span></h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">GUWIGO</h2>
           </div>
 
           <div className="text-center lg:text-left">
@@ -174,7 +165,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
               </div>
             </div>
@@ -191,7 +182,7 @@ export const LoginPage: React.FC = () => {
                     setResetEmail(email);
                     setShowResetModal(true);
                   }}
-                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                  className="text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                 >
                   Lupa kata sandi?
                 </button>
@@ -206,7 +197,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -222,7 +213,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -281,7 +272,7 @@ export const LoginPage: React.FC = () => {
             {resetSent ? (
               <div className="text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto">
-                  <Sparkles className="w-6 h-6 text-emerald-400" />
+                  <MailCheck className="w-6 h-6 text-emerald-400" />
                 </div>
                 <h3 className="text-lg font-bold text-white">Email Terkirim!</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">
@@ -320,10 +311,14 @@ export const LoginPage: React.FC = () => {
                     </button>
                     <button
                       onClick={handleResetPassword}
-                      disabled={!resetEmail}
-                      className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold disabled:opacity-50 transition-all"
+                      disabled={!resetEmail || resetLoading}
+                      className="flex-1 flex justify-center items-center py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold disabled:opacity-50 transition-all"
                     >
-                      Kirim Tautan
+                      {resetLoading ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        'Kirim Tautan'
+                      )}
                     </button>
                   </div>
                 </div>

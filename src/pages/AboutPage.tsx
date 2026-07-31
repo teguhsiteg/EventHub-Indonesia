@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
-import { Loader2, Info, ChevronRight, Home, Sparkles, Shield, FileText } from 'lucide-react';
+import { Loader2, Info, ChevronRight, Home, Shield, FileText, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import app from '../config/firebase';
 
@@ -124,7 +124,7 @@ export const AboutPage: React.FC = () => {
         
         <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 text-blue-500 dark:text-blue-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
-            <Sparkles className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
+            <Star className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
             <span>RACEPRO — TENTANG KAMI</span>
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight leading-[1.05]">

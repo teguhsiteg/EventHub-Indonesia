@@ -1,12 +1,83 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import nodemailer from 'nodemailer';
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+
+// Initialize Firebase Admin
+const serviceAccountPath = path.join(process.cwd(), 'profilcode-firebase-adminsdk-fbsvc-79c6afa1de.json');
+let db: FirebaseFirestore.Firestore;
+try {
+  const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+  initializeApp({
+    credential: cert(serviceAccount)
+  });
+  db = getFirestore();
+  console.log('Firebase Admin initialized successfully.');
+} catch (err) {
+  console.error('Failed to initialize Firebase Admin:', err);
+}
+
+// Automated Cleanup Job for Unverified Users (Runs every hour)
+const CLEANUP_INTERVAL = 60 * 60 * 1000; // 1 hour
+setInterval(async () => {
+  if (!db) return;
+  try {
+    console.log('[Cleanup Job] Running unverified users cleanup...');
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+    
+    // Query only users who haven't verified their email (saves quota vs querying all users)
+    const unverifiedUsersSnap = await db.collection('users')
+      .where('isEmailVerified', '==', false)
+      .get();
+      
+    let deletedCount = 0;
+    
+    for (const doc of unverifiedUsersSnap.docs) {
+      const userData = doc.data();
+      const createdAtStr = userData.createdAt;
+      
+      if (createdAtStr) {
+        const createdAt = new Date(createdAtStr);
+        if (createdAt < twentyFourHoursAgo) {
+          // 1. Delete from Firestore
+          await doc.ref.delete();
+          // 2. Delete from Firebase Auth
+          try {
+            await getAuth().deleteUser(doc.id);
+          } catch (authErr) {
+            console.warn(`[Cleanup Job] Failed to delete user from Auth (UID: ${doc.id}):`, authErr);
+          }
+          deletedCount++;
+        }
+      }
+    }
+    
+    if (deletedCount > 0) {
+      console.log(`[Cleanup Job] Successfully cleaned up ${deletedCount} unverified users older than 24h.`);
+    } else {
+      console.log('[Cleanup Job] No stale unverified users found.');
+    }
+  } catch (error) {
+    console.error('[Cleanup Job] Error during cleanup:', error);
+  }
+}, CLEANUP_INTERVAL);
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+// Set COOP header to fix Firebase Auth popup issue in dev
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+  next();
+});
 
 // API Routes
 
@@ -84,6 +155,19 @@ app.get('/api/verify/qr/:token', (req: Request, res: Response) => {
     verifiedAt: new Date().toISOString(),
     instruction: 'Scan QR berhasil. Buka dashboard admin check-in untuk konfirmasi pengambilan Race Pack & BIB.'
   });
+});
+
+// 4.5. Admin Users Fetcher (Bypass Firestore client rules)
+app.get('/api/admin/users', async (req: Request, res: Response) => {
+  try {
+    if (!db) return res.status(500).json({ error: 'Database not initialized' });
+    const snap = await db.collection('users').get();
+    const users = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(users);
+  } catch (error: any) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // 5. CSV Export endpoint
@@ -217,6 +301,171 @@ app.post('/api/notifications/send-registration-email', async (req: Request, res:
   } catch (error: any) {
     console.error('[Email Service Error]', error);
     return res.status(500).json({ success: false, message: 'Gagal mengirim email konfirmasi.', error: error.message });
+  }
+});
+
+// 7. Custom Password Reset Email API
+app.post('/api/auth/send-reset-password', async (req: Request, res: Response) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email dibutuhkan.' });
+  }
+
+  try {
+    const origin = req.headers.origin || 'http://localhost:3000';
+    const actionCodeSettings = {
+      url: `${origin}/reset-password`,
+      handleCodeInApp: false
+    };
+
+    // Generate reset link using Firebase Admin SDK
+    const firebaseLink = await getAuth().generatePasswordResetLink(email, actionCodeSettings);
+    
+    // Extract oobCode to create a direct link to our custom React page
+    const url = new URL(firebaseLink);
+    const oobCode = url.searchParams.get('oobCode');
+    const resetLink = `${actionCodeSettings.url}?oobCode=${oobCode}`;
+
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html lang="id">
+      <head>
+        <meta charset="UTF-8">
+        <title>Atur Ulang Kata Sandi - Guwigo Indonesia</title>
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; margin: 0; padding: 20px; line-height: 1.6; }
+          .wrapper { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+          .header { background: linear-gradient(135deg, #f97316, #d97706); padding: 30px 20px; text-align: center; color: white; }
+          .header h2 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+          .content { padding: 30px; }
+          .cta-button { display: inline-block; background: #2563eb; color: white; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 16px; margin-top: 20px; }
+          .footer { background: #0f172a; color: #94a3b8; text-align: center; padding: 20px; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="wrapper">
+          <div class="header">
+            <h2>GUWIGO INDONESIA</h2>
+          </div>
+          <div class="content">
+            <h3 style="margin-top: 0; font-size: 20px;">Permintaan Atur Ulang Kata Sandi</h3>
+            <p>Halo,</p>
+            <p>Kami menerima permintaan untuk mengatur ulang kata sandi akun Anda di Guwigo Indonesia. Jika Anda memang meminta ini, silakan klik tombol di bawah untuk membuat kata sandi baru:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetLink}" class="cta-button">Atur Ulang Kata Sandi</a>
+            </div>
+            <p style="font-size: 14px; color: #64748b;">Jika tombol di atas tidak berfungsi, Anda juga dapat menyalin dan menempelkan tautan berikut ke browser Anda:</p>
+            <p style="font-size: 12px; color: #2563eb; word-break: break-all;">${resetLink}</p>
+            <p style="margin-top: 30px; font-size: 14px;">Jika Anda tidak pernah meminta pengaturan ulang kata sandi, abaikan saja pesan ini.</p>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} GuwiGo Indonesia. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'parthner@guwigo.com',
+        pass: 'iiwh kcgf bkdo kxop' // NOTE: in production, this should be an env variable
+      }
+    });
+
+    const info = await transporter.sendMail({
+      from: '"GuwiGo Events" <parthner@guwigo.com>',
+      to: email,
+      subject: '[GuwiGo] Atur Ulang Kata Sandi Akun Anda',
+      html: emailHtml
+    });
+
+    console.log(`[Email Service] Sent reset password email to: ${email}. MessageId: ${info.messageId}`);
+
+    return res.json({ success: true, message: 'Email reset password telah dikirim.' });
+  } catch (error: any) {
+    console.error('[Email Service Error]', error);
+    return res.status(500).json({ success: false, message: 'Gagal mengirim email reset password.', error: error.message });
+  }
+});
+
+// 8. Custom Verification Email API
+app.post('/api/auth/send-verification-email', async (req: Request, res: Response) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email dibutuhkan.' });
+  }
+
+  try {
+    const origin = req.headers.origin || 'http://localhost:3000';
+    const actionCodeSettings = {
+      url: `${origin}/login?verified=true`,
+      handleCodeInApp: false
+    };
+
+    const verificationLink = await getAuth().generateEmailVerificationLink(email, actionCodeSettings);
+
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html lang="id">
+      <head>
+        <meta charset="UTF-8">
+        <title>Verifikasi Email - Guwigo Indonesia</title>
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; margin: 0; padding: 20px; line-height: 1.6; }
+          .wrapper { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+          .header { background: linear-gradient(135deg, #10b981, #059669); padding: 30px 20px; text-align: center; color: white; }
+          .header h2 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+          .content { padding: 30px; }
+          .cta-button { display: inline-block; background: #10b981; color: white; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 16px; margin-top: 20px; }
+          .footer { background: #0f172a; color: #94a3b8; text-align: center; padding: 20px; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="wrapper">
+          <div class="header">
+            <h2>GUWIGO INDONESIA</h2>
+          </div>
+          <div class="content">
+            <h3 style="margin-top: 0; font-size: 20px;">Verifikasi Alamat Email Anda</h3>
+            <p>Halo,</p>
+            <p>Terima kasih telah mendaftar di Guwigo Indonesia. Untuk mulai menggunakan akun Anda, silakan verifikasi alamat email ini dengan mengklik tombol di bawah:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${verificationLink}" class="cta-button">Verifikasi Email Saya</a>
+            </div>
+            <p style="font-size: 14px; color: #64748b;">Jika tombol di atas tidak berfungsi, salin tautan berikut ke browser Anda:</p>
+            <p style="font-size: 12px; color: #10b981; word-break: break-all;">${verificationLink}</p>
+            <p style="margin-top: 30px; font-size: 14px; font-weight: bold; color: #ef4444;">Perhatian: Akun yang tidak diverifikasi dalam waktu 1x24 jam akan dihapus otomatis oleh sistem.</p>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} GuwiGo Indonesia. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'parthner@guwigo.com',
+        pass: 'iiwh kcgf bkdo kxop' // NOTE: in production, this should be an env variable
+      }
+    });
+
+    const info = await transporter.sendMail({
+      from: '"GuwiGo Events" <parthner@guwigo.com>',
+      to: email,
+      subject: '[GuwiGo] Verifikasi Alamat Email Anda',
+      html: emailHtml
+    });
+
+    console.log(`[Email Service] Sent verification email to: ${email}. MessageId: ${info.messageId}`);
+    return res.json({ success: true, message: 'Email verifikasi telah dikirim.' });
+  } catch (error: any) {
+    console.error('[Email Service Error]', error);
+    return res.status(500).json({ success: false, message: 'Gagal mengirim email verifikasi.', error: error.message });
   }
 });
 

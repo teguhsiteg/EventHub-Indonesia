@@ -4,14 +4,15 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { 
   getAllEventsForAdmin, 
+  getEventsByOrganizer,
   createEvent, 
   updateEvent, 
   deleteEvent, 
   createCategory 
 } from '../services/eventService';
-import { getAllRegistrationsAdmin } from '../services/registrationService';
-import { getAllPaymentsAdmin, verifyPaymentByAdmin } from '../services/paymentService';
-import { getAllPayoutsAdmin, approvePayout } from '../services/payoutService';
+import { getAllRegistrationsAdmin, getRegistrationsByEventIds } from '../services/registrationService';
+import { getAllPaymentsAdmin, verifyPaymentByAdmin, getPaymentsByRegistrationIds } from '../services/paymentService';
+import { getAllPayoutsAdmin, approvePayout, getPayoutsByOrganizer } from '../services/payoutService';
 import { submitOrUpdateRaceResult, getPublicRaceResults, deleteRaceResult } from '../services/resultService';
 import { updateUserRoleBySuperAdmin, banUserBySuperAdmin } from '../services/authService';
 import { updateSystemSettings } from '../services/settingsService';
@@ -116,36 +117,60 @@ export const AdminDashboardPage: React.FC = () => {
   const loadAdminData = async () => {
     setLoading(true);
     try {
-      const results = await Promise.allSettled([
-        getAllEventsForAdmin(),
-        getAllRegistrationsAdmin(),
-        getAllPaymentsAdmin(),
-        getAllPayoutsAdmin(),
-        getDocs(collection(db, 'users')),
-        getDocs(query(collection(db, 'audit_logs'), limit(50))),
-        getEventRequests(),
-        getPublicRaceResults()
-      ]);
+      if (isSuperAdmin) {
+        const results = await Promise.allSettled([
+          getAllEventsForAdmin(),
+          getAllRegistrationsAdmin(),
+          getAllPaymentsAdmin(),
+          getAllPayoutsAdmin(),
+          fetch('/api/admin/users').then(res => res.json()),
+          getDocs(query(collection(db, 'audit_logs'), limit(50))),
+          getEventRequests(),
+          getPublicRaceResults()
+        ]);
 
-      if (results[0].status === 'fulfilled') setEvents(results[0].value);
-      if (results[1].status === 'fulfilled') setRegistrations(results[1].value);
-      if (results[2].status === 'fulfilled') setPayments(results[2].value);
-      if (results[3].status === 'fulfilled') setPayouts(results[3].value);
-      
-      if (results[4].status === 'fulfilled') {
-        setUsersList(results[4].value.docs.map(d => ({ id: d.id, ...d.data() })));
-      }
-      
-      if (results[5].status === 'fulfilled') {
-        setAuditLogs(results[5].value.docs.map(d => ({ id: d.id, ...d.data() })));
-      }
+        if (results[0].status === 'fulfilled') setEvents(results[0].value);
+        if (results[1].status === 'fulfilled') setRegistrations(results[1].value);
+        if (results[2].status === 'fulfilled') setPayments(results[2].value);
+        if (results[3].status === 'fulfilled') setPayouts(results[3].value);
+        
+        if (results[4].status === 'fulfilled' && Array.isArray(results[4].value)) {
+          setUsersList(results[4].value as UserProfile[]);
+        } else {
+          console.error('Failed to load users:', results[4].status === 'rejected' ? results[4].reason : 'Invalid data format');
+        }
+        
+        if (results[5].status === 'fulfilled') {
+          setAuditLogs(results[5].value.docs.map(d => ({ id: d.id, ...d.data() } as any)));
+        } else {
+          console.error('Failed to load audit logs:', results[5].reason);
+        }
 
-      if (results[6].status === 'fulfilled') {
-        setEventRequests(results[6].value);
-      }
-      
-      if (results[7] && results[7].status === 'fulfilled') {
-        setRaceResults(results[7].value);
+        if (results[6].status === 'fulfilled') {
+          setEventRequests(results[6].value);
+        }
+        
+        if (results[7] && results[7].status === 'fulfilled') {
+          setRaceResults(results[7].value);
+        }
+      } else if (user?.role === 'ORGANIZER') {
+        const organizerEvents = await getEventsByOrganizer(user.uid);
+        setEvents(organizerEvents);
+
+        const eventIds = organizerEvents.map(e => e.id);
+        const [organizerRegs, organizerPayouts, results] = await Promise.all([
+          getRegistrationsByEventIds(eventIds),
+          getPayoutsByOrganizer(user.uid),
+          getPublicRaceResults() // Optional: Might want to filter this by eventIds as well in the future
+        ]);
+
+        setRegistrations(organizerRegs);
+        setPayouts(organizerPayouts);
+        setRaceResults(results);
+
+        const regIds = organizerRegs.map(r => r.id);
+        const organizerPayments = await getPaymentsByRegistrationIds(regIds);
+        setPayments(organizerPayments);
       }
     } catch (error) {
       console.error('Error loading admin data:', error);

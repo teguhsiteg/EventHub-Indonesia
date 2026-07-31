@@ -27,6 +27,20 @@ export async function getAllPaymentsAdmin(): Promise<Payment[]> {
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Payment));
 }
 
+export async function getPaymentsByRegistrationIds(regIds: string[]): Promise<Payment[]> {
+  if (regIds.length === 0) return [];
+  const chunkSize = 30;
+  let allPayments: Payment[] = [];
+  for (let i = 0; i < regIds.length; i += chunkSize) {
+    const chunk = regIds.slice(i, i + chunkSize);
+    const q = query(collection(db, 'payments'), where('registrationId', 'in', chunk));
+    const snap = await getDocs(q);
+    const chunkPayments = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Payment));
+    allPayments = [...allPayments, ...chunkPayments];
+  }
+  return allPayments;
+}
+
 export async function submitPaymentProof(
   paymentId: string,
   registrationId: string,

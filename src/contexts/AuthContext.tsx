@@ -12,8 +12,6 @@ import {
   requestPasswordReset,
   sendUserEmailVerification
 } from '../services/authService';
-import { ensureInitialSeed } from '../services/seedService';
-
 interface AuthContextType {
   user: UserProfile | null;
   fbUser: FirebaseUser | null;
@@ -56,8 +54,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    ensureInitialSeed().catch(err => console.warn('Seed check error:', err));
-
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
       if (firebaseUser) {

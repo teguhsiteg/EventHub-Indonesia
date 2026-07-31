@@ -71,22 +71,20 @@ export const RegisterPage: React.FC = () => {
       </div>
 
       {/* Left: Brand Section */}
-      <div className="hidden lg:flex w-1/2 relative bg-gradient-to-br from-[#0a0f1e] via-[#020617] to-[#0a0f1e] items-center justify-center p-12 border-r border-slate-200 dark:border-white/[0.04]">
+      <div className="hidden lg:flex w-1/2 relative bg-slate-900 dark:bg-[#020617] items-center justify-center p-12">
         <div className="relative z-10 max-w-md text-center">
           {/* Logo */}
           <div className="inline-flex mb-8">
-            <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-400 to-yellow-400 p-[2px] shadow-2xl shadow-blue-500/30">
-              <div className="w-full h-full  rounded-2xl flex items-center justify-center">
-                <Trophy className="w-10 h-10 text-transparent" style={{ color: '#fb923c' }} />
-              </div>
+            <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
+              <Trophy className="w-8 h-8 text-white" />
             </div>
           </div>
 
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">
+          <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">
             Buat Akun Baru
           </h1>
-          <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-10 max-w-sm mx-auto">
-            Bergabung dengan RacePro dan dapatkan akses ke berbagai event olahraga terbaik di Indonesia. Daftar gratis dalam hitungan detik.
+          <p className="text-slate-400 text-sm leading-relaxed mb-10 max-w-sm mx-auto">
+            Bergabung dengan Guwigo dan dapatkan akses ke berbagai event olahraga terbaik di Indonesia. Daftar gratis dalam hitungan detik.
           </p>
 
           {/* Feature pills */}
@@ -98,41 +96,35 @@ export const RegisterPage: React.FC = () => {
             ].map((item, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.05] text-left"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-left"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/10 to-yellow-500/10 flex items-center justify-center shrink-0">
-                  <item.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                  <item.icon className="w-4 h-4 text-blue-400" />
                 </div>
-                <span className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">{item.text}</span>
+                <span className="text-sm text-slate-300">{item.text}</span>
               </div>
             ))}
           </div>
 
           {/* Trust badge */}
-          <div className="mt-8 flex items-center justify-center gap-2 text-xs text-slate-500">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <div className="mt-10 flex items-center justify-center gap-2 text-xs text-slate-500">
+            <ShieldCheck className="w-4 h-4 text-emerald-500" />
             <span>Data Anda Aman & Terenkripsi</span>
           </div>
         </div>
-
-        {/* Decorative grid */}
-        <div className="absolute inset-0 opacity-[0.02]" style={{
-          backgroundImage: 'linear-gradient(rgba(249,115,22,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.3) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }} />
       </div>
 
       {/* Right: Form Section */}
       <div className="w-full h-full lg:w-1/2 flex flex-col justify-center overflow-y-auto px-6 py-4 sm:p-12">
         <div className="w-full max-w-md mx-auto space-y-4 sm:space-y-6 my-auto">
           {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-4">
+          <div className="lg:hidden text-center mb-2">
             <div className="inline-flex mb-3">
-              <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-md">
                 <Trophy className="w-6 h-6 text-white" />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">RACE<span className="text-blue-600">PRO</span></h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">GUWIGO</h2>
           </div>
 
           <div className="text-center lg:text-left">
@@ -187,18 +179,18 @@ export const RegisterPage: React.FC = () => {
                   placeholder="+62 812-XXXX-XXXX"
                   required
                   autoComplete="tel"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
               </div>
             </div>
 
             {/* Email */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-xs font-medium text-slate-600 dark:text-slate-500 dark:text-slate-400">
+              <label htmlFor="email" className="block text-xs font-medium text-slate-600 dark:text-slate-400">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   id="email"
                   type="email"
@@ -207,18 +199,18 @@ export const RegisterPage: React.FC = () => {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
               </div>
             </div>
 
             {/* Kata Sandi */}
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-xs font-medium text-slate-600 dark:text-slate-500 dark:text-slate-400">
+              <label htmlFor="password" className="block text-xs font-medium text-slate-600 dark:text-slate-400">
                 Kata Sandi
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -227,12 +219,12 @@ export const RegisterPage: React.FC = () => {
                   placeholder="Minimal 6 karakter"
                   required
                   autoComplete="new-password"
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-600 dark:text-slate-300 transition-colors"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -243,7 +235,7 @@ export const RegisterPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
+              className="w-full flex items-center justify-center gap-2 py-2.5 mt-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -268,7 +260,8 @@ export const RegisterPage: React.FC = () => {
           <button
             type="button"
             onClick={handleGoogleRegister}
-            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-50 dark:hover:bg-white/[0.06] hover:border-slate-300 dark:hover:border-white/[0.12] shadow-sm dark:shadow-none transition-all duration-300"
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2.5 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300 font-medium text-sm hover:bg-slate-50 dark:hover:bg-white/[0.06] hover:border-slate-300 dark:hover:border-white/[0.12] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />

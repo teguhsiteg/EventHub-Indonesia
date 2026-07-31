@@ -47,6 +47,11 @@ export async function getAllPayoutsAdmin(): Promise<PayoutRequest[]> {
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as PayoutRequest));
 }
 
+export async function getPayoutsByOrganizer(organizerId: string): Promise<PayoutRequest[]> {
+  const snap = await getDocs(query(collection(db, 'payouts'), where('organizerId', '==', organizerId), orderBy('requestedAt', 'desc')));
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as PayoutRequest));
+}
+
 export async function approvePayout(
   payoutId: string,
   status: 'APPROVED' | 'PAID' | 'REJECTED',

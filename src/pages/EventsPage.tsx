@@ -4,7 +4,7 @@ import { searchEventsInFirestore, EventSearchParams } from '../services/eventSer
 import { EventSearchFilter } from '../components/events/EventSearchFilter';
 import { EventCardSkeleton } from '../components/events/EventCardSkeleton';
 import { EventItem } from '../types';
-import { MapPin, ChevronRight, Trophy, Tag, Sparkles, Calendar, Search } from 'lucide-react';
+import { MapPin, ChevronRight, Trophy, Tag, Calendar, Search, Star } from 'lucide-react';
 
 export const EventsPage: React.FC = () => {
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -36,7 +36,7 @@ export const EventsPage: React.FC = () => {
         <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text--600 dark:text--400 text-[10px] font-black uppercase tracking-wider mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text--600 dark:text--400" />
+              <Star className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
               <span>RacePro Search</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight">

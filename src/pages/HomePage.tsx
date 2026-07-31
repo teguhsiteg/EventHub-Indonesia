@@ -9,14 +9,13 @@ import {
   MapPin, 
   ChevronRight, 
   ShieldCheck, 
-  Sparkles, 
+  Star, 
   Award, 
   CheckCircle2, 
   Zap,
   ArrowRight,
   Users,
-  TrendingUp,
-  Star
+  TrendingUp
 } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
@@ -68,8 +67,8 @@ export const HomePage: React.FC = () => {
           <div className="text-center max-w-5xl mx-auto space-y-10">
             {/* Brand badge */}
             <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-blue-400 text-xs font-bold uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:bg-white/10 transition-colors cursor-default">
-              <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
-              <span>RACEPRO — THE ULTIMATE SPORTS PLATFORM</span>
+              <Star className="w-4 h-4 text-yellow-400 animate-pulse" />
+              <span>GUWIGO — THE ULTIMATE SPORTS PLATFORM</span>
             </div>
 
             {/* Main headline */}
@@ -82,7 +81,7 @@ export const HomePage: React.FC = () => {
 
             {/* Subtitle */}
             <p className="text-slate-300 text-lg md:text-2xl leading-relaxed max-w-3xl mx-auto font-light">
-              RacePro menghubungkan kamu dengan ribuan event olahraga terbaik di Indonesia.
+              Guwigo menghubungkan kamu dengan ribuan event olahraga terbaik di Indonesia.
               Dari lari marathon hingga trail run — <span className="font-semibold text-white">satu platform, semua event.</span>
             </p>
 
@@ -152,8 +151,8 @@ export const HomePage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest mb-3">
-                <Sparkles className="w-3 h-3" />
-                <span>RacePro</span>
+                <Star className="w-3 h-3" />
+                <span>Guwigo</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight">
                 Event <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">Mendatang</span>

@@ -756,7 +756,7 @@ export const EventDetailPage: React.FC = () => {
                   <div className="bg-white dark:bg-blue-950/60 border border-slate-300 dark:border-slate-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-8">
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/20 to-yellow-500/20 border border-yellow-500/20 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text--600 dark:text--400" />
+                        <Star className="w-5 h-5 text-yellow-500" />
                       </div>
                       <div>
                         <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase">Tambahan (Add-ons)</h3>
