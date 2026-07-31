@@ -20,8 +20,8 @@ export const ToastContainer: React.FC = () => {
           icon = <XCircle className="w-5 h-5 text-rose-400" />;
           borderClass = 'border-rose-500/40 bg-white dark:bg-blue-950/95';
         } else if (n.type === 'warning') {
-          icon = <AlertTriangle className="w-5 h-5 text-amber-400" />;
-          borderClass = 'border-amber-500/40 bg-white dark:bg-blue-950/95';
+          icon = <AlertTriangle className="w-5 h-5 text-yellow-400" />;
+          borderClass = 'border-yellow-500/40 bg-white dark:bg-blue-950/95';
         }
 
         return (

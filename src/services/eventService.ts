@@ -85,7 +85,7 @@ export async function searchEventsInFirestore(params: EventSearchParams): Promis
 
   // 2. Category constraint in Firestore
   if (normalizedCategory && normalizedCategory !== 'ALL') {
-    constraints.push(where('categories', 'array-contains', normalizedCategory));
+    constraints.push(where('category', '==', normalizedCategory));
   }
 
   // 3. Keyword / Token search in Firestore if search keyword provided

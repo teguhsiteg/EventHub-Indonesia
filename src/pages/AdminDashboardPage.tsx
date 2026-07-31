@@ -15,12 +15,14 @@ import { getAllPayoutsAdmin, approvePayout } from '../services/payoutService';
 import { submitOrUpdateRaceResult } from '../services/resultService';
 import { updateUserRoleBySuperAdmin, banUserBySuperAdmin } from '../services/authService';
 import { updateSystemSettings } from '../services/settingsService';
-import { EventItem, Registration, Payment, EventCategory, UserRole, PayoutRequest } from '../types';
+import { getEventRequests } from '../services/requestService';
+import { EventItem, Registration, Payment, EventCategory, UserRole, PayoutRequest, EventRequest } from '../types';
 import { db } from '../config/firebase';
 import { collection, getDocs, query, limit } from 'firebase/firestore';
 import { CreateEventModal } from '../components/admin/CreateEventModal';
 import { FooterSettings } from '../components/admin/FooterSettings';
 import { PageSettings } from '../components/admin/PageSettings';
+import { SponsorSettings } from '../components/admin/SponsorSettings';
 import { ConfirmDialog } from '../components/common/ConfirmDialog';
 import { 
   ShieldAlert, 
@@ -49,7 +51,8 @@ import {
   UserCheck,
   Edit3,
   FileText,
-  Info
+  Info,
+  ClipboardList
 } from 'lucide-react';
 
 export const AdminDashboardPage: React.FC = () => {
@@ -58,12 +61,13 @@ export const AdminDashboardPage: React.FC = () => {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const activeTab = (queryParams.get('tab') as 'stats' | 'events' | 'payments' | 'payouts' | 'results' | 'users' | 'settings') || 'stats';  
+  const activeTab = (queryParams.get('tab') as 'stats' | 'events' | 'requests' | 'payments' | 'payouts' | 'results' | 'users' | 'settings') || 'stats';  
   // Data States
   const [events, setEvents] = useState<EventItem[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
+  const [eventRequests, setEventRequests] = useState<EventRequest[]>([]);
   const [usersList, setUsersList] = useState<any[]>([]);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,7 +106,7 @@ export const AdminDashboardPage: React.FC = () => {
   const [eventStatusFilter, setEventStatusFilter] = useState('ALL');
   
   // Settings Tab internal state
-  const [activeSettingsTab, setActiveSettingsTab] = useState<'system' | 'payment' | 'pages' | 'footer'>('system');
+  const [activeSettingsTab, setActiveSettingsTab] = useState<'system' | 'payment' | 'pages' | 'footer' | 'sponsors'>('system');
 
   useEffect(() => {
     loadAdminData();
@@ -117,7 +121,8 @@ export const AdminDashboardPage: React.FC = () => {
         getAllPaymentsAdmin(),
         getAllPayoutsAdmin(),
         getDocs(collection(db, 'users')),
-        getDocs(query(collection(db, 'audit_logs'), limit(50)))
+        getDocs(query(collection(db, 'audit_logs'), limit(50))),
+        getEventRequests()
       ]);
 
       if (results[0].status === 'fulfilled') setEvents(results[0].value);
@@ -131,6 +136,10 @@ export const AdminDashboardPage: React.FC = () => {
       
       if (results[5].status === 'fulfilled') {
         setAuditLogs(results[5].value.docs.map(d => ({ id: d.id, ...d.data() })));
+      }
+
+      if (results[6].status === 'fulfilled') {
+        setEventRequests(results[6].value);
       }
     } catch (error) {
       console.error('Error loading admin data:', error);
@@ -244,7 +253,7 @@ export const AdminDashboardPage: React.FC = () => {
       'PUBLISHED': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
       'DRAFT': 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/30',
       'CANCELLED': 'bg-red-500/10 text-red-400 border-red-500/30',
-      'PENDING': 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+      'PENDING': 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30',
       'PAID': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
       'REJECTED': 'bg-red-500/10 text-red-400 border-red-500/30',
       'APPROVED': 'bg-blue-500/10 text-blue-400 border-blue-500/30',
@@ -258,9 +267,9 @@ export const AdminDashboardPage: React.FC = () => {
       label: 'Total Event',
       value: events.length,
       icon: Calendar,
-      accent: 'border-l-orange-500',
-      iconBg: 'bg-orange-500/10 text-orange-400',
-      gradient: 'from-orange-500/5 to-transparent',
+      accent: 'border-l-blue-500',
+      iconBg: 'bg-blue-500/10 text-blue-400',
+      gradient: 'from-blue-500/5 to-transparent',
     },
     {
       label: 'Total Pendaftaran',
@@ -274,9 +283,9 @@ export const AdminDashboardPage: React.FC = () => {
       label: 'Pembayaran Pending',
       value: pendingPaymentsCount,
       icon: Clock,
-      accent: 'border-l-amber-500',
-      iconBg: 'bg-amber-500/10 text-amber-400',
-      gradient: 'from-amber-500/5 to-transparent',
+      accent: 'border-l-yellow-500',
+      iconBg: 'bg-yellow-500/10 text-yellow-400',
+      gradient: 'from-yellow-500/5 to-transparent',
     },
     {
       label: 'Total Revenue',
@@ -304,7 +313,7 @@ export const AdminDashboardPage: React.FC = () => {
             {loading && (
               <div className="flex items-center justify-center py-20">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="w-10 h-10 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Memuat data...</span>
                 </div>
               </div>
@@ -343,7 +352,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-3">
                   <button
                     onClick={() => setShowEventModal(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 transition-all"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Buat Event Baru</span>
@@ -361,8 +370,8 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl">
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
-                        <Activity className="w-4 h-4 text-orange-400" />
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <Activity className="w-4 h-4 text-blue-400" />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Audit Logs</h3>
@@ -387,7 +396,7 @@ export const AdminDashboardPage: React.FC = () => {
                             <td className="py-3 px-6 text-xs text-slate-500 font-mono">{new Date(log.createdAt).toLocaleString('id-ID')}</td>
                             <td className="py-3 px-6 text-xs text-slate-700 dark:text-slate-300">{log.actorEmail}</td>
                             <td className="py-3 px-6">
-                              <span className="px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-400 text-[10px] font-bold uppercase border border-orange-500/20">
+                              <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-bold uppercase border border-blue-500/20">
                                 {log.action}
                               </span>
                             </td>
@@ -407,8 +416,8 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl">
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
-                        <Calendar className="w-4 h-4 text-orange-400" />
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <Calendar className="w-4 h-4 text-blue-400" />
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Manajemen Event</h3>
@@ -417,7 +426,7 @@ export const AdminDashboardPage: React.FC = () => {
                     </div>
                     <button
                       onClick={() => { setEditingEvent(null); setShowEventModal(true); }}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20"
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-blue-500/20"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Tambah Event</span>
@@ -431,12 +440,12 @@ export const AdminDashboardPage: React.FC = () => {
                       placeholder="Cari nama event atau lokasi..."
                       value={eventSearch}
                       onChange={e => setEventSearch(e.target.value)}
-                      className="flex-1 min-w-[180px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.06] rounded-xl px-4 py-2 text-xs text-slate-800 dark:text-slate-200 focus:border-orange-500/50 outline-none placeholder:text-slate-600"
+                      className="flex-1 min-w-[180px] bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.06] rounded-xl px-4 py-2 text-xs text-slate-800 dark:text-slate-200 focus:border-blue-500/50 outline-none placeholder:text-slate-600"
                     />
                     <select
                       value={eventStatusFilter}
                       onChange={e => setEventStatusFilter(e.target.value)}
-                      className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.06] rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-slate-300 focus:border-orange-500/50 outline-none"
+                      className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.06] rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-slate-300 focus:border-blue-500/50 outline-none"
                     >
                       <option value="ALL">Semua Status</option>
                       <option value="REGISTRATION_OPEN">Pendaftaran Buka</option>
@@ -492,7 +501,7 @@ export const AdminDashboardPage: React.FC = () => {
                                       setEditingEvent(ev);
                                       setShowEventModal(true);
                                     }}
-                                    className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-orange-400 hover:bg-orange-500/10 transition-all"
+                                    className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all"
                                     title="Edit"
                                   >
                                     <Edit className="w-3.5 h-3.5" />
@@ -541,13 +550,91 @@ export const AdminDashboardPage: React.FC = () => {
               </div>
             )}
 
+            {/* TAB: REQUESTS */}
+            {activeTab === 'requests' && !loading && (
+              <div className="animate-in fade-in duration-300">
+                <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl">
+                  <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                      <ClipboardList className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Permohonan Event</h3>
+                      <p className="text-[10px] text-slate-500">{eventRequests.length} permohonan</p>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-white/[0.04] text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                          <th className="py-3 px-6">Event / Jenis</th>
+                          <th className="py-3 px-6">Tanggal Rencana</th>
+                          <th className="py-3 px-6">Organizer / PIC</th>
+                          <th className="py-3 px-6">Kontak PIC</th>
+                          <th className="py-3 px-6">Status</th>
+                          <th className="py-3 px-6 text-right">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/[0.04]">
+                        {eventRequests.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="py-16 text-center text-slate-500">
+                              <ClipboardList className="w-8 h-8 mx-auto mb-3 text-slate-600" />
+                              <p className="text-xs font-semibold">Belum ada permohonan event</p>
+                            </td>
+                          </tr>
+                        ) : (
+                          eventRequests.map(req => (
+                            <tr key={req.id} className="hover:bg-white/[0.02] transition-colors">
+                              <td className="py-4 px-6">
+                                <p className="text-xs font-bold text-slate-900 dark:text-white">{req.eventName}</p>
+                                <p className="text-[10px] font-mono text-slate-500">{req.eventType}</p>
+                              </td>
+                              <td className="py-4 px-6 text-xs text-slate-700 dark:text-slate-300">
+                                {new Date(req.plannedDate).toLocaleDateString('id-ID')}
+                              </td>
+                              <td className="py-4 px-6">
+                                <p className="text-xs font-bold text-slate-900 dark:text-white">{req.eoName}</p>
+                                <p className="text-[10px] text-slate-500">{req.picName}</p>
+                              </td>
+                              <td className="py-4 px-6">
+                                <p className="text-xs text-slate-700 dark:text-slate-300">{req.picPhone}</p>
+                                <p className="text-[10px] text-slate-500">{req.picEmail}</p>
+                              </td>
+                              <td className="py-4 px-6">
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border ${
+                                  req.status === 'PENDING' ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' :
+                                  req.status === 'REVIEWED' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                                  req.status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                                  'bg-red-500/10 text-red-500 border-red-500/20'
+                                }`}>
+                                  {req.status}
+                                </span>
+                              </td>
+                              <td className="py-4 px-6 text-right">
+                                <button
+                                  className="text-[10px] font-bold text-blue-500 hover:text-blue-400 uppercase tracking-wider"
+                                >
+                                  Detail
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* TAB: PAYMENTS */}
             {activeTab === 'payments' && !loading && (
               <div className="animate-in fade-in duration-300">
                 <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl">
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                      <CreditCard className="w-4 h-4 text-amber-400" />
+                    <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                      <CreditCard className="w-4 h-4 text-yellow-400" />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Verifikasi Pembayaran</h3>
@@ -588,7 +675,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 })()}
                               </td>
                               <td className="py-4 px-6">
-                                <span className="text-xs font-bold text-amber-400">{formatRupiah(pay.amount)}</span>
+                                <span className="text-xs font-bold text-yellow-400">{formatRupiah(pay.amount)}</span>
                               </td>
                               <td className="py-4 px-6">
                                 {pay.proofUrl ? (
@@ -596,7 +683,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     href={pay.proofUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex items-center gap-1.5 text-xs text-orange-400 hover:text-orange-300 font-semibold transition-colors"
+                                    className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 font-semibold transition-colors"
                                   >
                                     <Eye className="w-3 h-3" />
                                     Lihat Bukti
@@ -665,7 +752,7 @@ export const AdminDashboardPage: React.FC = () => {
                     </div>
                     <button
                       onClick={() => setShowPayoutForm(v => !v)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-orange-500/20"
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-blue-500/20"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Ajukan Pencairan</span>
@@ -702,7 +789,7 @@ export const AdminDashboardPage: React.FC = () => {
                             required
                             value={payoutEventId}
                             onChange={e => setPayoutEventId(e.target.value)}
-                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-orange-500/50 outline-none"
+                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-blue-500/50 outline-none"
                           >
                             <option value="">-- Pilih Event --</option>
                             {events.map(ev => <option key={ev.id} value={ev.id}>{ev.name}</option>)}
@@ -714,7 +801,7 @@ export const AdminDashboardPage: React.FC = () => {
                             required type="number" min="1"
                             value={payoutAmount} onChange={e => setPayoutAmount(e.target.value)}
                             placeholder="1000000"
-                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-orange-500/50 outline-none placeholder:text-slate-600"
+                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-blue-500/50 outline-none placeholder:text-slate-600"
                           />
                         </div>
                         <div>
@@ -723,7 +810,7 @@ export const AdminDashboardPage: React.FC = () => {
                             required
                             value={payoutBank} onChange={e => setPayoutBank(e.target.value)}
                             placeholder="BCA, Mandiri, BNI..."
-                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-orange-500/50 outline-none placeholder:text-slate-600"
+                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-blue-500/50 outline-none placeholder:text-slate-600"
                           />
                         </div>
                         <div>
@@ -732,7 +819,7 @@ export const AdminDashboardPage: React.FC = () => {
                             required
                             value={payoutAccount} onChange={e => setPayoutAccount(e.target.value)}
                             placeholder="1234567890"
-                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs font-mono focus:border-orange-500/50 outline-none placeholder:text-slate-600"
+                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs font-mono focus:border-blue-500/50 outline-none placeholder:text-slate-600"
                           />
                         </div>
                         <div className="sm:col-span-2">
@@ -741,14 +828,14 @@ export const AdminDashboardPage: React.FC = () => {
                             required
                             value={payoutHolder} onChange={e => setPayoutHolder(e.target.value)}
                             placeholder="Budi Santoso"
-                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-orange-500/50 outline-none placeholder:text-slate-600"
+                            className="w-full bg-white dark:bg-blue-950 border border-white/[0.08] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-blue-500/50 outline-none placeholder:text-slate-600"
                           />
                         </div>
                         <div className="sm:col-span-2 flex gap-3">
                           <button
                             type="submit"
                             disabled={payoutLoading}
-                            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 disabled:opacity-50 transition-all"
+                            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 disabled:opacity-50 transition-all"
                           >
                             {payoutLoading ? 'Mengajukan...' : 'Kirim Permintaan Pencairan'}
                           </button>
@@ -792,7 +879,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{payout.bankName} — {payout.accountNumber}</p>
                                 <p className="text-[10px] text-slate-500">{payout.accountHolderName}</p>
                               </td>
-                              <td className="py-4 px-6 text-xs font-bold text-amber-400">{formatRupiah(payout.amount)}</td>
+                              <td className="py-4 px-6 text-xs font-bold text-yellow-400">{formatRupiah(payout.amount)}</td>
                               <td className="py-4 px-6">
                                 <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border ${getStatusBadge(payout.status)}`}>
                                   {payout.status}
@@ -869,8 +956,8 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="animate-in fade-in duration-300">
                 <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl max-w-xl mx-auto">
                   <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
-                      <Trophy className="w-4 h-4 text-orange-400" />
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                      <Trophy className="w-4 h-4 text-blue-400" />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Input Hasil Lomba</h3>
@@ -884,7 +971,7 @@ export const AdminDashboardPage: React.FC = () => {
                         <select
                           value={resEventId}
                           onChange={(e) => setResEventId(e.target.value)}
-                          className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/30 transition-all"
+                          className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all"
                         >
                           {events.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                         </select>
@@ -898,7 +985,7 @@ export const AdminDashboardPage: React.FC = () => {
                             value={resBib}
                             onChange={(e) => setResBib(e.target.value)}
                             placeholder="TR50-0001"
-                            className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs font-mono focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/30 transition-all placeholder:text-slate-600"
+                            className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs font-mono focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all placeholder:text-slate-600"
                           />
                         </div>
                         <div>
@@ -909,7 +996,7 @@ export const AdminDashboardPage: React.FC = () => {
                             value={resName}
                             onChange={(e) => setResName(e.target.value)}
                             placeholder="Budi Santoso"
-                            className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/30 transition-all placeholder:text-slate-600"
+                            className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all placeholder:text-slate-600"
                           />
                         </div>
                       </div>
@@ -921,7 +1008,7 @@ export const AdminDashboardPage: React.FC = () => {
                             required
                             value={resChipTime}
                             onChange={(e) => setResChipTime(e.target.value)}
-                            className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs font-mono focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/30 transition-all"
+                            className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs font-mono focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all"
                           />
                         </div>
                         <div>
@@ -931,13 +1018,13 @@ export const AdminDashboardPage: React.FC = () => {
                             required
                             value={resRank}
                             onChange={(e) => setResRank(Number(e.target.value))}
-                            className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/30 transition-all"
+                            className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.06] rounded-xl p-3 text-slate-800 dark:text-slate-200 text-xs focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all"
                           />
                         </div>
                       </div>
                       <button
                         type="submit"
-                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 transition-all"
+                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
                       >
                         Publikasikan Hasil Finisher
                       </button>
@@ -979,7 +1066,7 @@ export const AdminDashboardPage: React.FC = () => {
                               )}
                             </td>
                             <td className="py-4 px-6">
-                              <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border bg-amber-500/10 text-amber-400 border-amber-500/20">
+                              <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase border bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
                                 {u.role}
                               </span>
                             </td>
@@ -987,7 +1074,7 @@ export const AdminDashboardPage: React.FC = () => {
                               <div className="flex flex-wrap items-center gap-1.5">
                                 <button
                                   onClick={() => handleRoleChange(u.id, 'ADMIN')}
-                                  className="px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold text-[10px] uppercase tracking-wider border border-amber-500/20 transition-all"
+                                  className="px-2.5 py-1.5 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 font-bold text-[10px] uppercase tracking-wider border border-yellow-500/20 transition-all"
                                 >
                                   <Shield className="w-3 h-3 inline mr-1" />
                                   ADMIN
@@ -1059,6 +1146,7 @@ export const AdminDashboardPage: React.FC = () => {
                       {[
                         { id: 'system', label: 'Sistem & Maintenance', icon: Settings },
                         { id: 'payment', label: 'Payment Gateway', icon: CreditCard },
+                        { id: 'sponsors', label: 'Mitra & Sponsor', icon: Trophy },
                         { id: 'pages', label: 'Halaman Statis (CMS)', icon: FileText },
                         { id: 'footer', label: 'Footer & Copyright', icon: Edit3 }
                       ].map(tab => {
@@ -1070,8 +1158,8 @@ export const AdminDashboardPage: React.FC = () => {
                             onClick={() => setActiveSettingsTab(tab.id as any)}
                             className={`flex items-center gap-3 px-5 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider whitespace-nowrap transition-all text-left ${
                               isActive 
-                                ? 'bg-orange-500 text-slate-900 dark:text-white shadow-lg shadow-orange-500/20' 
-                                : 'bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-200 hover:border-orange-500/50'
+                                ? 'bg-blue-500 text-slate-900 dark:text-white shadow-lg shadow-blue-500/20' 
+                                : 'bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-200 hover:border-blue-500/50'
                             }`}
                           >
                             <Icon className="w-4 h-4 shrink-0" />
@@ -1089,8 +1177,8 @@ export const AdminDashboardPage: React.FC = () => {
                     {activeSettingsTab === 'system' && (
                       <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl animate-in fade-in">
                         <div className="px-6 py-5 border-b border-slate-200 dark:border-white/[0.06] flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-                            <Settings className="w-5 h-5 text-orange-500" />
+                          <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                            <Settings className="w-5 h-5 text-blue-500" />
                           </div>
                           <div>
                             <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-wider">Status Sistem</h3>
@@ -1105,8 +1193,8 @@ export const AdminDashboardPage: React.FC = () => {
                             </div>
                             <button
                               onClick={handleToggleMaintenance}
-                              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 ${
-                                settings.maintenanceMode ? 'bg-orange-500' : 'bg-slate-300 dark:bg-slate-700'
+                              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
+                                settings.maintenanceMode ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-700'
                               }`}
                             >
                               <span
@@ -1251,6 +1339,11 @@ export const AdminDashboardPage: React.FC = () => {
                     {/* Footer Settings */}
                     {activeSettingsTab === 'footer' && (
                       <FooterSettings addNotification={addNotification} />
+                    )}
+
+                    {/* Sponsor Settings */}
+                    {activeSettingsTab === 'sponsors' && (
+                      <SponsorSettings addNotification={addNotification} />
                     )}
 
                   </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createEvent, updateEvent, createCategory } from '../../services/eventService';
 import { UserProfile, EventItem } from '../../types';
+import { EVENT_CATEGORIES } from '../../utils/constants';
 
 interface CreateEventModalProps {
   user: UserProfile;
@@ -30,6 +31,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   const [eventSlug, setEventSlug] = useState(initialData?.slug || '');
   const [eventDesc, setEventDesc] = useState(initialData?.description || '');
   const [eventBanner, setEventBanner] = useState(initialData?.banner || '');
+  const [eventCategory, setEventCategory] = useState(initialData?.category || '');
   const [eventLocation, setEventLocation] = useState(initialData?.location || '');
   const [eventStartDate, setEventStartDate] = useState(initialData?.startDate ? new Date(initialData.startDate).toISOString().slice(0, 16) : '');
   const [eventRegStart, setEventRegStart] = useState(initialData?.registrationStart ? new Date(initialData.registrationStart).toISOString().slice(0, 16) : '');
@@ -43,6 +45,12 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   // Form States - Facilities & Rules
   const [facilities, setFacilities] = useState(initialData?.facilities?.join(', ') || 'Medali Finisher, Jersey Finisher, BIB dengan Timing Chip, Water Station, Asuransi');
   const [rules, setRules] = useState(initialData?.rules || 'Peserta wajib dalam keadaan sehat. Wajib mematuhi cut-off time.');
+  
+  // Extra visual infos
+  const [jerseySizeChartUrl, setJerseySizeChartUrl] = useState(initialData?.jerseySizeChartUrl || '');
+  const [jacketSizeChartUrl, setJacketSizeChartUrl] = useState(initialData?.jacketSizeChartUrl || '');
+  const [medalImageUrl, setMedalImageUrl] = useState(initialData?.medalImageUrl || '');
+
   const [faqQ, setFaqQ] = useState('');
   const [faqA, setFaqA] = useState('');
   const [faqs, setFaqs] = useState<{question: string, answer: string}[]>(initialData?.faqs || []);
@@ -61,6 +69,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   const [catCutoff, setCatCutoff] = useState('');
   const [catEarlyBirdPrice, setCatEarlyBirdPrice] = useState('');
   const [catEarlyBirdEndDate, setCatEarlyBirdEndDate] = useState('');
+  const [catEarlyBirdQuota, setCatEarlyBirdQuota] = useState('');
 
   const [editingCategoryIndex, setEditingCategoryIndex] = useState<number | null>(null);
 
@@ -69,6 +78,48 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   const [addonName, setAddonName] = useState('');
   const [addonPrice, setAddonPrice] = useState('');
   const [addonDesc, setAddonDesc] = useState('');
+
+  // Form States - Vouchers and Promos (Step 5)
+  const [specialVouchers, setSpecialVouchers] = useState<{code: string, categoryId: string}[]>(initialData?.specialVouchers || []);
+  const [voucherCode, setVoucherCode] = useState('');
+  const [voucherCatId, setVoucherCatId] = useState('');
+  const [enableVoucherCode, setEnableVoucherCode] = useState(initialData?.enableVoucherCode || false);
+
+  const [promoCodes, setPromoCodes] = useState<{code: string, discountType: 'PERCENTAGE'|'FIXED', discountValue: number}[]>(initialData?.promoCodes || []);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoType, setPromoType] = useState<'PERCENTAGE'|'FIXED'>('PERCENTAGE');
+  const [promoValue, setPromoValue] = useState('');
+
+  // Form States - Payment Routing & Hotel Bundles (Step 6)
+  const [paymentType, setPaymentType] = useState<'DIRECT_EO' | 'WEB'>(initialData?.paymentType || 'WEB');
+  const [webFeeBearer, setWebFeeBearer] = useState<'BUYER' | 'EO'>(initialData?.webFeeBearer || 'BUYER');
+  const [webFeeAmount, setWebFeeAmount] = useState<number>(initialData?.webFeeAmount || 5000);
+  const [eoBankName, setEoBankName] = useState(initialData?.eoBankName || '');
+  const [eoBankAccountName, setEoBankAccountName] = useState(initialData?.eoBankAccountName || '');
+  const [eoBankAccountNumber, setEoBankAccountNumber] = useState(initialData?.eoBankAccountNumber || '');
+  const [eoNpwp, setEoNpwp] = useState(initialData?.eoNpwp || '');
+
+  const [hotelBundles, setHotelBundles] = useState<any[]>(initialData?.hotelBundles || []);
+  const [hotelName, setHotelName] = useState('');
+  const [hotelPrice, setHotelPrice] = useState('');
+  const [hotelQuota, setHotelQuota] = useState('');
+  const [hotelDesc, setHotelDesc] = useState('');
+
+  const handleAddVoucher = () => {
+    if (voucherCode && voucherCatId) {
+      setSpecialVouchers([...specialVouchers, { code: voucherCode.toUpperCase(), categoryId: voucherCatId }]);
+      setVoucherCode('');
+      setVoucherCatId('');
+    }
+  };
+
+  const handleAddPromo = () => {
+    if (promoCode && promoValue) {
+      setPromoCodes([...promoCodes, { code: promoCode.toUpperCase(), discountType: promoType, discountValue: Number(promoValue) }]);
+      setPromoCode('');
+      setPromoValue('');
+    }
+  };
 
   const handleAddFaq = () => {
     if (faqQ && faqA) {
@@ -98,6 +149,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         price: Number(catPrice),
         earlyBirdPrice: catEarlyBirdPrice ? Number(catEarlyBirdPrice) : undefined,
         earlyBirdEndDate: catEarlyBirdEndDate ? new Date(catEarlyBirdEndDate).toISOString() : undefined,
+        earlyBirdQuota: catEarlyBirdQuota ? Number(catEarlyBirdQuota) : undefined,
         quota: Number(catQuota),
         startTime: '05:30 WIB',
         cutoffTime: catCutoff || '4 Jam',
@@ -126,6 +178,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
       setCatCutoff('');
       setCatEarlyBirdPrice('');
       setCatEarlyBirdEndDate('');
+      setCatEarlyBirdQuota('');
     }
   };
 
@@ -142,6 +195,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
     } else {
       setCatEarlyBirdEndDate('');
     }
+    setCatEarlyBirdQuota(c.earlyBirdQuota?.toString() || '');
     setEditingCategoryIndex(index);
   };
 
@@ -168,11 +222,39 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
     }
   };
 
+  const handleAddHotel = () => {
+    if (hotelName && hotelPrice && hotelQuota) {
+      setHotelBundles([...hotelBundles, {
+        id: 'hotel_' + Date.now(),
+        name: hotelName,
+        price: Number(hotelPrice),
+        quota: Number(hotelQuota),
+        registeredCount: 0,
+        description: hotelDesc
+      }]);
+      setHotelName('');
+      setHotelPrice('');
+      setHotelQuota('');
+      setHotelDesc('');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!initialData && categories.length === 0) {
       addNotification('error', 'Validasi Gagal', 'Mohon tambahkan setidaknya satu kategori lomba.');
       return;
+    }
+    
+    if (paymentType === 'DIRECT_EO') {
+      if (!eoBankName || !eoBankAccountNumber || !eoBankAccountName || !eoNpwp) {
+        addNotification('error', 'Validasi Gagal', 'Mohon lengkapi Detail Rekening EO & NPWP untuk metode pembayaran langsung.');
+        return;
+      }
+      if (!webFeeAmount) {
+        addNotification('error', 'Validasi Gagal', 'Mohon isi Nominal Fee Web.');
+        return;
+      }
     }
 
     setLoading(true);
@@ -181,6 +263,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         name: eventName,
         slug: eventSlug || eventName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
         description: eventDesc,
+        category: eventCategory,
         banner: eventBanner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=1600&q=80',
         thumbnail: eventBanner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=600&q=80',
         location: eventLocation,
@@ -196,10 +279,25 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         organizerSocialMedia: organizerSocialMedia,
         featured: true,
         facilities: facilities.split(',').map(f => f.trim()).filter(f => f),
+        jerseySizeChartUrl: jerseySizeChartUrl || null,
+        jacketSizeChartUrl: jacketSizeChartUrl || null,
+        medalImageUrl: medalImageUrl || null,
         schedule: schedules,
         rules: rules,
         faqs: faqs,
+        faqs: faqs,
         addons: addons,
+        enableVoucherCode: enableVoucherCode,
+        specialVouchers: specialVouchers,
+        promoCodes: promoCodes,
+        paymentType: paymentType,
+        webFeeBearer: webFeeBearer,
+        webFeeAmount: webFeeAmount,
+        eoBankName: paymentType === 'DIRECT_EO' ? eoBankName : undefined,
+        eoBankAccountName: paymentType === 'DIRECT_EO' ? eoBankAccountName : undefined,
+        eoBankAccountNumber: paymentType === 'DIRECT_EO' ? eoBankAccountNumber : undefined,
+        eoNpwp: paymentType === 'DIRECT_EO' ? eoNpwp : undefined,
+        hotelBundles: hotelBundles,
         updatedBy: user.uid
       };
 
@@ -260,7 +358,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         </button>
 
         <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase mb-6 flex items-center gap-3">
-          <span className="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-500 flex items-center justify-center">
+          <span className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-500 flex items-center justify-center">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
           </span>
           {initialData ? 'Edit Event Lomba' : 'Buat Event Lomba Baru'}
@@ -268,37 +366,54 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
 
         {/* Step Indicator */}
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4, 5, 6].map(i => (
             <React.Fragment key={i}>
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-orange-500 text-white' : step > i ? 'bg-orange-200 text-orange-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-500 dark:text-slate-400'}`}>
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-blue-500 text-white' : step > i ? 'bg-blue-200 text-blue-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-500 dark:text-slate-400'}`}>
                 {step > i ? '✓' : i}
               </div>
               <span className={`text-xs font-bold uppercase tracking-wider whitespace-nowrap ${step === i ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-500 dark:text-slate-400'}`}>
-                {i === 1 ? 'Info Dasar' : i === 2 ? 'Fasilitas & Aturan' : i === 3 ? 'Kategori Tiket' : 'Add-Ons'}
+                {i === 1 ? 'Info' : i === 2 ? 'Aturan' : i === 3 ? 'Kategori' : i === 4 ? 'Add-Ons' : i === 5 ? 'Voucher' : 'Hotel & Pay'}
               </span>
-              {i < 4 && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
+              {i < 6 && <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 min-w-[20px]" />}
             </React.Fragment>
           ))}
         </div>
 
-        <form onSubmit={step === 4 ? handleSubmit : (e) => { e.preventDefault(); setStep(step + 1); }} className="space-y-6 text-sm">
+        <form onSubmit={step === 6 ? handleSubmit : (e) => { e.preventDefault(); setStep(step + 1); }} className="space-y-6 text-sm">
           
           {/* STEP 1: Basic Info */}
           {step === 1 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="space-y-4 md:col-span-2">
-                <div>
-                  <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Nama Event *</label>
-                  <input
-                    type="text"
-                    required
-                    value={eventName}
-                    onChange={(e) => setEventName(e.target.value)}
-                    placeholder="Contoh: Rinjani Ultra Trail 2026"
-                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Nama Event *</label>
+                    <input
+                      type="text"
+                      required
+                      value={eventName}
+                      onChange={(e) => setEventName(e.target.value)}
+                      placeholder="Contoh: Rinjani Ultra Trail 2026"
+                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Jenis Event *</label>
+                    <select
+                      required
+                      value={eventCategory}
+                      onChange={(e) => setEventCategory(e.target.value)}
+                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none appearance-none"
+                    >
+                      <option value="">Pilih Jenis Event...</option>
+                      {EVENT_CATEGORIES.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
+
 
               <div>
                 <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">Waktu Pelaksanaan *</label>
@@ -307,7 +422,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={eventStartDate}
                   onChange={(e) => setEventStartDate(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                 />
               </div>
               <div>
@@ -318,7 +433,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   value={eventLocation}
                   onChange={(e) => setEventLocation(e.target.value)}
                   placeholder="Nama Tempat / Kota"
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                 />
               </div>
 
@@ -329,7 +444,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={eventRegStart}
                   onChange={(e) => setEventRegStart(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                 />
               </div>
               <div>
@@ -339,7 +454,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={eventRegEnd}
                   onChange={(e) => setEventRegEnd(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                 />
               </div>
 
@@ -351,7 +466,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={eventBanner}
                     onChange={(e) => setEventBanner(e.target.value)}
                     placeholder="https://..."
-                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                   />
                 </div>
                 <div>
@@ -362,7 +477,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={eventDesc}
                     onChange={(e) => setEventDesc(e.target.value)}
                     placeholder="Jelaskan detail event lomba ini..."
-                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                   />
                 </div>
 
@@ -376,7 +491,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                         value={organizerName}
                         onChange={(e) => setOrganizerName(e.target.value)}
                         placeholder="Contoh: RunID, LariYuk"
-                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                       />
                     </div>
                     <div>
@@ -386,7 +501,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                         value={organizerWebsite}
                         onChange={(e) => setOrganizerWebsite(e.target.value)}
                         placeholder="https://..."
-                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                       />
                     </div>
                     <div>
@@ -396,7 +511,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                         value={organizerSocialMedia}
                         onChange={(e) => setOrganizerSocialMedia(e.target.value)}
                         placeholder="https://instagram.com/..."
-                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                       />
                     </div>
                   </div>
@@ -415,7 +530,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={facilities}
                   onChange={(e) => setFacilities(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                 />
               </div>
               
@@ -426,8 +541,41 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={rules}
                   onChange={(e) => setRules(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-orange-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">URL Size Chart Jersey (Opsional)</label>
+                  <input
+                    type="url"
+                    value={jerseySizeChartUrl}
+                    onChange={(e) => setJerseySizeChartUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">URL Size Chart Jaket (Opsional)</label>
+                  <input
+                    type="url"
+                    value={jacketSizeChartUrl}
+                    onChange={(e) => setJacketSizeChartUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold uppercase mb-1.5 text-xs">URL Gambar Medali (Opsional)</label>
+                  <input
+                    type="url"
+                    value={medalImageUrl}
+                    onChange={(e) => setMedalImageUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none text-sm"
+                  />
+                </div>
               </div>
 
               <div className=" border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
@@ -464,7 +612,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       placeholder="Deskripsi"
                       className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
                     />
-                    <button type="button" onClick={handleAddSchedule} className="px-4 bg-orange-100 text-orange-600 rounded-xl font-bold hover:bg-orange-200 shrink-0 text-xs">
+                    <button type="button" onClick={handleAddSchedule} className="px-4 bg-blue-100 text-blue-600 rounded-xl font-bold hover:bg-blue-200 shrink-0 text-xs">
                       Tambah
                     </button>
                   </div>
@@ -498,7 +646,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       placeholder="Jawaban"
                       className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
                     />
-                    <button type="button" onClick={handleAddFaq} className="px-4 bg-orange-100 text-orange-600 rounded-xl font-bold hover:bg-orange-200 shrink-0">
+                    <button type="button" onClick={handleAddFaq} className="px-4 bg-blue-100 text-blue-600 rounded-xl font-bold hover:bg-blue-200 shrink-0">
                       Tambah
                     </button>
                   </div>
@@ -511,7 +659,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               
-              <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/50 rounded-2xl p-5 mb-6">
+              <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 rounded-2xl p-5 mb-6">
                 <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Kategori Tersimpan ({categories.length})</h4>
                 {categories.length === 0 ? (
                   <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-xs text-center py-4">Belum ada kategori. Tambahkan di bawah.</p>
@@ -523,11 +671,11 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                           <span className="font-bold text-slate-900 dark:text-white block">{c.name} ({c.distance})</span>
                           <span className="text-xs text-slate-500">
                             Rp {c.price.toLocaleString('id-ID')} | Kuota: {c.quota} 
-                            {c.earlyBirdPrice && ` | EB: Rp ${c.earlyBirdPrice.toLocaleString('id-ID')}`}
+                            {c.earlyBirdPrice && ` | EB: Rp ${c.earlyBirdPrice.toLocaleString('id-ID')}${c.earlyBirdQuota ? ` (Kuota: ${c.earlyBirdQuota})` : ''}`}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button type="button" onClick={() => handleEditCategory(i)} className="text-orange-500 text-xs font-bold bg-orange-50 dark:bg-orange-900/20 px-3 py-1.5 rounded-lg hover:bg-orange-100">
+                          <button type="button" onClick={() => handleEditCategory(i)} className="text-blue-500 text-xs font-bold bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg hover:bg-blue-100">
                             Edit
                           </button>
                           <button type="button" onClick={() => setCategories(categories.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
@@ -547,34 +695,38 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Kategori</label>
-                    <input type="text" value={catName} onChange={e => setCatName(e.target.value)} placeholder="Cth: 10K Open" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={catName} onChange={e => setCatName(e.target.value)} placeholder="Cth: 10K Open" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Jarak</label>
-                    <input type="text" value={catDistance} onChange={e => setCatDistance(e.target.value)} placeholder="Cth: 10 KM" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={catDistance} onChange={e => setCatDistance(e.target.value)} placeholder="Cth: 10 KM" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga (Rp)</label>
-                    <input type="number" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="Cth: 250000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="number" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="Cth: 250000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kuota Maksimal</label>
-                    <input type="number" value={catQuota} onChange={e => setCatQuota(e.target.value)} placeholder="Cth: 500" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="number" value={catQuota} onChange={e => setCatQuota(e.target.value)} placeholder="Cth: 500" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Waktu (Cut-Off Time)</label>
-                    <input type="text" value={catCutoff} onChange={e => setCatCutoff(e.target.value)} placeholder="Cth: 3 Jam" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={catCutoff} onChange={e => setCatCutoff(e.target.value)} placeholder="Cth: 3 Jam" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga Early Bird (Opsional)</label>
-                    <input type="number" value={catEarlyBirdPrice} onChange={e => setCatEarlyBirdPrice(e.target.value)} placeholder="Cth: 200000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="number" value={catEarlyBirdPrice} onChange={e => setCatEarlyBirdPrice(e.target.value)} placeholder="Cth: 200000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Waktu Early Bird (Opsional)</label>
-                    <input type="datetime-local" value={catEarlyBirdEndDate} onChange={e => setCatEarlyBirdEndDate(e.target.value)} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="datetime-local" value={catEarlyBirdEndDate} onChange={e => setCatEarlyBirdEndDate(e.target.value)} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white [color-scheme:dark]" />
                   </div>
-                  <div className="flex items-end gap-2">
-                    <button type="button" onClick={handleAddCategory} className="w-full bg-white dark:bg-blue-950 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-100 dark:bg-slate-800 transition-colors">
+                  <div>
+                    <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Kuota Early Bird (Opsional)</label>
+                    <input type="number" value={catEarlyBirdQuota} onChange={e => setCatEarlyBirdQuota(e.target.value)} placeholder="Cth: 50" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                  </div>
+                  <div className="flex items-end gap-2 sm:col-span-2">
+                    <button type="button" onClick={handleAddCategory} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-wider rounded-xl p-3 transition-colors shadow-lg shadow-blue-500/25">
                       {editingCategoryIndex !== null ? 'Simpan Perubahan' : 'Simpan Kategori'}
                     </button>
                     {editingCategoryIndex !== null && (
@@ -589,8 +741,9 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                           setCatCutoff('');
                           setCatEarlyBirdPrice('');
                           setCatEarlyBirdEndDate('');
+                          setCatEarlyBirdQuota('');
                         }} 
-                        className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-300 transition-colors"
+                        className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-300 transition-colors"
                       >
                         Batal
                       </button>
@@ -652,6 +805,224 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
             </div>
           )}
 
+          {/* STEP 5: Vouchers & Promos */}
+          {step === 5 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+              {/* VOUCHER KHUSUS */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Kode Voucher (Buka Kategori Sold Out)</h4>
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-400">
+                    <input type="checkbox" checked={enableVoucherCode} onChange={(e) => setEnableVoucherCode(e.target.checked)} className="rounded text-blue-500" />
+                    Tampilkan Selalu (Bypass Sold Out)
+                  </label>
+                </div>
+                {specialVouchers.length === 0 ? (
+                  <div className="text-center p-6 bg-slate-50 dark:bg-blue-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <p className="text-slate-500 font-medium text-xs">Belum ada kode voucher khusus ditambahkan.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {specialVouchers.map((v, i) => (
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div>
+                          <span className="font-bold text-slate-900 dark:text-white block">{v.code}</span>
+                          <span className="text-xs text-slate-500">Membuka Kategori ID: {v.categoryId}</span>
+                        </div>
+                        <button type="button" onClick={() => setSpecialVouchers(specialVouchers.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
+                          Hapus
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="border border-slate-200 dark:border-slate-800 rounded-2xl p-5 mt-4">
+                  <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Tambah Kode Voucher</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Voucher</label>
+                      <input type="text" value={voucherCode} onChange={e => setVoucherCode(e.target.value)} placeholder="Cth: VIP-10K" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none uppercase" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Untuk Kategori</label>
+                      <select value={voucherCatId} onChange={e => setVoucherCatId(e.target.value)} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
+                        <option value="">Pilih Kategori...</option>
+                        {categories.map((c, i) => (
+                          <option key={i} value={c.id || c.slug}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="md:col-span-2 flex justify-end">
+                      <button type="button" onClick={handleAddVoucher} className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-300 transition-colors">
+                        Tambah Voucher
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* KODE PROMO */}
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Kode Promo (Diskon)</h4>
+                {promoCodes.length === 0 ? (
+                  <div className="text-center p-6 bg-slate-50 dark:bg-blue-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <p className="text-slate-500 font-medium text-xs">Belum ada kode promo ditambahkan.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {promoCodes.map((p, i) => (
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div>
+                          <span className="font-bold text-slate-900 dark:text-white block">{p.code}</span>
+                          <span className="text-xs text-slate-500">Diskon {p.discountType === 'PERCENTAGE' ? `${p.discountValue}%` : `Rp ${p.discountValue.toLocaleString('id-ID')}`}</span>
+                        </div>
+                        <button type="button" onClick={() => setPromoCodes(promoCodes.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
+                          Hapus
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="border border-slate-200 dark:border-slate-800 rounded-2xl p-5 mt-4">
+                  <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Tambah Kode Promo</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Promo</label>
+                      <input type="text" value={promoCode} onChange={e => setPromoCode(e.target.value)} placeholder="Cth: MERDEKA20" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none uppercase" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Tipe Diskon</label>
+                      <select value={promoType} onChange={e => setPromoType(e.target.value as 'PERCENTAGE'|'FIXED')} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
+                        <option value="PERCENTAGE">Persentase (%)</option>
+                        <option value="FIXED">Nominal Tetap (Rp)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nilai Diskon</label>
+                      <input type="number" value={promoValue} onChange={e => setPromoValue(e.target.value)} placeholder="Cth: 20 atau 50000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    </div>
+                    <div className="md:col-span-3 flex justify-end mt-2">
+                      <button type="button" onClick={handleAddPromo} className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-300 transition-colors">
+                        Tambah Promo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 6: Hotel Bundles & Payment Routing */}
+          {step === 6 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Pengaturan Pembayaran</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+                  <div>
+                    <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Metode Pembayaran</label>
+                    <select value={paymentType} onChange={e => setPaymentType(e.target.value as 'DIRECT_EO' | 'WEB')} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
+                      <option value="WEB">Via Web (Sistem)</option>
+                      <option value="DIRECT_EO">Langsung ke EO (Transfer Manual)</option>
+                    </select>
+                  </div>
+                  {paymentType === 'WEB' ? (
+                    <>
+                      <div>
+                        <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Biaya Layanan Web Ditanggung Oleh</label>
+                        <select value={webFeeBearer} onChange={e => setWebFeeBearer(e.target.value as 'BUYER' | 'EO')} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white">
+                          <option value="BUYER">Pembeli (Peserta)</option>
+                          <option value="EO">Penyelenggara (EO)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nominal Biaya Layanan (Rp)</label>
+                        <input type="number" value={webFeeAmount} onChange={e => setWebFeeAmount(Number(e.target.value))} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="md:col-span-2 border-t border-slate-200 dark:border-slate-800 pt-4 mt-2">
+                        <h5 className="font-bold text-slate-700 dark:text-slate-300 text-xs mb-3">Detail Rekening EO & Fee Web</h5>
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Bank *</label>
+                        <input type="text" value={eoBankName} onChange={e => setEoBankName(e.target.value)} placeholder="Cth: BCA" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nomor Rekening *</label>
+                        <input type="text" value={eoBankAccountNumber} onChange={e => setEoBankAccountNumber(e.target.value)} placeholder="Cth: 1234567890" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Pemilik Rekening *</label>
+                        <input type="text" value={eoBankAccountName} onChange={e => setEoBankAccountName(e.target.value)} placeholder="Cth: PT Event Organizer" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                      </div>
+                      <div>
+                        <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">NPWP *</label>
+                        <input type="text" value={eoNpwp} onChange={e => setEoNpwp(e.target.value)} placeholder="Cth: 12.345.678.9-012.000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Fee untuk Web (Dipotong dari EO) Rp *</label>
+                        <input type="number" value={webFeeAmount} onChange={e => setWebFeeAmount(Number(e.target.value))} placeholder="Cth: 5000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Bundling Hotel (Opsional)</h4>
+                {hotelBundles.length === 0 ? (
+                  <div className="text-center p-6 bg-slate-50 dark:bg-blue-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <p className="text-slate-500 font-medium text-xs">Belum ada paket hotel ditambahkan.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {hotelBundles.map((hotel, i) => (
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div>
+                          <span className="font-bold text-slate-900 dark:text-white block">{hotel.name}</span>
+                          <span className="text-xs text-slate-500">Rp {hotel.price.toLocaleString('id-ID')} | Kuota: {hotel.quota} kamar</span>
+                        </div>
+                        <button type="button" onClick={() => setHotelBundles(hotelBundles.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
+                          Hapus
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="border border-slate-200 dark:border-slate-800 rounded-2xl p-5 mt-4">
+                  <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Tambah Paket Hotel</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Hotel / Paket</label>
+                      <input type="text" value={hotelName} onChange={e => setHotelName(e.target.value)} placeholder="Cth: Hotel Aston - 1 Malam" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga (Rp)</label>
+                      <input type="number" value={hotelPrice} onChange={e => setHotelPrice(e.target.value)} placeholder="Cth: 500000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kuota Kamar</label>
+                      <input type="number" value={hotelQuota} onChange={e => setHotelQuota(e.target.value)} placeholder="Cth: 20" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Deskripsi (Opsional)</label>
+                      <input type="text" value={hotelDesc} onChange={e => setHotelDesc(e.target.value)} placeholder="Fasilitas kamar, jarak ke venue, dll." className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    </div>
+                    <div className="md:col-span-2 flex justify-end">
+                      <button type="button" onClick={handleAddHotel} className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-300 transition-colors">
+                        Tambah Hotel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Navigation Buttons */}
           <div className="flex justify-between items-center pt-6 mt-8 border-t border-slate-200 dark:border-slate-800">
             {step > 1 ? (
@@ -676,10 +1047,10 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               type="submit"
               disabled={loading}
               className={`px-8 py-3 rounded-xl font-black uppercase text-xs tracking-wider shadow-lg transition-all ${
-                loading ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-600/30'
+                loading ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/30'
               }`}
             >
-              {loading ? 'Memproses...' : ((initialData && step === 2) || step === 4) ? (initialData ? 'Simpan Perubahan' : 'Terbitkan Event') : 'Selanjutnya'}
+              {loading ? 'Memproses...' : ((initialData && step === 2) || step === 6) ? (initialData ? 'Simpan Perubahan' : 'Terbitkan Event') : 'Selanjutnya'}
             </button>
           </div>
 

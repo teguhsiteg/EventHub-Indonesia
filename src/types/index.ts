@@ -58,6 +58,26 @@ export interface AddOnItem {
   image?: string;
 }
 
+export interface HotelBundleItem {
+  id: string;
+  name: string;
+  price: number;
+  description?: string;
+  quota: number;
+  registeredCount: number;
+}
+
+export interface SpecialVoucher {
+  code: string;
+  categoryId: string;
+}
+
+export interface PromoCode {
+  code: string;
+  discountType: 'PERCENTAGE' | 'FIXED';
+  discountValue: number;
+}
+
 export interface EventItem {
   id: string;
   name: string;
@@ -81,12 +101,26 @@ export interface EventItem {
   schedule: EventScheduleItem[];
   routeImageUrl?: string;
   elevationGpxUrl?: string;
+  jerseySizeChartUrl?: string;
+  jacketSizeChartUrl?: string;
+  medalImageUrl?: string;
   rules: string;
   faqs: FAQItem[];
   addons?: AddOnItem[];
   category?: string;
   categories?: string[];
   searchKeywords?: string[];
+  paymentType?: 'DIRECT_EO' | 'WEB';
+  webFeeBearer?: 'BUYER' | 'EO';
+  webFeeAmount?: number;
+  eoBankAccountName?: string;
+  eoBankAccountNumber?: string;
+  eoBankName?: string;
+  eoNpwp?: string;
+  enableVoucherCode?: boolean;
+  specialVouchers?: SpecialVoucher[];
+  promoCodes?: PromoCode[];
+  hotelBundles?: HotelBundleItem[];
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -106,6 +140,7 @@ export interface EventCategory {
   price: number; // e.g. 500000
   earlyBirdPrice?: number;
   earlyBirdEndDate?: string;
+  earlyBirdQuota?: number;
   quota: number;
   registeredCount: number;
   startTime: string; // e.g. "05:00 WIB"
@@ -135,8 +170,12 @@ export interface Registration {
   items: { categoryId: string; quantity: number; price: number; earlyBird: boolean }[];
   ticketCount: number;
   selectedAddons?: { addonId: string; quantity: number; price: number }[];
+  selectedHotels?: { hotelId: string; quantity: number; price: number; name: string }[];
   status: RegistrationStatus;
   amount: number;
+  webFeeAmount?: number;
+  promoCode?: string;
+  discountAmount?: number;
   invoiceId: string;
   createdAt: string;
   updatedAt: string;
@@ -342,4 +381,22 @@ export interface PayoutRequest {
   processedAt?: string;
   proofUrl?: string;
   notes?: string;
+}
+
+export type EventRequestStatus = 'PENDING' | 'REVIEWED' | 'APPROVED' | 'REJECTED';
+
+export interface EventRequest {
+  id: string;
+  eoName: string;
+  picName: string;
+  picPhone: string;
+  picEmail: string;
+  eventName: string;
+  plannedDate: string;
+  estimatedParticipants: number;
+  location: string;
+  eventType: string;
+  additionalNotes: string;
+  status: EventRequestStatus;
+  createdAt: string;
 }

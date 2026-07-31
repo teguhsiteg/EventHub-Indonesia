@@ -91,7 +91,7 @@ export const PageSettings: React.FC<PageSettingsProps> = ({ addNotification }) =
   if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
       </div>
     );
   }

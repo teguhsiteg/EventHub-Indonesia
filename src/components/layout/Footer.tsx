@@ -30,7 +30,7 @@ export const Footer: React.FC = () => {
   return (
     <footer className="relative  border-t border-slate-200 dark:border-white/[0.06] pt-16 pb-8">
       {/* Subtle top glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
@@ -38,12 +38,12 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="lg:col-span-1 space-y-4">
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center shadow-md shadow-orange-500/20">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-yellow-400 flex items-center justify-center shadow-md shadow-blue-500/20">
                 <Trophy className="w-4.5 h-4.5 text-white" />
               </div>
               <div className="leading-tight">
                 <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
-                  RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-400">PRO</span>
+                  RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">PRO</span>
                 </span>
                 <span className="block text-[9px] font-medium text-slate-500 tracking-wider uppercase">
                   Platform Event Olahraga Terdepan di Indonesia
@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-orange-400 transition-colors flex items-center gap-1 group"
+                    className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-1 group"
                   >
                     {link.label}
                     <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200" />
@@ -94,7 +94,7 @@ export const Footer: React.FC = () => {
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-orange-400 transition-colors"
+                    className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-blue-400 transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -113,13 +113,13 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-2.5 text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">
                 <Mail className="w-4 h-4 text-slate-500 shrink-0" />
-                <a href="mailto:support@racepro.id" className="hover:text-orange-400 transition-colors">
+                <a href="mailto:support@racepro.id" className="hover:text-blue-400 transition-colors">
                   support@racepro.id
                 </a>
               </li>
               <li className="flex items-center gap-2.5 text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">
                 <Phone className="w-4 h-4 text-slate-500 shrink-0" />
-                <a href="tel:+6281234567890" className="hover:text-orange-400 transition-colors">
+                <a href="tel:+6281234567890" className="hover:text-blue-400 transition-colors">
                   +62 812-XXXX-XXXX
                 </a>
               </li>

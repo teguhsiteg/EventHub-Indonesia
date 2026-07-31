@@ -18,6 +18,7 @@ import { EventDetailPage } from './pages/EventDetailPage';
 import { PublicResultsPage } from './pages/PublicResultsPage';
 import { VerifyQRPage } from './pages/VerifyQRPage';
 import { AboutPage } from './pages/AboutPage';
+import { HostEventPage } from './pages/HostEventPage';
 import { TermsPage } from './pages/TermsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { ContactPage } from './pages/ContactPage';
@@ -45,6 +46,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/results" element={<PublicLayout><PublicResultsPage /></PublicLayout>} />
       <Route path="/verify/:token" element={<PublicLayout><VerifyQRPage /></PublicLayout>} />
       <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+      <Route path="/host-event" element={<PublicLayout><HostEventPage /></PublicLayout>} />
       <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
       <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />

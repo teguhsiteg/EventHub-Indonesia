@@ -49,7 +49,7 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDateISO }) => {
 
   return (
     <div className="bg-white dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-xl">
-      <div className="flex items-center gap-2 text-xs font-bold text-orange-400 uppercase tracking-wider mb-3">
+      <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-wider mb-3">
         <Timer className="w-4 h-4" />
         <span>Hitung Mundur Race Start</span>
       </div>
@@ -67,7 +67,7 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDateISO }) => {
           <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">MENIT</span>
         </div>
         <div className=" p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
-          <span className="block text-xl font-black text-orange-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
+          <span className="block text-xl font-black text-blue-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
           <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">DETIK</span>
         </div>
       </div>

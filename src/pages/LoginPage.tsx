@@ -71,8 +71,8 @@ export const LoginPage: React.FC = () => {
     <div className="min-h-[calc(100vh-4rem)] flex bg-slate-50 dark:bg-blue-950">
       {/* Animated background blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute top-0 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-orange-600/10 via-amber-500/5 to-transparent blur-3xl" />
-        <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-orange-500/8 to-transparent blur-3xl" />
+        <div className="absolute top-0 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-blue-600/10 via-yellow-500/5 to-transparent blur-3xl" />
+        <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-blue-500/8 to-transparent blur-3xl" />
       </div>
 
       {/* Left: Brand Section */}
@@ -80,7 +80,7 @@ export const LoginPage: React.FC = () => {
         <div className="relative z-10 max-w-md text-center">
           {/* Logo */}
           <div className="inline-flex mb-8">
-            <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 via-orange-400 to-amber-400 p-[2px] shadow-2xl shadow-orange-500/30">
+            <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-400 to-yellow-400 p-[2px] shadow-2xl shadow-blue-500/30">
               <div className="w-full h-full  rounded-2xl flex items-center justify-center">
                 <Trophy className="w-10 h-10 text-transparent" style={{ color: '#fb923c' }} />
               </div>
@@ -105,8 +105,8 @@ export const LoginPage: React.FC = () => {
                 key={i}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.05] text-left"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/10 to-amber-500/10 flex items-center justify-center shrink-0">
-                  <item.icon className="w-4 h-4 text-orange-400" />
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/10 to-yellow-500/10 flex items-center justify-center shrink-0">
+                  <item.icon className="w-4 h-4 text-blue-400" />
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400">{item.text}</span>
               </div>
@@ -133,11 +133,11 @@ export const LoginPage: React.FC = () => {
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-4">
             <div className="inline-flex mb-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center shadow-lg shadow-orange-500/20">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-yellow-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Trophy className="w-7 h-7 text-white" />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-white">RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-400">PRO</span></h2>
+            <h2 className="text-xl font-bold text-white">RACE<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">PRO</span></h2>
           </div>
 
           <div>
@@ -172,7 +172,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
               </div>
             </div>
@@ -189,7 +189,7 @@ export const LoginPage: React.FC = () => {
                     setResetEmail(email);
                     setShowResetModal(true);
                   }}
-                  className="text-xs text-orange-400 hover:text-orange-300 transition-colors"
+                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   Lupa kata sandi?
                 </button>
@@ -204,7 +204,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -220,7 +220,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-semibold text-sm shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white font-semibold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -258,7 +258,7 @@ export const LoginPage: React.FC = () => {
           {/* Register link */}
           <p className="text-center text-sm text-slate-500">
             Belum memiliki akun?{' '}
-            <Link to="/register" className="text-orange-400 hover:text-orange-300 font-medium transition-colors">
+            <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
               Daftar Sekarang
             </Link>
           </p>
@@ -299,7 +299,7 @@ export const LoginPage: React.FC = () => {
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
                       placeholder="nama@email.com"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-orange-500/50 transition-all"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all"
                     />
                   </div>
                   <div className="flex gap-2.5">
@@ -312,7 +312,7 @@ export const LoginPage: React.FC = () => {
                     <button
                       onClick={handleResetPassword}
                       disabled={!resetEmail}
-                      className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm font-semibold disabled:opacity-50 transition-all"
+                      className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 text-white text-sm font-semibold disabled:opacity-50 transition-all"
                     >
                       Kirim Tautan
                     </button>

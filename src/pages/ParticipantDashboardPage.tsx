@@ -181,17 +181,17 @@ export const ParticipantDashboardPage: React.FC = () => {
         {/* Profile Header */}
         <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-slate-900 dark:text-white text-2xl font-black uppercase shadow-lg shadow-orange-600/30">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-yellow-500 flex items-center justify-center text-slate-900 dark:text-white text-2xl font-black uppercase shadow-lg shadow-blue-600/30">
               {user?.displayName ? user.displayName[0] : 'P'}
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest bg-orange-950 px-2.5 py-1 rounded border border-orange-800/40">
+                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest bg-blue-950 px-2.5 py-1 rounded border border-blue-800/40">
                   RACEPRO PESERTA
                 </span>
                 {eventData && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) <= 48 && ((new Date(eventData.startDate).getTime() - Date.now()) / (1000 * 60 * 60)) >= -24 && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/60 text-amber-400 text-[10px] font-black uppercase tracking-wider animate-pulse">
-                    <Bell className="w-3 h-3 text-amber-400" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-yellow-500/20 border border-yellow-500/60 text-yellow-400 text-[10px] font-black uppercase tracking-wider animate-pulse">
+                    <Bell className="w-3 h-3 text-yellow-400" />
                     <span>RACE DAY &lt; 48 JAM</span>
                   </span>
                 )}
@@ -205,7 +205,7 @@ export const ParticipantDashboardPage: React.FC = () => {
             {participant && (
               <button
                 onClick={() => setShowQrModal(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-orange-600/25 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 transition-all"
               >
                 <QrCode className="w-4 h-4" />
                 <span>Buka QR Check-In</span>
@@ -235,7 +235,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                 const found = registrations.find(r => r.id === e.target.value);
                 if (found) loadRegistrationDetails(found);
               }}
-              className=" border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 w-full sm:w-auto"
+              className=" border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-500 w-full sm:w-auto"
             >
               {registrations.map(r => (
                 <option key={r.id} value={r.id}>
@@ -273,7 +273,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-black uppercase border ${
                         selectedReg.status === 'VERIFIED' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' :
-                        selectedReg.status === 'WAITING_PAYMENT' ? 'bg-amber-950 text-amber-400 border-amber-800' :
+                        selectedReg.status === 'WAITING_PAYMENT' ? 'bg-yellow-950 text-yellow-400 border-yellow-800' :
                         'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700'
                       }`}>
                         STATUS: {selectedReg.status}
@@ -283,7 +283,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
                       <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800">
                         <span className="block text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold">NOMOR BIB</span>
-                        <span className="block text-2xl font-black text-amber-400 font-mono mt-1">
+                        <span className="block text-2xl font-black text-yellow-400 font-mono mt-1">
                           {participant?.bibNumber || 'DIPROSES'}
                         </span>
                       </div>
@@ -334,7 +334,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                     <h3 className="text-xl font-mono font-black text-slate-900 dark:text-white">{payment.invoiceId}</h3>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${
-                    payment.status === 'PAID' ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'
+                    payment.status === 'PAID' ? 'bg-emerald-950 text-emerald-400' : 'bg-yellow-950 text-yellow-400'
                   }`}>
                     {payment.status}
                   </span>
@@ -343,7 +343,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                 <div className="p-4  rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
                   <div className="flex justify-between text-slate-600 dark:text-slate-300">
                     <span>Total Pembayaran:</span>
-                    <span className="font-black text-amber-400 text-base">{formatRupiah(payment.amount)}</span>
+                    <span className="font-black text-yellow-400 text-base">{formatRupiah(payment.amount)}</span>
                   </div>
                   <div className="flex justify-between text-slate-500 dark:text-slate-400 text-[11px]">
                     <span>Metode:</span>
@@ -361,13 +361,13 @@ export const ParticipantDashboardPage: React.FC = () => {
                         value={proofUrl}
                         onChange={(e) => setProofUrl(e.target.value)}
                         placeholder="https://drive.google.com/..."
-                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-blue-500"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={submittingProof}
-                      className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black uppercase tracking-wider flex items-center justify-center gap-2"
+                      className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider flex items-center justify-center gap-2"
                     >
                       <Upload className="w-4 h-4" />
                       <span>{submittingProof ? 'Mengirim...' : 'Kirim Bukti Pembayaran'}</span>
@@ -392,7 +392,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                       rows={3}
                       value={allergies}
                       onChange={(e) => setAllergies(e.target.value)}
-                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-blue-500"
                     />
                   </div>
 
@@ -405,7 +405,7 @@ export const ParticipantDashboardPage: React.FC = () => {
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black uppercase tracking-wider"
+                    className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider"
                   >
                     Simpan Pernyataan Medis
                   </button>
@@ -416,7 +416,7 @@ export const ParticipantDashboardPage: React.FC = () => {
             {/* RESULT & CERTIFICATE TAB */}
             {activeTab === 'result' && (
               <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-2xl mx-auto text-center space-y-6">
-                <Award className="w-16 h-16 text-amber-400 mx-auto" />
+                <Award className="w-16 h-16 text-yellow-400 mx-auto" />
                 
                 {result ? (
                   <div className="space-y-4">
@@ -435,7 +435,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                     {certificate && (
                       <button
                         onClick={() => setShowCertModal(true)}
-                        className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20"
+                        className="w-full py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-blue-500 hover:from-yellow-400 hover:to-blue-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-yellow-500/20"
                       >
                         Buka E-Sertifikat Finisher
                       </button>

@@ -99,7 +99,7 @@ export const AboutPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-blue-950">
-        <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
       </div>
     );
   }
@@ -109,27 +109,27 @@ export const AboutPage: React.FC = () => {
       {/* Breadcrumb */}
       <div className="max-w-4xl mx-auto px-4 pt-8 pb-0">
         <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-8">
-          <Link to="/" className="hover:text-orange-400 transition-colors flex items-center gap-1">
+          <Link to="/" className="hover:text-blue-400 transition-colors flex items-center gap-1">
             <Home className="w-3.5 h-3.5" /> Beranda
           </Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-orange-400">Tentang Kami</span>
+          <span className="text-blue-400">Tentang Kami</span>
         </nav>
       </div>
 
       {/* Hero Header */}
       <div className="relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-orange-600/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-yellow-500/5 blur-[100px] rounded-full pointer-events-none" />
         
         <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 text-orange-500 dark:text-orange-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
-            <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 text-blue-500 dark:text-blue-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
+            <Sparkles className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
             <span>RACEPRO — TENTANG KAMI</span>
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight leading-[1.05]">
             Tentang <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-400 to-amber-200">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-yellow-400 to-yellow-200">
               RacePro
             </span>
           </h1>
@@ -141,17 +141,17 @@ export const AboutPage: React.FC = () => {
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 pb-24">
-        <div className="bg-white/60 dark:bg-blue-950/50 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-xl prose dark:prose-invert max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-lg prose-h3:mt-8 prose-p:text-slate-600 dark:prose-p:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-a:text-orange-500 dark:prose-a:text-orange-400 prose-a:no-underline hover:prose-a:text-orange-600 dark:hover:prose-a:text-orange-300 prose-strong:text-slate-900 dark:prose-strong:text-white prose-code:text-orange-500 dark:prose-code:text-orange-300 prose-code:bg-slate-100 dark:prose-code:bg-slate-100 dark:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-li:text-slate-600 dark:prose-li:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-hr:border-slate-200 dark:prose-hr:border-slate-300 dark:border-slate-700 prose-blockquote:border-orange-500 prose-blockquote:text-slate-500 dark:prose-blockquote:text-slate-600 dark:text-slate-500 dark:text-slate-400 prose-blockquote:bg-orange-50 dark:prose-blockquote:bg-slate-100 dark:bg-slate-800/50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-2xl backdrop-blur-md">
+        <div className="bg-white/60 dark:bg-blue-950/50 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-xl prose dark:prose-invert max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-lg prose-h3:mt-8 prose-p:text-slate-600 dark:prose-p:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-a:text-blue-500 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:text-blue-600 dark:hover:prose-a:text-blue-300 prose-strong:text-slate-900 dark:prose-strong:text-white prose-code:text-blue-500 dark:prose-code:text-blue-300 prose-code:bg-slate-100 dark:prose-code:bg-slate-100 dark:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-li:text-slate-600 dark:prose-li:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-hr:border-slate-200 dark:prose-hr:border-slate-300 dark:border-slate-700 prose-blockquote:border-blue-500 prose-blockquote:text-slate-500 dark:prose-blockquote:text-slate-600 dark:text-slate-500 dark:text-slate-400 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-slate-100 dark:bg-slate-800/50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-2xl backdrop-blur-md">
           <ReactMarkdown>{content || DEFAULT_ABOUT}</ReactMarkdown>
         </div>
 
         {/* Footer CTA */}
         <div className="mt-12 text-center">
           <div className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/80 dark:bg-blue-950 border border-slate-200 dark:border-slate-800 shadow-sm backdrop-blur-sm">
-            <Info className="w-5 h-5 text-orange-500 dark:text-orange-400" />
+            <Info className="w-5 h-5 text-blue-500 dark:text-blue-400" />
             <span className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400">
               Ada pertanyaan? Hubungi kami di{' '}
-              <a href="mailto:support@racepro.id" className="text-orange-500 dark:text-orange-400 font-bold hover:text-orange-600 dark:hover:text-orange-300">
+              <a href="mailto:support@racepro.id" className="text-blue-500 dark:text-blue-400 font-bold hover:text-blue-600 dark:hover:text-blue-300">
                 support@racepro.id
               </a>
             </span>

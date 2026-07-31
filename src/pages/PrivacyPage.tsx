@@ -116,7 +116,7 @@ export const PrivacyPage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-blue-950">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest animate-pulse">Memuat...</span>
         </div>
       </div>
@@ -128,11 +128,11 @@ export const PrivacyPage: React.FC = () => {
       {/* Breadcrumb */}
       <div className="max-w-4xl mx-auto px-4 pt-8 pb-0">
         <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-8">
-          <Link to="/" className="hover:text-orange-400 transition-colors flex items-center gap-1">
+          <Link to="/" className="hover:text-blue-400 transition-colors flex items-center gap-1">
             <Home className="w-3.5 h-3.5" /> Beranda
           </Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-orange-400">Kebijakan Privasi</span>
+          <span className="text-blue-400">Kebijakan Privasi</span>
         </nav>
       </div>
 

@@ -48,13 +48,13 @@ export const AdminCheckInPage: React.FC = () => {
     <div className="min-h-screen  text-slate-900 dark:text-slate-100 py-12">
       <div className="max-w-xl mx-auto px-4 space-y-8">
         
-        <Link to="/admin" className="inline-flex items-center gap-2 text-xs font-bold text-orange-400 hover:underline uppercase">
+        <Link to="/admin" className="inline-flex items-center gap-2 text-xs font-bold text-blue-400 hover:underline uppercase">
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Dashboard Admin</span>
         </Link>
 
         <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-orange-600/20 border border-orange-500/30 text-orange-400 flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center mx-auto">
             <QrCode className="w-8 h-8" />
           </div>
 
@@ -72,13 +72,13 @@ export const AdminCheckInPage: React.FC = () => {
                 value={qrInput}
                 onChange={(e) => setQrInput(e.target.value)}
                 placeholder="Tempel / Scan QR Token (RACEPRO_QR_...)"
-                className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white font-mono text-xs focus:border-orange-500"
+                className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white font-mono text-xs focus:border-blue-500"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-black uppercase tracking-wider shadow-lg shadow-orange-600/20"
+              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider shadow-lg shadow-blue-600/20"
             >
               {loading ? 'Memverifikasi...' : 'VERIFIKASI & CHECK-IN'}
             </button>
@@ -86,10 +86,10 @@ export const AdminCheckInPage: React.FC = () => {
 
           {statusMessage && (
             <div className={`p-4 rounded-2xl border text-xs text-left ${
-              isSuccess ? 'bg-emerald-950/60 border-emerald-800 text-emerald-300' : 'bg-amber-950/60 border-amber-800 text-amber-300'
+              isSuccess ? 'bg-emerald-950/60 border-emerald-800 text-emerald-300' : 'bg-yellow-950/60 border-yellow-800 text-yellow-300'
             }`}>
               <div className="flex items-center gap-2 font-bold uppercase mb-1">
-                {isSuccess ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <AlertCircle className="w-4 h-4 text-amber-400" />}
+                {isSuccess ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <AlertCircle className="w-4 h-4 text-yellow-400" />}
                 <span>{isSuccess ? 'STATUS CHECK-IN BERHASIL' : 'CATATAN CHECK-IN'}</span>
               </div>
               <p className="leading-relaxed">{statusMessage}</p>
@@ -106,7 +106,7 @@ export const AdminCheckInPage: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[10px] uppercase">Nomor BIB:</span>
-                  <span className="font-mono font-black text-amber-400 text-sm">{participant.bibNumber}</span>
+                  <span className="font-mono font-black text-yellow-400 text-sm">{participant.bibNumber}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[10px] uppercase">Ukuran Jersey:</span>

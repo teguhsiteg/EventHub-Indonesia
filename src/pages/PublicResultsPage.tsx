@@ -48,7 +48,7 @@ export const PublicResultsPage: React.FC = () => {
         
         {/* Header */}
         <div className="mb-10 text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold uppercase tracking-wider mb-3">
             <Trophy className="w-4 h-4" />
             <span>Papan Klasemen Finisher</span>
           </div>
@@ -63,7 +63,7 @@ export const PublicResultsPage: React.FC = () => {
             <select
               value={selectedEventId}
               onChange={(e) => handleEventChange(e.target.value)}
-              className=" border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 w-full md:w-72"
+              className=" border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-500 w-full md:w-72"
             >
               <option value="">Semua Event</option>
               {events.map(ev => (
@@ -79,7 +79,7 @@ export const PublicResultsPage: React.FC = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nama peserta atau nomor BIB..."
-              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-orange-500"
+              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
             />
           </div>
         </div>
@@ -111,9 +111,9 @@ export const PublicResultsPage: React.FC = () => {
                 <tbody className="divide-y divide-slate-800/60 font-medium">
                   {filteredResults.map((r, idx) => (
                     <tr key={r.id} className="hover:bg-slate-100 dark:bg-slate-800/50 transition-colors">
-                      <td className="p-4 font-black text-amber-400">
+                      <td className="p-4 font-black text-yellow-400">
                         {r.categoryRank <= 3 ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 font-black">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-yellow-500/20 text-yellow-300 font-black">
                             <Medal className="w-3.5 h-3.5" /> #{r.categoryRank}
                           </span>
                         ) : (

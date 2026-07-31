@@ -19,7 +19,7 @@ export const ContactPage: React.FC = () => {
     <div className="min-h-screen  text-slate-900 dark:text-slate-100 py-16">
       <div className="max-w-4xl mx-auto px-4 space-y-12">
         <div className="text-center space-y-2">
-          <span className="text-xs font-extrabold text-orange-500 uppercase tracking-widest block">HUBUNGI KAMI</span>
+          <span className="text-xs font-extrabold text-blue-500 uppercase tracking-widest block">HUBUNGI KAMI</span>
           <h1 className="text-3xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight">Hubungi Tim RacePro</h1>
           <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-xs">Punya pertanyaan seputar pendaftaran, pembayaran, atau kemitraan organizer?</p>
         </div>
@@ -29,7 +29,7 @@ export const ContactPage: React.FC = () => {
             <h3 className="text-base font-bold text-slate-900 dark:text-white uppercase">Informasi Kontak</h3>
             <div className="space-y-4 text-xs">
               <div className="flex items-center gap-3 p-3  rounded-xl border border-slate-200 dark:border-slate-800">
-                <Mail className="w-5 h-5 text-orange-400 shrink-0" />
+                <Mail className="w-5 h-5 text-blue-400 shrink-0" />
                 <div>
                   <span className="block text-slate-500 dark:text-slate-500 dark:text-slate-400 text-[10px]">Email Support</span>
                   <span className="font-bold text-slate-900 dark:text-white">support@racepro.id</span>
@@ -43,7 +43,7 @@ export const ContactPage: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3  rounded-xl border border-slate-200 dark:border-slate-800">
-                <MapPin className="w-5 h-5 text-amber-400 shrink-0" />
+                <MapPin className="w-5 h-5 text-yellow-400 shrink-0" />
                 <div>
                   <span className="block text-slate-500 dark:text-slate-500 dark:text-slate-400 text-[10px]">Kantor Operasional</span>
                   <span className="font-bold text-slate-900 dark:text-white">Yogyakarta & Jakarta, Indonesia</span>
@@ -68,7 +68,7 @@ export const ContactPage: React.FC = () => {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-blue-500"
                   />
                 </div>
                 <div>
@@ -78,7 +78,7 @@ export const ContactPage: React.FC = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-blue-500"
                   />
                 </div>
                 <div>
@@ -88,12 +88,12 @@ export const ContactPage: React.FC = () => {
                     required
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-orange-500"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white focus:border-blue-500"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
                 >
                   <Send className="w-4 h-4" />
                   <span>Kirim Pesan</span>

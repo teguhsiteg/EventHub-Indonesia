@@ -8,7 +8,7 @@ export const NotFoundPage: React.FC = () => {
       <div className="max-w-md w-full text-center space-y-8">
         <div className="space-y-4">
           <h1 className="text-8xl font-black text-white">404</h1>
-          <div className="h-1 w-24 bg-orange-500 mx-auto rounded-full" />
+          <div className="h-1 w-24 bg-blue-500 mx-auto rounded-full" />
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200">
             Halaman Tidak Ditemukan
           </h2>
@@ -27,7 +27,7 @@ export const NotFoundPage: React.FC = () => {
           </button>
           <Link
             to="/"
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2"
           >
             <Home className="w-4 h-4" />
             <span>Ke Halaman Utama</span>

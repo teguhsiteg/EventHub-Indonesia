@@ -36,8 +36,8 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
     <div className="flex flex-col items-center p-6 bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-300 dark:border-slate-800 rounded-2xl shadow-2xl shadow-black/40 max-w-sm mx-auto text-center">
       
       {/* Header */}
-      <div className="flex items-center gap-2 text-xs font-bold text-orange-400 uppercase tracking-wider mb-5">
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/20 flex items-center justify-center">
+      <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-wider mb-5">
+        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500/20 to-yellow-500/20 border border-blue-500/20 flex items-center justify-center">
           <QrCode className="w-3.5 h-3.5" />
         </div>
         <span>Token Verifikasi QR RacePro</span>
@@ -51,7 +51,7 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
           {/* RacePro Logo Overlay */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div 
-              className="rounded-full bg-gradient-to-br from-orange-500 to-amber-400 shadow-lg shadow-orange-500/30 flex items-center justify-center border-2 border-white/20"
+              className="rounded-full bg-gradient-to-br from-blue-500 to-yellow-400 shadow-lg shadow-blue-500/30 flex items-center justify-center border-2 border-white/20"
               style={{ width: logoSize, height: logoSize }}
             >
               <span 

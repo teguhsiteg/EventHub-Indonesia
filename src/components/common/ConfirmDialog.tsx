@@ -28,7 +28,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       <div className="bg-white dark:bg-blue-950 rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl border border-slate-200 dark:border-slate-800 text-center zoom-in-95 duration-200">
         
         <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
-          isDanger ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-orange-100 dark:bg-orange-900/30 text-orange-600'
+          isDanger ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600'
         }`}>
           {isDanger ? (
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -56,7 +56,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           <button
             onClick={onConfirm}
             className={`flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-colors text-white ${
-              isDanger ? 'bg-red-600 hover:bg-red-500 shadow-lg shadow-red-600/20' : 'bg-orange-600 hover:bg-orange-500 shadow-lg shadow-orange-600/20'
+              isDanger ? 'bg-red-600 hover:bg-red-500 shadow-lg shadow-red-600/20' : 'bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20'
             }`}
           >
             {confirmText}

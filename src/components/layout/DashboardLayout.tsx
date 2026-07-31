@@ -33,10 +33,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   };
 
   return (
-    <div className="relative min-h-screen  font-sans text-slate-900 dark:text-slate-100 selection:bg-orange-500/30 selection:text-orange-200">
+    <div className="relative min-h-screen  font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-500/30 selection:text-blue-200">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
-        <div className="absolute -top-1/2 -left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-orange-600/5 via-amber-500/3 to-transparent blur-3xl" />
+        <div className="absolute -top-1/2 -left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-blue-600/5 via-yellow-500/3 to-transparent blur-3xl" />
       </div>
 
       {/* Top Header Bar */}
@@ -50,11 +50,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-yellow-400 flex items-center justify-center">
                 <Trophy className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                RACE<span className="text-orange-500">PRO</span>
+                RACE<span className="text-blue-500">PRO</span>
               </span>
             </Link>
           </div>
@@ -67,7 +67,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
             <div className="flex items-center gap-2 pl-3 border-l border-slate-200 dark:border-white/[0.06]">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-yellow-400 flex items-center justify-center text-white text-xs font-bold">
                 {user?.displayName?.[0] || 'P'}
               </div>
               <span className="hidden sm:block text-xs font-medium text-slate-700 dark:text-slate-600 dark:text-slate-300">{user?.displayName}</span>
@@ -96,7 +96,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                 to={tab.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                   isActive 
-                    ? 'bg-gradient-to-r from-orange-500/20 to-amber-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 shadow-lg shadow-orange-500/5' 
+                    ? 'bg-gradient-to-r from-blue-500/20 to-yellow-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-lg shadow-blue-500/5' 
                     : 'text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
                 }`}
               >
@@ -123,7 +123,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                     onClick={() => setMobileSidebarOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                       isActive 
-                        ? 'bg-gradient-to-r from-orange-500/20 to-amber-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 shadow-lg shadow-orange-500/5' 
+                        ? 'bg-gradient-to-r from-blue-500/20 to-yellow-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-lg shadow-blue-500/5' 
                         : 'text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
                     }`}
                   >

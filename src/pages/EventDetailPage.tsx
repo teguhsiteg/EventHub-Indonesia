@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { getEventBySlug, getEventCategories } from '../services/eventService';
 import { createRegistration } from '../services/registrationService';
 import { EventItem, EventCategory } from '../types';
@@ -37,6 +38,11 @@ export const EventDetailPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<{ categoryId: string; quantity: number; price: number; earlyBird: boolean; name: string }[]>([]);
   const [formsData, setFormsData] = useState<any[]>([]);
   const [selectedAddons, setSelectedAddons] = useState<{addonId: string, quantity: number, price: number, name: string}[]>([]);
+  const [selectedHotels, setSelectedHotels] = useState<{hotelId: string, quantity: number, price: number, name: string}[]>([]);
+  const [specialVoucherCode, setSpecialVoucherCode] = useState('');
+  const [promoCode, setPromoCode] = useState('');
+  const [timeLeft, setTimeLeft] = useState<number>(15 * 60);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('QRIS');
 
   const { user } = useAuth();
   const { addNotification } = useSettings();
@@ -57,6 +63,27 @@ export const EventDetailPage: React.FC = () => {
     }
     loadData();
   }, [slug]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (checkoutStep >= 1 && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && checkoutStep >= 1) {
+      addNotification('error', 'Waktu Habis', 'Waktu pengisian form telah habis. Silakan ulangi dari awal.');
+      setCheckoutStep(0);
+      setCartItems([]);
+      setTimeLeft(15 * 60);
+    }
+    return () => clearInterval(timer);
+  }, [checkoutStep, timeLeft, addNotification]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
 
 
 
@@ -180,9 +207,10 @@ export const EventDetailPage: React.FC = () => {
         }
       }
 
+
       if (!currentUserId) throw new Error('Gagal mengidentifikasi sesi pengguna.');
 
-      const result = await createRegistration(currentUserId, event.id, cartItems, formsData, selectedAddons);
+      const result = await createRegistration(currentUserId, event.id, cartItems, formsData, selectedAddons, specialVoucherCode, promoCode, selectedHotels, selectedPaymentMethod);
       addNotification('success', 'Pendaftaran Berhasil!', `Nomor Registrasi: ${result.registration.registrationNumber}. Harap selesaikan pembayaran.`);
       navigate('/dashboard');
     } catch (err: any) {
@@ -193,7 +221,27 @@ export const EventDetailPage: React.FC = () => {
 
   const subTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const addonsTotal = selectedAddons.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const grandTotal = subTotal + addonsTotal;
+  const hotelsTotal = selectedHotels.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  let webFee = 0;
+  if (event?.paymentType === 'WEB' && event?.webFeeBearer === 'BUYER' && event?.webFeeAmount) {
+    webFee = event.webFeeAmount;
+  }
+  
+  let grandTotal = subTotal + addonsTotal + hotelsTotal + webFee;
+  let discountAmount = 0;
+
+  if (promoCode && event?.promoCodes) {
+    const promo = event.promoCodes.find(p => p.code === promoCode.toUpperCase());
+    if (promo) {
+      if (promo.discountType === 'PERCENTAGE') {
+        discountAmount = grandTotal * (promo.discountValue / 100);
+      } else if (promo.discountType === 'FIXED') {
+        discountAmount = promo.discountValue;
+      }
+      grandTotal = Math.max(0, grandTotal - discountAmount);
+    }
+  }
 
   const formatRupiah = (val: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
@@ -203,7 +251,7 @@ export const EventDetailPage: React.FC = () => {
     return (
       <div className="min-h-screen  flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
           <span className="text-slate-600 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Memuat Event...</span>
         </div>
       </div>
@@ -216,7 +264,7 @@ export const EventDetailPage: React.FC = () => {
         <div className="max-w-md mx-auto bg-white/60 dark:bg-blue-950/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 backdrop-blur-sm">
           <AlertCircle className="w-12 h-12 text-slate-600 dark:text-slate-400 dark:text-slate-600 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Event tidak ditemukan.</h2>
-          <Link to="/events" className="text-orange-400 hover:text-orange-300 underline text-sm font-bold inline-flex items-center gap-1.5 transition-colors">
+          <Link to="/events" className="text-blue-400 hover:text-blue-300 underline text-sm font-bold inline-flex items-center gap-1.5 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Kembali ke Katalog Event
           </Link>
@@ -231,8 +279,31 @@ export const EventDetailPage: React.FC = () => {
     { step: 3, icon: CreditCard, label: 'Pembayaran' },
   ];
 
+  const nowDt = new Date();
+  const regStart = new Date(event.registrationStart);
+  const regEnd = new Date(event.registrationEnd);
+  
+  const isBeforeOpen = nowDt < regStart;
+  const isAfterClose = nowDt > regEnd;
+  const isRegistrationOpen = event.status === 'REGISTRATION_OPEN' && !isBeforeOpen && !isAfterClose;
+
+  let displayStatus = event.status;
+  if (isBeforeOpen) displayStatus = 'Segera Hadir';
+  else if (isAfterClose) displayStatus = 'Pendaftaran Ditutup';
+  else if (event.status === 'REGISTRATION_OPEN') displayStatus = 'Pendaftaran Dibuka';
+
   return (
     <div className="min-h-screen  text-slate-900 dark:text-slate-100 pb-24">
+      <Helmet>
+        <title>{event.name} — RacePro</title>
+        <meta name="description" content={event.description.substring(0, 160)} />
+        <meta property="og:title" content={`${event.name} — RacePro`} />
+        <meta property="og:description" content={event.description.substring(0, 160)} />
+        <meta property="og:image" content={event.banner} />
+        <meta name="twitter:title" content={`${event.name} — RacePro`} />
+        <meta name="twitter:description" content={event.description.substring(0, 160)} />
+        <meta name="twitter:image" content={event.banner} />
+      </Helmet>
 
       {/* HERO BANNER */}
       <div className="relative h-[420px] md:h-[480px]  border-b border-slate-300 dark:border-slate-800 overflow-hidden">
@@ -243,7 +314,7 @@ export const EventDetailPage: React.FC = () => {
         <div className="absolute bottom-0 inset-x-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="space-y-4 max-w-2xl">
-              <Link to="/events" className="inline-flex items-center gap-2 text-xs text-orange-400 font-bold uppercase tracking-wider hover:text-orange-300 transition-colors group">
+              <Link to="/events" className="inline-flex items-center gap-2 text-xs text-blue-400 font-bold uppercase tracking-wider hover:text-blue-300 transition-colors group">
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                 <span>Kembali ke Katalog</span>
               </Link>
@@ -251,14 +322,14 @@ export const EventDetailPage: React.FC = () => {
               {/* Status badge */}
               <div>
                 <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase px-3 py-1.5 rounded-md backdrop-blur-md shadow-lg ${
-                  event.status === 'REGISTRATION_OPEN' 
-                    ? 'bg-orange-500/90 text-white' 
+                  isRegistrationOpen 
+                    ? 'bg-blue-500/90 text-white' 
                     : 'bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300'
                 }`}>
-                  {event.status === 'REGISTRATION_OPEN' ? (
+                  {isRegistrationOpen ? (
                     <><CheckCircle2 className="w-3 h-3" /> Pendaftaran Dibuka</>
                   ) : (
-                    event.status
+                    displayStatus
                   )}
                 </span>
               </div>
@@ -268,10 +339,10 @@ export const EventDetailPage: React.FC = () => {
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-700 dark:text-slate-300">
                 <span className="flex items-center gap-1.5 bg-white dark:bg-blue-950/60 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700/50">
-                  <MapPin className="w-3.5 h-3.5 text-orange-400" /> {event.location}
+                  <MapPin className="w-3.5 h-3.5 text-blue-400" /> {event.location}
                 </span>
                 <span className="flex items-center gap-1.5 bg-white dark:bg-blue-950/60 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700/50">
-                  <Calendar className="w-3.5 h-3.5 text-amber-400" /> {new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'full' })}
+                  <Calendar className="w-3.5 h-3.5 text-yellow-400" /> {new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'full' })}
                 </span>
               </div>
             </div>
@@ -296,10 +367,10 @@ export const EventDetailPage: React.FC = () => {
                 const isPast = checkoutStep > s.step;
                 return (
                   <React.Fragment key={s.step}>
-                    <div className={`flex items-center gap-3 whitespace-nowrap ${isActive ? 'text-orange-400' : 'text-slate-600'}`}>
+                    <div className={`flex items-center gap-3 whitespace-nowrap ${isActive ? 'text-blue-400' : 'text-slate-600'}`}>
                       <div className={`flex items-center justify-center w-10 h-10 rounded-xl text-xs font-black transition-all duration-300 ${
                         isActive 
-                          ? 'bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/20' 
+                          ? 'bg-gradient-to-br from-blue-500 to-yellow-500 text-white shadow-lg shadow-blue-500/20' 
                           : 'bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700'
                       }`}>
                         {isPast ? <CheckCircle2 className="w-4 h-4" /> : s.step}
@@ -310,7 +381,7 @@ export const EventDetailPage: React.FC = () => {
                     </div>
                     {idx < 2 && (
                       <div className={`w-12 md:w-20 h-0.5 mx-3 rounded-full transition-all duration-500 ${
-                        isPast ? 'bg-gradient-to-r from-orange-500 to-amber-500' : 'bg-slate-100 dark:bg-slate-800'
+                        isPast ? 'bg-gradient-to-r from-blue-500 to-yellow-500' : 'bg-slate-100 dark:bg-slate-800'
                       }`} />
                     )}
                   </React.Fragment>
@@ -330,7 +401,7 @@ export const EventDetailPage: React.FC = () => {
               <>
                 <div className="glass-card p-6 md:p-8">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-4 flex items-center gap-2">
-                    <span className="w-1 h-5 bg-gradient-to-b from-orange-500 to-amber-500 rounded-full" />
+                    <span className="w-1 h-5 bg-gradient-to-b from-blue-500 to-yellow-500 rounded-full" />
                     Deskripsi Event
                   </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">{event.description}</p>
@@ -339,19 +410,19 @@ export const EventDetailPage: React.FC = () => {
                     <div className="mt-8 pt-6 border-t border-slate-300 dark:border-slate-800">
                       <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-4">Informasi Penyelenggara</h4>
                       <div className="flex items-center gap-4 p-4 bg-slate-100 dark:bg-slate-800/40 rounded-xl border border-slate-300 dark:border-slate-700/50">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/20 flex items-center justify-center">
-                          <Trophy className="w-5 h-5 text-orange-400" />
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-yellow-500/20 border border-blue-500/20 flex items-center justify-center">
+                          <Trophy className="w-5 h-5 text-blue-400" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-white">{event.organizerName}</p>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{event.organizerName}</p>
                           <div className="flex gap-4 mt-1.5">
                             {event.organizerWebsite && (
-                              <a href={event.organizerWebsite} target="_blank" rel="noreferrer" className="text-xs text-orange-400 hover:text-orange-300 transition-colors font-medium">
+                              <a href={event.organizerWebsite} target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 transition-colors font-medium">
                                 Website
                               </a>
                             )}
                             {event.organizerSocialMedia && (
-                              <a href={event.organizerSocialMedia} target="_blank" rel="noreferrer" className="text-xs text-orange-400 hover:text-orange-300 transition-colors font-medium">
+                              <a href={event.organizerSocialMedia} target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 transition-colors font-medium">
                                 Sosial Media
                               </a>
                             )}
@@ -379,16 +450,40 @@ export const EventDetailPage: React.FC = () => {
                   </div>
                 )}
 
+                {/* VISUAL INFO IMAGES */}
+                {(event.jerseySizeChartUrl || event.jacketSizeChartUrl || event.medalImageUrl) && (
+                  <div className="glass-card p-6 md:p-8 space-y-8">
+                    {event.jerseySizeChartUrl && (
+                      <div>
+                        <h3 className="text-[10px] font-black text-slate-900 dark:text-white uppercase mb-3 tracking-widest">Sizechart Jersey</h3>
+                        <img src={event.jerseySizeChartUrl} alt="Jersey Size Chart" className="w-full rounded-xl border border-slate-200 dark:border-slate-800" />
+                      </div>
+                    )}
+                    {event.jacketSizeChartUrl && (
+                      <div>
+                        <h3 className="text-[10px] font-black text-slate-900 dark:text-white uppercase mb-3 tracking-widest">Sizechart Finisher Jacket</h3>
+                        <img src={event.jacketSizeChartUrl} alt="Jacket Size Chart" className="w-full rounded-xl border border-slate-200 dark:border-slate-800" />
+                      </div>
+                    )}
+                    {event.medalImageUrl && (
+                      <div>
+                        <h3 className="text-[10px] font-black text-slate-900 dark:text-white uppercase mb-3 tracking-widest">Desain Medali</h3>
+                        <img src={event.medalImageUrl} alt="Medal Design" className="w-full rounded-xl border border-slate-200 dark:border-slate-800" />
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {event.schedule && event.schedule.length > 0 && (
                   <div className="glass-card p-6 md:p-8">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white uppercase mb-6 flex items-center gap-2">
-                      <span className="w-1 h-5 bg-gradient-to-b from-amber-500 to-amber-400 rounded-full" />
+                      <span className="w-1 h-5 bg-gradient-to-b from-yellow-500 to-yellow-400 rounded-full" />
                       Jadwal Acara
                     </h3>
                     <div className="space-y-4">
                       {event.schedule.map((sch, idx) => (
-                        <div key={idx} className="p-4 bg-slate-100 dark:bg-slate-800/40 rounded-xl border border-slate-300 dark:border-slate-700/50 flex items-start gap-4 hover:border-orange-500/20 transition-colors">
-                          <span className="bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-black px-3 py-1.5 rounded-lg shrink-0">
+                        <div key={idx} className="p-4 bg-slate-100 dark:bg-slate-800/40 rounded-xl border border-slate-300 dark:border-slate-700/50 flex items-start gap-4 hover:border-blue-500/20 transition-colors">
+                          <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-black px-3 py-1.5 rounded-lg shrink-0">
                             {sch.time}
                           </span>
                           <div>
@@ -422,8 +517,8 @@ export const EventDetailPage: React.FC = () => {
                     <div className="space-y-4">
                       {event.faqs.map((faq, idx) => (
                         <div key={idx} className="bg-slate-100 dark:bg-slate-800/40 p-5 rounded-xl border border-slate-300 dark:border-slate-700/50">
-                          <p className="font-bold text-white text-sm mb-2 flex items-start gap-2">
-                            <span className="text-orange-500 font-black shrink-0">Q:</span>
+                          <p className="font-bold text-slate-900 dark:text-white text-sm mb-2 flex items-start gap-2">
+                            <span className="text-blue-500 font-black shrink-0">Q:</span>
                             {faq.question}
                           </p>
                           <p className="text-sm text-slate-600 dark:text-slate-400 flex items-start gap-2">
@@ -443,8 +538,8 @@ export const EventDetailPage: React.FC = () => {
               <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="glass-card p-6 md:p-8">
                   <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/20 flex items-center justify-center">
-                      <Ticket className="w-5 h-5 text-orange-400" />
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-yellow-500/20 border border-blue-500/20 flex items-center justify-center">
+                      <Ticket className="w-5 h-5 text-blue-400" />
                     </div>
                     <div>
                       <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase">Kategori Tiket</h3>
@@ -453,15 +548,30 @@ export const EventDetailPage: React.FC = () => {
                   </div>
                   <div className="space-y-4">
                     {categories.map((cat) => {
-                      const isFull = cat.registeredCount >= cat.quota;
+                      let isVoucherValid = false;
+                      if (specialVoucherCode && event.specialVouchers) {
+                        isVoucherValid = event.specialVouchers.some(v => v.code === specialVoucherCode.toUpperCase() && v.categoryId === cat.id);
+                      }
+                      const isFull = cat.registeredCount >= cat.quota && !isVoucherValid;
+                      const remainingQuota = isVoucherValid ? 999 : (cat.quota - cat.registeredCount);
                       const cartItem = cartItems.find(i => i.categoryId === cat.id);
                       const currentQty = cartItem ? cartItem.quantity : 0;
 
                       const now = new Date();
                       let currentPrice = cat.price;
                       let isEarlyBird = false;
-                      if (cat.earlyBirdPrice && cat.earlyBirdEndDate) {
-                        if (now <= new Date(cat.earlyBirdEndDate)) {
+                      if (cat.earlyBirdPrice) {
+                        let validDate = true;
+                        let validQuota = true;
+                        
+                        if (cat.earlyBirdEndDate) {
+                          validDate = now <= new Date(cat.earlyBirdEndDate);
+                        }
+                        if (cat.earlyBirdQuota) {
+                          validQuota = (cat.registeredCount || 0) < cat.earlyBirdQuota;
+                        }
+
+                        if ((cat.earlyBirdEndDate || cat.earlyBirdQuota) && validDate && validQuota) {
                           currentPrice = cat.earlyBirdPrice;
                           isEarlyBird = true;
                         }
@@ -472,15 +582,17 @@ export const EventDetailPage: React.FC = () => {
                           isFull 
                             ? 'bg-slate-100 dark:bg-slate-800/20 border-slate-300 dark:border-slate-800 opacity-50' 
                             : currentQty > 0 
-                              ? 'bg-orange-500/5 border-orange-500/30 shadow-lg shadow-orange-500/5' 
-                              : 'bg-slate-100 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700/50 hover:border-orange-500/20'
+                              ? 'bg-blue-500/5 border-blue-500/30 shadow-lg shadow-blue-500/5' 
+                              : 'bg-slate-100 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700/50 hover:border-blue-500/20'
                         }`}>
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div className="space-y-2">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase">{cat.name}</h4>
+                                <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase">
+                                  {cat.name} {cat.distance && <span className="text-blue-500 font-black">— {cat.distance}</span>}
+                                </h4>
                                 {isEarlyBird && (
-                                  <span className="bg-gradient-to-r from-amber-500/20 to-amber-500/10 text-amber-400 text-[9px] font-black px-2 py-0.5 rounded-md border border-amber-500/30">
+                                  <span className="bg-gradient-to-r from-yellow-500/20 to-yellow-500/10 text-yellow-400 text-[9px] font-black px-2 py-0.5 rounded-md border border-yellow-500/30">
                                     EARLY BIRD
                                   </span>
                                 )}
@@ -491,9 +603,9 @@ export const EventDetailPage: React.FC = () => {
                                 )}
                               </div>
                               <p className="text-[11px] text-slate-500">
-                                Kuota: {cat.registeredCount}/{cat.quota} • COT: {cat.cutoffTime}
+                                COT: {cat.cutoffTime}
                               </p>
-                              <div className="text-xl font-black text-orange-400">
+                              <div className="text-xl font-black text-blue-400">
                                 {formatRupiah(currentPrice)}
                               </div>
                             </div>
@@ -502,17 +614,17 @@ export const EventDetailPage: React.FC = () => {
                               <button
                                 type="button"
                                 disabled={currentQty === 0}
-                                onClick={() => handleCartUpdate(cat.id, cat.name, currentQty - 1, cat.quota - cat.registeredCount, currentPrice, isEarlyBird)}
-                                className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:text-orange-400 hover:bg-slate-200 dark:bg-slate-700 disabled:opacity-30 transition-all"
+                                onClick={() => handleCartUpdate(cat.id, cat.name, currentQty - 1, remainingQuota, currentPrice, isEarlyBird)}
+                                className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:text-blue-400 hover:bg-slate-200 dark:bg-slate-700 disabled:opacity-30 transition-all"
                               >
                                 −
                               </button>
-                              <span className="w-12 text-center font-bold text-sm text-white">{currentQty}</span>
+                              <span className="w-12 text-center font-bold text-sm text-slate-900 dark:text-white">{currentQty}</span>
                               <button
                                 type="button"
-                                disabled={isFull || currentQty >= (cat.quota - cat.registeredCount)}
-                                onClick={() => handleCartUpdate(cat.id, cat.name, currentQty + 1, cat.quota - cat.registeredCount, currentPrice, isEarlyBird)}
-                                className="w-9 h-9 flex items-center justify-center rounded-lg bg-orange-500/20 text-orange-400 font-bold hover:bg-orange-500 hover:text-white disabled:opacity-30 disabled:hover:bg-orange-500/20 disabled:hover:text-orange-400 transition-all"
+                                disabled={isFull || currentQty >= remainingQuota}
+                                onClick={() => handleCartUpdate(cat.id, cat.name, currentQty + 1, remainingQuota, currentPrice, isEarlyBird)}
+                                className="w-9 h-9 flex items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 font-bold hover:bg-blue-500 hover:text-white disabled:opacity-30 disabled:hover:bg-blue-500/20 disabled:hover:text-blue-400 transition-all"
                               >
                                 +
                               </button>
@@ -522,13 +634,28 @@ export const EventDetailPage: React.FC = () => {
                       );
                     })}
                   </div>
+                  {categories.length > 0 && (categories.every(c => c.registeredCount >= c.quota) || event?.enableVoucherCode) && (
+                    <div className="mt-6 border-t border-slate-200 dark:border-slate-800 pt-6">
+                      <label className="block text-slate-600 dark:text-slate-400 font-bold uppercase mb-2 text-[10px]">Punya Kode Khusus?</label>
+                      <input 
+                        type="text" 
+                        placeholder="Masukkan kode voucher..." 
+                        value={specialVoucherCode} 
+                        onChange={(e) => setSpecialVoucherCode(e.target.value)} 
+                        className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all uppercase" 
+                      />
+                      {specialVoucherCode && event.specialVouchers?.some(v => v.code === specialVoucherCode.toUpperCase()) && (
+                        <p className="text-emerald-500 text-xs font-bold mt-2">Kode voucher valid. Silakan pilih tiket yang terbuka.</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {event.addons && event.addons.length > 0 && (
                   <div className="bg-white dark:bg-blue-950/60 border border-slate-300 dark:border-slate-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-8">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-yellow-500/20 border border-amber-500/20 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-amber-400" />
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/20 to-yellow-500/20 border border-yellow-500/20 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-yellow-400" />
                       </div>
                       <div>
                         <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase">Tambahan (Add-ons)</h3>
@@ -540,11 +667,11 @@ export const EventDetailPage: React.FC = () => {
                         const existing = selectedAddons.find(a => a.addonId === addon.id);
                         const qty = existing ? existing.quantity : 0;
                         return (
-                          <div key={addon.id} className="flex items-center justify-between p-4 border border-slate-300 dark:border-slate-700/50 rounded-xl bg-slate-100 dark:bg-slate-800/40 hover:border-amber-500/20 transition-colors">
+                          <div key={addon.id} className="flex items-center justify-between p-4 border border-slate-300 dark:border-slate-700/50 rounded-xl bg-slate-100 dark:bg-slate-800/40 hover:border-yellow-500/20 transition-colors">
                             <div>
-                              <p className="font-bold text-sm text-white uppercase">{addon.name}</p>
+                              <p className="font-bold text-sm text-slate-900 dark:text-white uppercase">{addon.name}</p>
                               <p className="text-[11px] text-slate-500">{addon.description}</p>
-                              <p className="text-xs font-bold text-amber-400 mt-1.5">{formatRupiah(addon.price)}</p>
+                              <p className="text-xs font-bold text-yellow-400 mt-1.5">{formatRupiah(addon.price)}</p>
                             </div>
                             <div className="flex items-center bg-white dark:bg-blue-950/80 rounded-lg p-1 border border-slate-300 dark:border-slate-700/50">
                               <button type="button" onClick={() => {
@@ -552,12 +679,12 @@ export const EventDetailPage: React.FC = () => {
                                   if (qty - 1 === 0) setSelectedAddons(selectedAddons.filter(a => a.addonId !== addon.id));
                                   else setSelectedAddons(selectedAddons.map(a => a.addonId === addon.id ? {...a, quantity: qty - 1} : a));
                                 }
-                              }} className="w-7 h-7 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold hover:text-orange-400 transition-colors">−</button>
-                              <span className="w-8 text-center text-xs font-bold text-white">{qty}</span>
+                              }} className="w-7 h-7 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold hover:text-blue-400 transition-colors">−</button>
+                              <span className="w-8 text-center text-xs font-bold text-slate-900 dark:text-white">{qty}</span>
                               <button type="button" onClick={() => {
                                 if (qty === 0) setSelectedAddons([...selectedAddons, {addonId: addon.id, name: addon.name, quantity: 1, price: addon.price}]);
                                 else setSelectedAddons(selectedAddons.map(a => a.addonId === addon.id ? {...a, quantity: qty + 1} : a));
-                              }} className="w-7 h-7 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold hover:text-orange-400 transition-colors">+</button>
+                              }} className="w-7 h-7 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold hover:text-blue-400 transition-colors">+</button>
                             </div>
                           </div>
                         );
@@ -571,7 +698,7 @@ export const EventDetailPage: React.FC = () => {
             {/* STEP 2: ISI DATA PESERTA */}
             {checkoutStep === 2 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <button onClick={() => setCheckoutStep(1)} className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1.5 mb-4 transition-colors group">
+                <button onClick={() => setCheckoutStep(1)} className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 mb-4 transition-colors group">
                   <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" /> 
                   Kembali ke Pemilihan Tiket
                 </button>
@@ -579,12 +706,12 @@ export const EventDetailPage: React.FC = () => {
                   <div key={index} className="bg-white dark:bg-blue-950/60 border border-slate-300 dark:border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
                     <div className="bg-slate-100 dark:bg-slate-800/60 px-6 py-4 border-b border-slate-300 dark:border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <h4 className="font-black text-slate-900 dark:text-white uppercase text-sm flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/20 flex items-center justify-center">
-                          <UserCheck className="w-3.5 h-3.5 text-orange-400" />
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500/20 to-yellow-500/20 border border-blue-500/20 flex items-center justify-center">
+                          <UserCheck className="w-3.5 h-3.5 text-blue-400" />
                         </div>
                         Data Peserta {index + 1}
                       </h4>
-                      <span className="bg-orange-500/10 text-orange-400 text-[10px] font-black px-3 py-1 rounded-md border border-orange-500/20 uppercase">
+                      <span className="bg-blue-500/10 text-blue-400 text-[10px] font-black px-3 py-1 rounded-md border border-blue-500/20 uppercase">
                         {data.categoryName}
                       </span>
                     </div>
@@ -592,29 +719,29 @@ export const EventDetailPage: React.FC = () => {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nama Lengkap (Sesuai KTP) *</label>
-                          <input type="text" required value={data.fullName} onChange={(e) => handleFormChange(index, 'fullName', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                          <input id={`fullName-${index}`} type="text" required value={data.fullName} onChange={(e) => handleFormChange(index, 'fullName', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
                         <div>
                           <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nomor KTP (NIK) *</label>
-                          <input type="text" required maxLength={16} value={data.nik} onChange={(e) => handleFormChange(index, 'nik', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                          <input id={`nik-${index}`} type="text" required maxLength={16} value={data.nik} onChange={(e) => handleFormChange(index, 'nik', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
                         <div>
                           <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Email *</label>
-                          <input type="email" required value={data.email} onChange={(e) => handleFormChange(index, 'email', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                          <input id={`email-${index}`} type="email" required value={data.email} onChange={(e) => handleFormChange(index, 'email', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
                         <div>
                           <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nomor WhatsApp *</label>
-                          <input type="text" required value={data.phone} onChange={(e) => handleFormChange(index, 'phone', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                          <input id={`phone-${index}`} type="text" required value={data.phone} onChange={(e) => handleFormChange(index, 'phone', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 sm:col-span-2">
                           <div>
                             <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Tanggal Lahir *</label>
-                            <input type="date" required value={data.birthDate} onChange={(e) => handleFormChange(index, 'birthDate', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all [color-scheme:dark]" />
+                            <input id={`birthDate-${index}`} type="date" required value={data.birthDate} onChange={(e) => handleFormChange(index, 'birthDate', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all [color-scheme:dark]" />
                           </div>
                           <div>
                             <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Jenis Kelamin *</label>
-                            <select value={data.gender} onChange={(e) => handleFormChange(index, 'gender', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all">
+                            <select id={`gender-${index}`} value={data.gender} onChange={(e) => handleFormChange(index, 'gender', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all">
                               <option value="MALE">Laki-Laki</option>
                               <option value="FEMALE">Perempuan</option>
                             </select>
@@ -623,16 +750,16 @@ export const EventDetailPage: React.FC = () => {
 
                         <div className="sm:col-span-2">
                           <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Alamat Lengkap *</label>
-                          <textarea required value={data.address} onChange={(e) => handleFormChange(index, 'address', e.target.value)} rows={2} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                          <textarea id={`address-${index}`} required value={data.address} onChange={(e) => handleFormChange(index, 'address', e.target.value)} rows={2} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
 
                         <div>
                           <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Kota *</label>
-                          <input type="text" required value={data.city} onChange={(e) => handleFormChange(index, 'city', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                          <input id={`city-${index}`} type="text" required value={data.city} onChange={(e) => handleFormChange(index, 'city', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
                         <div>
                           <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Provinsi *</label>
-                          <input type="text" required value={data.province} onChange={(e) => handleFormChange(index, 'province', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                          <input id={`province-${index}`} type="text" required value={data.province} onChange={(e) => handleFormChange(index, 'province', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
 
                         <div className="sm:col-span-2 pt-6 border-t border-slate-300 dark:border-slate-700/50">
@@ -643,7 +770,7 @@ export const EventDetailPage: React.FC = () => {
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Golongan Darah *</label>
-                              <select value={data.bloodType} onChange={(e) => handleFormChange(index, 'bloodType', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all">
+                              <select value={data.bloodType} onChange={(e) => handleFormChange(index, 'bloodType', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all">
                                 <option value="A+">A+</option><option value="A-">A-</option>
                                 <option value="B+">B+</option><option value="B-">B-</option>
                                 <option value="AB+">AB+</option><option value="AB-">AB-</option>
@@ -653,21 +780,21 @@ export const EventDetailPage: React.FC = () => {
                             </div>
                             <div>
                               <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Ukuran Jersey *</label>
-                              <select value={data.jerseySize} onChange={(e) => handleFormChange(index, 'jerseySize', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all">
+                              <select value={data.jerseySize} onChange={(e) => handleFormChange(index, 'jerseySize', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all">
                                 <option value="XS">XS</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option><option value="XXL">XXL</option>
                               </select>
                             </div>
                             <div className="sm:col-span-2">
                               <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nama Kontak Darurat *</label>
-                              <input type="text" required value={data.emergencyContactName} onChange={(e) => handleFormChange(index, 'emergencyContactName', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                              <input id={`emergencyContactName-${index}`} type="text" required value={data.emergencyContactName} onChange={(e) => handleFormChange(index, 'emergencyContactName', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                             </div>
                             <div>
                               <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">No HP Darurat *</label>
-                              <input type="text" required value={data.emergencyContactPhone} onChange={(e) => handleFormChange(index, 'emergencyContactPhone', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                              <input id={`emergencyContactPhone-${index}`} type="text" required value={data.emergencyContactPhone} onChange={(e) => handleFormChange(index, 'emergencyContactPhone', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                             </div>
                             <div>
                               <label className="block text-slate-600 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Hubungan *</label>
-                              <input type="text" required value={data.emergencyContactRelation} onChange={(e) => handleFormChange(index, 'emergencyContactRelation', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all" />
+                              <input id={`emergencyContactRelation-${index}`} type="text" required value={data.emergencyContactRelation} onChange={(e) => handleFormChange(index, 'emergencyContactRelation', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                             </div>
                           </div>
                         </div>
@@ -675,18 +802,101 @@ export const EventDetailPage: React.FC = () => {
                     </div>
                   </div>
                 ))}
+
+                <div className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-xl mt-6 space-y-2">
+                  <p className="text-xs font-bold text-blue-400 uppercase tracking-wide flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    Penting: Pastikan email yang diisi sudah benar
+                  </p>
+                  <ul className="text-[11px] text-slate-400 list-disc list-inside space-y-1 ml-6">
+                    <li>Bukti konfirmasi registrasi & pembayaran dikirim ke email tersebut.</li>
+                    <li>Penyimpanan email tidak penuh agar email dari kami dapat diterima dengan lancar.</li>
+                  </ul>
+                </div>
               </div>
             )}
 
-            {/* STEP 3: METODE PEMBAYARAN */}
+            {/* STEP 3: HOTEL BUNDLING */}
             {checkoutStep === 3 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <button onClick={() => setCheckoutStep(2)} className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1.5 mb-4 transition-colors group">
+                <button onClick={() => setCheckoutStep(2)} className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 mb-4 transition-colors group">
                   <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" /> 
                   Kembali ke Data Peserta
                 </button>
                 <div className="bg-white dark:bg-blue-950/60 border border-slate-300 dark:border-slate-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase mb-6 flex items-center gap-3">
+                    <CreditCard className="w-6 h-6 text-blue-400" />
+                    Bundling Hotel (Opsional)
+                  </h3>
+                  {event?.hotelBundles && event.hotelBundles.length > 0 ? (
+                    <div className="space-y-4">
+                      {event.hotelBundles.map((hotel) => {
+                        const existing = selectedHotels.find(h => h.hotelId === hotel.id);
+                        const qty = existing ? existing.quantity : 0;
+                        return (
+                          <div key={hotel.id} className="flex items-center justify-between p-4 border border-slate-300 dark:border-slate-700/50 rounded-xl bg-slate-100 dark:bg-slate-800/40 hover:border-blue-500/20 transition-colors">
+                            <div>
+                              <p className="font-bold text-sm text-slate-900 dark:text-white uppercase">{hotel.name}</p>
+                              {hotel.description && <p className="text-[11px] text-slate-500">{hotel.description}</p>}
+                              <p className="text-xs font-bold text-blue-400 mt-1.5">{formatRupiah(hotel.price)}</p>
+                            </div>
+                            <div className="flex items-center bg-white dark:bg-blue-950/80 rounded-lg p-1 border border-slate-300 dark:border-slate-700/50">
+                              <button type="button" onClick={() => {
+                                if (qty > 0) {
+                                  if (qty - 1 === 0) setSelectedHotels(selectedHotels.filter(h => h.hotelId !== hotel.id));
+                                  else setSelectedHotels(selectedHotels.map(h => h.hotelId === hotel.id ? {...h, quantity: qty - 1} : h));
+                                }
+                              }} className="w-7 h-7 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold hover:text-blue-400 transition-colors">−</button>
+                              <span className="w-8 text-center text-xs font-bold text-slate-900 dark:text-white">{qty}</span>
+                              <button type="button" onClick={() => {
+                                if (qty === 0) setSelectedHotels([...selectedHotels, {hotelId: hotel.id, name: hotel.name, quantity: 1, price: hotel.price}]);
+                                else setSelectedHotels(selectedHotels.map(h => h.hotelId === hotel.id ? {...h, quantity: qty + 1} : h));
+                              }} className="w-7 h-7 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold hover:text-blue-400 transition-colors">+</button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-500">Tidak ada paket hotel yang tersedia.</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: METODE PEMBAYARAN */}
+            {checkoutStep === 4 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <button onClick={() => setCheckoutStep(event?.hotelBundles && event.hotelBundles.length > 0 ? 3 : 2)} className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 mb-4 transition-colors group">
+                  <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" /> 
+                  Kembali
+                </button>
+                <div className="bg-white dark:bg-blue-950/60 border border-slate-300 dark:border-slate-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm">
                   <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase flex items-center gap-3 mb-6">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-400/20 border border-blue-500/20 flex items-center justify-center">
+                      <CreditCard className="w-4.5 h-4.5 text-blue-400" />
+                    </div>
+                    Pilih Metode Pembayaran
+                  </h3>
+                  
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+                    {['QRIS', 'VA BCA', 'VA Mandiri', 'VA BNI', 'VA BRI', 'OVO', 'GoPay', 'ShopeePay'].map((method) => (
+                      <button
+                        key={method}
+                        type="button"
+                        onClick={() => setSelectedPaymentMethod(method)}
+                        className={`p-3 rounded-xl border text-xs font-bold uppercase transition-all flex flex-col items-center justify-center gap-2 ${
+                          selectedPaymentMethod === method 
+                            ? 'bg-blue-500/10 border-blue-500 text-blue-400' 
+                            : 'bg-slate-100 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700/50 text-slate-500 hover:border-blue-500/50'
+                        }`}
+                      >
+                        {method}
+                      </button>
+                    ))}
+                  </div>
+
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase flex items-center gap-3 mb-6 border-t border-slate-300 dark:border-slate-800 pt-6">
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-400/20 border border-blue-500/20 flex items-center justify-center">
                       <ShieldCheck className="w-4.5 h-4.5 text-blue-400" />
                     </div>
@@ -698,14 +908,21 @@ export const EventDetailPage: React.FC = () => {
                     <p>3. Nomor dada (BIB) tidak dapat dipindahtangankan kepada orang lain.</p>
                     <p>4. Peserta menyatakan bahwa dirinya dalam keadaan sehat jasmani dan rohani serta sanggup mengikuti lomba.</p>
                     <p>5. Panitia tidak bertanggung jawab atas cedera, kehilangan barang, atau kejadian tidak terduga lainnya selama perlombaan.</p>
-                    {event.rules && <p className="font-bold mt-4 text-orange-400">Aturan Khusus: {event.rules}</p>}
+                    {event?.rules && <p className="font-bold mt-4 text-blue-400">Aturan Khusus: {event.rules}</p>}
                   </div>
                   <label className="flex items-start gap-3 mt-5 cursor-pointer group">
-                    <input type="checkbox" required className="mt-1 shrink-0 w-4 h-4 rounded border-slate-600 bg-slate-100 dark:bg-slate-800 text-orange-500 focus:ring-orange-500 focus:ring-offset-0" />
+                    <input type="checkbox" required className="mt-1 shrink-0 w-4 h-4 rounded border-slate-600 bg-slate-100 dark:bg-slate-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-0" />
                     <span className="text-xs text-slate-600 dark:text-slate-400 font-medium group-hover:text-slate-700 dark:text-slate-300 transition-colors">
                       Saya dan seluruh peserta yang saya daftarkan telah membaca, memahami, dan menyetujui seluruh Syarat & Ketentuan serta Aturan Lomba yang berlaku.
                     </span>
                   </label>
+                  
+                  {event?.paymentType === 'WEB' && selectedPaymentMethod === 'QRIS' && (
+                    <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl mt-6">
+                      <p className="text-xs font-bold text-yellow-400">Info Pembayaran QRIS</p>
+                      <p className="text-[11px] text-slate-400 mt-1">Bayar via QRIS — matikan mode gelap agar QR code terlihat jelas saat di-scan.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -721,7 +938,7 @@ export const EventDetailPage: React.FC = () => {
                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block border-b border-slate-300 dark:border-slate-800 pb-3">
                       Status Pendaftaran
                     </span>
-                    {event.status === 'REGISTRATION_OPEN' ? (
+                    {isRegistrationOpen ? (
                       <div className="flex items-center gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
                         <CheckCircle2 className="w-6 h-6 text-emerald-400" />
                         <div>
@@ -730,24 +947,26 @@ export const EventDetailPage: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-3 p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
-                        <AlertCircle className="w-6 h-6 text-red-400" />
+                      <div className="flex items-center gap-3 p-4 bg-slate-500/5 border border-slate-500/20 dark:bg-slate-800/50 dark:border-slate-700/50 rounded-xl">
+                        <AlertCircle className="w-6 h-6 text-slate-400" />
                         <div>
-                          <div className="font-black text-red-400 text-sm uppercase">Ditutup</div>
-                          <div className="text-[10px] text-slate-500 mt-0.5">Pendaftaran telah ditutup</div>
+                          <div className="font-black text-slate-500 dark:text-slate-400 text-sm uppercase">{displayStatus}</div>
+                          <div className="text-[10px] text-slate-500 mt-0.5">
+                            {isBeforeOpen ? 'Pendaftaran belum dimulai' : 'Pendaftaran tidak tersedia saat ini'}
+                          </div>
                         </div>
                       </div>
                     )}
 
-                    {event.status === 'REGISTRATION_OPEN' && categories.length > 0 && (
+                    {isRegistrationOpen && categories.length > 0 && (
                       <div className="space-y-2 pt-2">
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-slate-500">Kategori tersedia</span>
-                          <span className="font-bold text-white">{categories.length}</span>
+                          <span className="font-bold text-slate-900 dark:text-white">{categories.length}</span>
                         </div>
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-slate-500">Kuota total</span>
-                          <span className="font-bold text-white">
+                          <span className="font-bold text-slate-900 dark:text-white">
                             {categories.reduce((sum, c) => sum + c.quota, 0)}
                           </span>
                         </div>
@@ -756,19 +975,23 @@ export const EventDetailPage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => {
-                      if (event.status !== 'REGISTRATION_OPEN') return;
+                      if (!isRegistrationOpen) return;
                       setCheckoutStep(1);
                     }}
-                    disabled={event.status !== 'REGISTRATION_OPEN'}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black text-sm uppercase tracking-wider shadow-xl shadow-orange-500/25 transition-all transform hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-orange-500/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                    disabled={!isRegistrationOpen}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white font-black text-sm uppercase tracking-wider shadow-xl shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-blue-500/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                   >
-                    {event.status === 'REGISTRATION_OPEN' ? 'Daftar Sekarang' : 'Pendaftaran Ditutup'}
+                    {isRegistrationOpen ? 'Daftar Sekarang' : displayStatus}
                   </button>
                 </>
               ) : (
                 <div className="space-y-5">
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex flex-col items-center justify-center">
+                    <span className="text-[10px] text-red-400 font-bold uppercase mb-1">Selesaikan pengisian sebelum</span>
+                    <span className="text-3xl font-black text-red-500 tracking-wider tabular-nums">{formatTime(timeLeft)}</span>
+                  </div>
                   <div className="flex items-center gap-2 pb-4 border-b border-slate-300 dark:border-slate-800">
-                    <ShoppingCart className="w-4 h-4 text-orange-400" />
+                    <ShoppingCart className="w-4 h-4 text-blue-400" />
                     <h3 className="font-black text-slate-900 dark:text-white uppercase text-sm">Rincian Pesanan</h3>
                   </div>
 
@@ -782,9 +1005,9 @@ export const EventDetailPage: React.FC = () => {
                       {cartItems.map((item, idx) => (
                         <div key={idx} className="flex justify-between items-start gap-3">
                           <div className="min-w-0">
-                            <span className="font-bold text-white text-xs uppercase block truncate">{item.name}</span>
+                            <span className="font-bold text-slate-900 dark:text-white text-xs uppercase block truncate">{item.name}</span>
                             <span className="text-[11px] text-slate-500">{item.quantity}x tiket {item.earlyBird && (
-                              <span className="text-amber-400 font-bold">• Early Bird</span>
+                              <span className="text-yellow-400 font-bold">• Early Bird</span>
                             )}</span>
                           </div>
                           <span className="font-semibold text-sm text-slate-700 dark:text-slate-300 shrink-0">{formatRupiah(item.price * item.quantity)}</span>
@@ -814,9 +1037,45 @@ export const EventDetailPage: React.FC = () => {
                             <span>{formatRupiah(addonsTotal)}</span>
                           </div>
                         )}
+                        {hotelsTotal > 0 && (
+                          <div className="flex justify-between text-xs text-slate-500">
+                            <span>Bundling Hotel</span>
+                            <span>{formatRupiah(hotelsTotal)}</span>
+                          </div>
+                        )}
+                        {webFee > 0 && (
+                          <div className="flex justify-between text-xs text-slate-500">
+                            <span>Biaya Layanan Web</span>
+                            <span>{formatRupiah(webFee)}</span>
+                          </div>
+                        )}
+
+                        {checkoutStep === 4 && (
+                          <div className="pt-3 border-t border-slate-300 dark:border-slate-800">
+                            <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Promo</label>
+                            <input 
+                              type="text" 
+                              value={promoCode} 
+                              onChange={(e) => setPromoCode(e.target.value)} 
+                              placeholder="KODE PROMO" 
+                              className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-2 text-xs text-slate-900 dark:text-white outline-none focus:border-blue-500 uppercase"
+                            />
+                            {discountAmount > 0 && (
+                              <p className="text-emerald-500 text-[10px] font-bold mt-1.5">Diskon berhasil diaplikasikan!</p>
+                            )}
+                          </div>
+                        )}
+
+                        {discountAmount > 0 && (
+                          <div className="flex justify-between text-xs text-emerald-500 font-bold pt-1">
+                            <span>Diskon Promo</span>
+                            <span>-{formatRupiah(discountAmount)}</span>
+                          </div>
+                        )}
+
                         <div className="flex justify-between text-base font-black pt-3 border-t border-slate-300 dark:border-slate-800">
-                          <span className="text-white">Grand Total</span>
-                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400">{formatRupiah(grandTotal)}</span>
+                          <span className="text-slate-900 dark:text-white">Grand Total</span>
+                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-yellow-400">{formatRupiah(grandTotal)}</span>
                         </div>
                       </div>
                     </div>
@@ -825,7 +1084,7 @@ export const EventDetailPage: React.FC = () => {
                   {checkoutStep === 1 && (
                     <button
                       onClick={handleStartRegistration}
-                      className="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                      className="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
                     >
                       <UserCheck className="w-4 h-4" />
                       Isi Data Peserta
@@ -834,22 +1093,49 @@ export const EventDetailPage: React.FC = () => {
                   {checkoutStep === 2 && (
                     <button
                       onClick={() => {
-                        let valid = true;
-                        formsData.forEach(d => {
-                          if (!d.fullName || !d.nik || !d.email || !d.phone || !d.address || !d.city || !d.province || !d.emergencyContactName || !d.emergencyContactPhone || !d.emergencyContactRelation) {
-                            valid = false;
+                        let invalidFieldId: string | null = null;
+                        
+                        for (let i = 0; i < formsData.length; i++) {
+                          const d = formsData[i];
+                          if (!d.fullName) { invalidFieldId = `fullName-${i}`; break; }
+                          if (!d.nik) { invalidFieldId = `nik-${i}`; break; }
+                          if (!d.email) { invalidFieldId = `email-${i}`; break; }
+                          if (!d.phone) { invalidFieldId = `phone-${i}`; break; }
+                          if (!d.birthDate) { invalidFieldId = `birthDate-${i}`; break; }
+                          if (!d.address) { invalidFieldId = `address-${i}`; break; }
+                          if (!d.city) { invalidFieldId = `city-${i}`; break; }
+                          if (!d.province) { invalidFieldId = `province-${i}`; break; }
+                          if (!d.emergencyContactName) { invalidFieldId = `emergencyContactName-${i}`; break; }
+                          if (!d.emergencyContactPhone) { invalidFieldId = `emergencyContactPhone-${i}`; break; }
+                          if (!d.emergencyContactRelation) { invalidFieldId = `emergencyContactRelation-${i}`; break; }
+                        }
+                        
+                        if (invalidFieldId) {
+                          addNotification('error', 'Form Belum Lengkap', 'Mohon lengkapi semua data dengan tanda bintang (*) sebelum melanjutkan.');
+                          const el = document.getElementById(invalidFieldId);
+                          if (el) {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            el.focus();
                           }
-                        });
-                        if (!valid) addNotification('error', 'Form Belum Lengkap', 'Mohon lengkapi semua data dengan tanda bintang (*) sebelum melanjutkan.');
-                        else setCheckoutStep(3);
+                        } else {
+                          if (event?.hotelBundles && event.hotelBundles.length > 0) setCheckoutStep(3);
+                          else setCheckoutStep(4);
+                        }
                       }}
-                      className="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                      className="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
                     >
-                      <CreditCard className="w-4 h-4" />
-                      Lanjut Pembayaran
+                      {event?.hotelBundles && event.hotelBundles.length > 0 ? 'Lanjut Pilih Hotel' : 'Lanjut Pembayaran'}
                     </button>
                   )}
                   {checkoutStep === 3 && (
+                    <button
+                      onClick={() => setCheckoutStep(4)}
+                      className="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-blue-500 to-yellow-500 hover:from-blue-400 hover:to-yellow-400 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                    >
+                      Lanjut Pembayaran
+                    </button>
+                  )}
+                  {checkoutStep === 4 && (
                     <button
                       onClick={handleSubmitRegistration}
                       disabled={submitting}

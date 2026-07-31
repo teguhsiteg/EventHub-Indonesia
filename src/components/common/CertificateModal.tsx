@@ -21,7 +21,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
         {/* Header */}
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-blue-950/50">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-400">
+            <div className="p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400">
               <Award className="w-6 h-6" />
             </div>
             <div>
@@ -41,14 +41,14 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
         <div className="p-8  overflow-x-auto flex justify-center">
           <div
             ref={printRef}
-            className="w-[800px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border-8 border-amber-500/40 p-10 rounded-2xl relative shadow-2xl flex flex-col justify-between text-center select-none shrink-0"
+            className="w-[800px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border-8 border-yellow-500/40 p-10 rounded-2xl relative shadow-2xl flex flex-col justify-between text-center select-none shrink-0"
             style={{
               backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 70%)'
             }}
           >
             {/* Watermark / Badge */}
             <div className="absolute top-6 left-8 flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-amber-400" />
+              <Trophy className="w-6 h-6 text-yellow-400" />
               <span className="text-sm font-black text-slate-900 dark:text-white tracking-widest uppercase">RACEPRO</span>
             </div>
 
@@ -59,7 +59,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
 
             {/* Header Title */}
             <div className="mt-8 space-y-2">
-              <span className="text-xs font-bold tracking-[0.3em] text-amber-400 uppercase">SERTIFIKAT PENGHARGAAN FINISHER</span>
+              <span className="text-xs font-bold tracking-[0.3em] text-yellow-400 uppercase">SERTIFIKAT PENGHARGAAN FINISHER</span>
               <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-wide font-serif italic">
                 {certificate.eventName}
               </h2>
@@ -68,23 +68,23 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             {/* Awardee Body */}
             <div className="my-6 space-y-3">
               <p className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase tracking-widest">Diberikan Dengan Bangga Kepada:</p>
-              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-100 to-amber-400 tracking-wide uppercase font-sans border-b-2 border-amber-500/30 pb-3 inline-block px-8">
+              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-400 tracking-wide uppercase font-sans border-b-2 border-yellow-500/30 pb-3 inline-block px-8">
                 {certificate.participantName}
               </h1>
               <p className="text-xs text-slate-600 dark:text-slate-600 dark:text-slate-300 max-w-lg mx-auto leading-relaxed pt-2">
-                Atas keberhasilan menuntaskan lomba dalam kategori <strong className="text-slate-900 dark:text-white">{certificate.categoryName}</strong> dengan nomor peserta BIB <strong className="text-amber-400">{certificate.bibNumber}</strong>.
+                Atas keberhasilan menuntaskan lomba dalam kategori <strong className="text-slate-900 dark:text-white">{certificate.categoryName}</strong> dengan nomor peserta BIB <strong className="text-yellow-400">{certificate.bibNumber}</strong>.
               </p>
             </div>
 
             {/* Metrics */}
-            <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto my-2 bg-white dark:bg-blue-950/80 border border-amber-500/20 p-4 rounded-xl">
+            <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto my-2 bg-white dark:bg-blue-950/80 border border-yellow-500/20 p-4 rounded-xl">
               <div>
                 <span className="block text-[10px] font-bold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">WAKTU FINISH</span>
                 <span className="block text-xl font-black text-slate-900 dark:text-white font-mono mt-0.5">{certificate.finishTime}</span>
               </div>
               <div>
                 <span className="block text-[10px] font-bold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">RANK KATEGORI</span>
-                <span className="block text-xl font-black text-amber-400 font-mono mt-0.5">#{certificate.categoryRank}</span>
+                <span className="block text-xl font-black text-yellow-400 font-mono mt-0.5">#{certificate.categoryRank}</span>
               </div>
               <div>
                 <span className="block text-[10px] font-bold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">RANK OVERALL</span>
@@ -101,7 +101,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
               </div>
               <div className="text-right">
                 <div className="w-24 h-12 border-b border-slate-300 dark:border-slate-700 mb-1 flex items-center justify-end">
-                  <Sparkles className="w-6 h-6 text-amber-400/50" />
+                  <Sparkles className="w-6 h-6 text-yellow-400/50" />
                 </div>
                 <p className="font-bold text-slate-800 dark:text-slate-200 uppercase">Race Director</p>
                 <p className="text-slate-500">Komite Penyelenggara</p>
@@ -126,7 +126,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-blue-500 hover:from-yellow-400 hover:to-blue-400 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-yellow-500/20 transition-all"
             >
               <Download className="w-4 h-4" />
               <span>Unduh Sertifikat</span>

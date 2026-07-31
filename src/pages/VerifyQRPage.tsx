@@ -36,7 +36,7 @@ export const VerifyQRPage: React.FC = () => {
         
         {loading ? (
           <div className="py-12 space-y-4">
-            <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 font-medium">Memverifikasi Token QR Code...</p>
           </div>
         ) : valid && participant ? (
@@ -52,13 +52,13 @@ export const VerifyQRPage: React.FC = () => {
               <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase mt-3">
                 {participant.fullName}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 mt-0.5">BIB Nomor: <strong className="text-amber-400 font-mono text-sm">{participant.bibNumber}</strong></p>
+              <p className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 mt-0.5">BIB Nomor: <strong className="text-yellow-400 font-mono text-sm">{participant.bibNumber}</strong></p>
             </div>
 
             <div className=" p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 text-left space-y-2 text-xs">
               <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800">
                 <span className="text-slate-500 dark:text-slate-500 dark:text-slate-400">Status Check-in:</span>
-                <span className={`font-bold ${participant.checkInStatus ? 'text-emerald-400' : 'text-amber-400'}`}>
+                <span className={`font-bold ${participant.checkInStatus ? 'text-emerald-400' : 'text-yellow-400'}`}>
                   {participant.checkInStatus ? 'SUDAH CHECK-IN' : 'BELUM CHECK-IN'}
                 </span>
               </div>

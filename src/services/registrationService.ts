@@ -51,7 +51,11 @@ export async function createRegistration(
   eventId: string,
   cartItems: { categoryId: string; quantity: number; price: number; earlyBird: boolean }[],
   formsData: RegistrationFormData[],
-  selectedAddons: { addonId: string; quantity: number; price: number }[] = []
+  selectedAddons: { addonId: string; quantity: number; price: number }[] = [],
+  specialVoucherCode?: string,
+  promoCode?: string,
+  selectedHotels: { hotelId: string; quantity: number; price: number; name: string }[] = [],
+  paymentMethod: string = 'BANK_TRANSFER'
 ): Promise<{ registration: Registration; participants: Participant[]; payment: Payment }> {
   // 1. Fetch event data
   const eventSnap = await getDoc(doc(db, 'events', eventId));
@@ -74,7 +78,13 @@ export async function createRegistration(
     if (!catSnap.exists()) throw new Error(`Kategori ${item.categoryId} tidak ditemukan.`);
     
     const category = catSnap.data() as EventCategory;
-    if (category.registeredCount + item.quantity > category.quota) {
+    let hasValidVoucher = false;
+    if (specialVoucherCode && event.specialVouchers) {
+      const isValid = event.specialVouchers.some(v => v.code === specialVoucherCode && v.categoryId === category.id);
+      if (isValid) hasValidVoucher = true;
+    }
+    
+    if (category.registeredCount + item.quantity > category.quota && !hasValidVoucher) {
       throw new Error(`Kategori ${category.name} kehabisan kuota.`);
     }
 
@@ -87,7 +97,27 @@ export async function createRegistration(
   }
 
   const totalAddonsPrice = selectedAddons.reduce((sum, addon) => sum + (addon.price * addon.quantity), 0);
-  const totalAmount = totalTicketsPrice + totalAddonsPrice;
+  const totalHotelsPrice = selectedHotels ? selectedHotels.reduce((sum, hotel) => sum + (hotel.price * hotel.quantity), 0) : 0;
+  
+  let webFee = 0;
+  if (event.paymentType === 'WEB' && event.webFeeBearer === 'BUYER' && event.webFeeAmount) {
+    webFee = event.webFeeAmount;
+  }
+
+  let totalAmount = totalTicketsPrice + totalAddonsPrice + totalHotelsPrice + webFee;
+  let discountAmount = 0;
+
+  if (promoCode && event.promoCodes) {
+    const promo = event.promoCodes.find(p => p.code === promoCode);
+    if (promo) {
+      if (promo.discountType === 'PERCENTAGE') {
+        discountAmount = totalAmount * (promo.discountValue / 100);
+      } else if (promo.discountType === 'FIXED') {
+        discountAmount = promo.discountValue;
+      }
+      totalAmount = Math.max(0, totalAmount - discountAmount);
+    }
+  }
 
   // 3. Generate IDs
   const timestamp = now.getTime();
@@ -106,8 +136,12 @@ export async function createRegistration(
     items: cartItems,
     ticketCount: totalTicketCount,
     selectedAddons,
+    selectedHotels,
     status: 'WAITING_PAYMENT',
     amount: totalAmount,
+    webFeeAmount: webFee > 0 ? webFee : undefined,
+    promoCode: promoCode && discountAmount > 0 ? promoCode : undefined,
+    discountAmount: discountAmount > 0 ? discountAmount : undefined,
     invoiceId,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
@@ -154,7 +188,7 @@ export async function createRegistration(
     invoiceId,
     amount: totalAmount,
     status: 'PENDING',
-    paymentMethod: 'BANK_TRANSFER',
+    paymentMethod,
     expiredAt: new Date(timestamp + 24 * 60 * 60 * 1000).toISOString(),
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
