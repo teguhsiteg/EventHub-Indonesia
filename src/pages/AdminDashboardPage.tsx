@@ -12,11 +12,11 @@ import {
 import { getAllRegistrationsAdmin } from '../services/registrationService';
 import { getAllPaymentsAdmin, verifyPaymentByAdmin } from '../services/paymentService';
 import { getAllPayoutsAdmin, approvePayout } from '../services/payoutService';
-import { submitOrUpdateRaceResult } from '../services/resultService';
+import { submitOrUpdateRaceResult, getPublicRaceResults, deleteRaceResult } from '../services/resultService';
 import { updateUserRoleBySuperAdmin, banUserBySuperAdmin } from '../services/authService';
 import { updateSystemSettings } from '../services/settingsService';
 import { getEventRequests } from '../services/requestService';
-import { EventItem, Registration, Payment, EventCategory, UserRole, PayoutRequest, EventRequest } from '../types';
+import { EventItem, Registration, Payment, EventCategory, UserRole, PayoutRequest, EventRequest, RaceResult } from '../types';
 import { db } from '../config/firebase';
 import { collection, getDocs, query, limit } from 'firebase/firestore';
 import { CreateEventModal } from '../components/admin/CreateEventModal';
@@ -70,6 +70,7 @@ export const AdminDashboardPage: React.FC = () => {
   const [eventRequests, setEventRequests] = useState<EventRequest[]>([]);
   const [usersList, setUsersList] = useState<any[]>([]);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [raceResults, setRaceResults] = useState<RaceResult[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Modals / Forms
@@ -122,7 +123,8 @@ export const AdminDashboardPage: React.FC = () => {
         getAllPayoutsAdmin(),
         getDocs(collection(db, 'users')),
         getDocs(query(collection(db, 'audit_logs'), limit(50))),
-        getEventRequests()
+        getEventRequests(),
+        getPublicRaceResults()
       ]);
 
       if (results[0].status === 'fulfilled') setEvents(results[0].value);
@@ -140,6 +142,10 @@ export const AdminDashboardPage: React.FC = () => {
 
       if (results[6].status === 'fulfilled') {
         setEventRequests(results[6].value);
+      }
+      
+      if (results[7] && results[7].status === 'fulfilled') {
+        setRaceResults(results[7].value);
       }
     } catch (error) {
       console.error('Error loading admin data:', error);
@@ -214,10 +220,36 @@ export const AdminDashboardPage: React.FC = () => {
       }, user.uid, user.email);
 
       addNotification('success', 'Hasil Lomba Tersimpan', `Hasil finisher ${resName} (BIB: ${resBib}) berhasil dipublikasikan.`);
+      setResParticipantId('');
+      setResBib('');
+      setResName('');
       loadAdminData();
     } catch (err: any) {
       addNotification('error', 'Gagal', err.message);
     }
+  };
+
+  const handleEditResult = (r: RaceResult) => {
+    setResParticipantId(r.participantId);
+    setResBib(r.bibNumber);
+    setResEventId(r.eventId);
+    setResName(r.participantName);
+    setResChipTime(r.chipTime || '');
+    setResGunTime(r.gunTime || '');
+    setResRank(r.rank || 1);
+  };
+
+  const handleDeleteResult = (resultId: string) => {
+    confirmAction('Hapus Hasil', 'Yakin ingin menghapus hasil ini?', true, async () => {
+      if (!user) return;
+      try {
+        await deleteRaceResult(resultId, user.uid, user.email || '');
+        addNotification('success', 'Berhasil', 'Hasil berhasil dihapus.');
+        loadAdminData();
+      } catch (err: any) {
+        addNotification('error', 'Gagal', err.message);
+      }
+    });
   };
 
   const handleRoleChange = async (targetUid: string, newRole: UserRole) => {
@@ -1029,6 +1061,65 @@ export const AdminDashboardPage: React.FC = () => {
                         Publikasikan Hasil Finisher
                       </button>
                     </form>
+                  </div>
+                </div>
+
+                {/* Table for Race Results */}
+                <div className="mt-8 bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl overflow-hidden shadow-xl max-w-4xl mx-auto">
+                  <div className="px-6 py-4 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Daftar Hasil Lomba</h3>
+                      <p className="text-[10px] text-slate-500">Menampilkan {raceResults.length} hasil</p>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-white/[0.06]">
+                          <th className="p-4 text-[10px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">Event</th>
+                          <th className="p-4 text-[10px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">BIB</th>
+                          <th className="p-4 text-[10px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">Peserta</th>
+                          <th className="p-4 text-[10px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">Waktu (Chip)</th>
+                          <th className="p-4 text-[10px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap text-center">Rank</th>
+                          <th className="p-4 text-[10px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap text-right">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 dark:divide-white/[0.06]">
+                        {raceResults.map(r => {
+                          const eventName = events.find(e => e.id === r.eventId)?.name || r.eventId;
+                          return (
+                            <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+                              <td className="p-4 text-xs text-slate-700 dark:text-slate-300 font-medium">{eventName}</td>
+                              <td className="p-4 text-xs font-mono text-blue-600 dark:text-blue-400 font-bold">{r.bibNumber}</td>
+                              <td className="p-4 text-xs text-slate-700 dark:text-slate-300">{r.participantName}</td>
+                              <td className="p-4 text-xs font-mono text-slate-700 dark:text-slate-300">{r.chipTime || '-'}</td>
+                              <td className="p-4 text-xs text-center font-bold text-slate-700 dark:text-slate-300">{r.rank || '-'}</td>
+                              <td className="p-4 text-right space-x-2">
+                                <button
+                                  onClick={() => handleEditResult(r)}
+                                  className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-500/20 transition-colors"
+                                  title="Edit"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteResult(r.id)}
+                                  className="p-1.5 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors"
+                                  title="Hapus"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {raceResults.length === 0 && (
+                          <tr>
+                            <td colSpan={6} className="p-8 text-center text-slate-500 text-xs">Belum ada hasil lomba yang diinput.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>

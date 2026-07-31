@@ -9,7 +9,8 @@ import {
   query, 
   where, 
   orderBy, 
-  limit 
+  limit,
+  deleteDoc
 } from 'firebase/firestore';
 import { RaceResult, FinisherStatus } from '../types';
 import { logAuditEvent } from './auditService';
@@ -83,4 +84,10 @@ export async function submitOrUpdateRaceResult(
     await logAuditEvent(actorUid, actorEmail, 'ADMIN', 'CREATE_RACE_RESULT', 'race_results', newRef.id);
     return newResult;
   }
+}
+
+export async function deleteRaceResult(resultId: string, actorUid: string, actorEmail: string): Promise<void> {
+  const ref = doc(db, 'race_results', resultId);
+  await deleteDoc(ref);
+  await logAuditEvent(actorUid, actorEmail, 'ADMIN', 'DELETE_RACE_RESULT', 'race_results', resultId);
 }
