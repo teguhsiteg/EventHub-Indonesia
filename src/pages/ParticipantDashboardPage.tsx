@@ -205,9 +205,8 @@ export const ParticipantDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen  text-slate-900 dark:text-slate-100 py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+    <div className="w-full max-w-[1200px] mx-auto text-slate-900 dark:text-slate-100 animate-in fade-in duration-500">
+
         {/* Profile Header */}
         <div className="relative overflow-hidden rounded-3xl mb-8 shadow-2xl shadow-blue-900/5 dark:shadow-none border border-slate-200/60 dark:border-white/10 group">
           {/* Glass background layers */}
@@ -535,7 +534,7 @@ export const ParticipantDashboardPage: React.FC = () => {
           </>
         )}
 
-      </div>
+      {/* End Main Container */}
 
       {/* QR Modal */}
       {showQrModal && participant && (
