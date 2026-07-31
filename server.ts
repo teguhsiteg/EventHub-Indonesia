@@ -114,28 +114,74 @@ app.post('/api/notifications/send-registration-email', async (req: Request, res:
       <meta charset="UTF-8">
       <title>Konfirmasi Pendaftaran - ${eventName}</title>
       <style>
-        body { font-family: sans-serif; background-color: #090d16; color: #e2e8f0; margin: 0; padding: 20px; }
-        .card { max-width: 600px; margin: 0 auto; background: #0f172a; border-radius: 16px; border: 1px solid #334155; padding: 24px; }
-        .header { background: linear-gradient(135deg, #ea580c, #d97706); padding: 16px; border-radius: 12px; text-align: center; color: white; font-weight: bold; }
-        .badge { background: #f97316; color: #0f172a; padding: 4px 12px; border-radius: 6px; font-weight: bold; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; margin: 0; padding: 20px; line-height: 1.6; }
+        .wrapper { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .header { background: linear-gradient(135deg, #f97316, #d97706); padding: 30px 20px; text-align: center; color: white; }
+        .header h2 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+        .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+        .content { padding: 30px; }
+        .greeting { font-size: 18px; font-weight: 700; color: #0f172a; margin-top: 0; }
+        .info-box { background: #f1f5f9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #f97316; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; font-size: 14px; }
+        .info-row:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .info-label { color: #64748b; font-weight: 600; }
+        .info-value { color: #0f172a; font-weight: 700; text-align: right; }
+        .badge { background: #f97316; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .qr-section { text-align: center; margin: 30px 0; padding: 20px; border: 2px dashed #cbd5e1; border-radius: 16px; background: #f8fafc; }
+        .qr-code { width: 180px; height: 180px; margin: 10px auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .qr-text { font-size: 12px; color: #64748b; margin-top: 10px; font-family: monospace; }
+        .cta-button { display: block; width: 100%; text-align: center; background: #2563eb; color: white; text-decoration: none; padding: 14px 0; border-radius: 12px; font-weight: 700; font-size: 16px; margin-top: 20px; }
+        .footer { background: #0f172a; color: #94a3b8; text-align: center; padding: 20px; font-size: 12px; }
+        .footer a { color: #38bdf8; text-decoration: none; }
       </style>
     </head>
     <body>
-      <div class="card">
+      <div class="wrapper">
         <div class="header">
           <h2>GUWIGO INDONESIA</h2>
-          <p>Konfirmasi Pendaftaran Event</p>
+          <p>E-Ticket & Konfirmasi Pendaftaran</p>
         </div>
-        <h3>Halo, ${participantName}!</h3>
-        <p>Pendaftaran Anda untuk event <strong>${eventName}</strong> (${categoryName}) telah dikonfirmasi.</p>
-        <ul>
-          <li><strong>Nomor Registrasi:</strong> ${registrationNumber}</li>
-          <li><strong>Nomor BIB:</strong> <span class="badge">${bibNumber || 'PENDING'}</span></li>
-          <li><strong>Tanggal Event:</strong> ${eventDate || 'Akan datang'}</li>
-          <li><strong>Lokasi:</strong> ${location || 'Venue Event'}</li>
-        </ul>
-        <p>Gunakan E-Ticket dan QR Code berikut saat pengambilan Race Pack:</p>
-        <p><strong>QR Token:</strong> <code>${qrToken}</code></p>
+        <div class="content">
+          <h3 class="greeting">Halo, ${participantName}!</h3>
+          <p>Selamat! Pendaftaran Anda untuk event <strong>${eventName}</strong> telah berhasil dikonfirmasi. Berikut adalah rincian tiket Anda:</p>
+          
+          <div class="info-box">
+            <div class="info-row">
+              <span class="info-label">Nomor Registrasi</span>
+              <span class="info-value">${registrationNumber}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Nomor BIB</span>
+              <span class="info-value"><span class="badge">${bibNumber || 'PENDING'}</span></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Kategori</span>
+              <span class="info-value">${categoryName}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Tanggal Event</span>
+              <span class="info-value">${eventDate || 'Akan datang'}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Lokasi</span>
+              <span class="info-value">${location || 'Venue Event'}</span>
+            </div>
+          </div>
+
+          <div class="qr-section">
+            <p style="margin:0 0 15px; font-weight: 700; color: #0f172a;">Tunjukkan QR Code ini saat pengambilan Race Pack</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrToken}" alt="QR Code" class="qr-code" />
+            <div class="qr-text">Token: ${qrToken}</div>
+          </div>
+
+          <p style="font-size: 14px; text-align: center; color: #64748b;">Simpan email ini baik-baik. Anda juga dapat melihat e-ticket sewaktu-waktu melalui dashboard.</p>
+          
+          <a href="https://ev.guwigo.com/dashboard" class="cta-button">Buka Dashboard Saya</a>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} GuwiGo Indonesia. All rights reserved.</p>
+          <p>Butuh bantuan? Kunjungi <a href="https://guwigo.com" target="_blank">guwigo.com</a> atau hubungi panitia acara.</p>
+        </div>
       </div>
     </body>
     </html>
