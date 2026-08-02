@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { getEventBySlug, getEventCategories } from '../services/eventService';
-import { createRegistration } from '../services/registrationService';
+import { createRegistration, triggerTicketEmail } from '../services/registrationService';
 import { EventItem, EventCategory } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
@@ -256,8 +256,8 @@ export const EventDetailPage: React.FC = () => {
           await addDoc(collection(db, 'mail'), {
             to: newUser.email,
             message: {
-              subject: 'Selamat Datang di RacePro! Ini Akun Anda',
-              text: `Halo ${primaryName},\n\nTerima kasih telah mendaftar. Akun Anda telah dibuat secara otomatis.\n\nEmail: ${newUser.email}\nPassword Sementara: ${randomPassword}\n\nHarap segera login dan ganti password Anda di dashboard.\n\nSalam,\nTim RacePro`
+              subject: 'Selamat Datang di EventHub by Guwigo! Ini Akun Anda',
+              text: `Halo ${primaryName},\n\nTerima kasih telah mendaftar. Akun Anda telah dibuat secara otomatis.\n\nEmail: ${newUser.email}\nPassword Sementara: ${randomPassword}\n\nHarap segera login dan ganti password Anda di dashboard.\n\nSalam,\nTim EventHub by Guwigo`
             }
           });
           
@@ -313,8 +313,27 @@ export const EventDetailPage: React.FC = () => {
           
           if (snapData.token && (window as any).snap) {
             (window as any).snap.pay(snapData.token, {
-              onSuccess: function(midtransResult: any) {
-                addNotification('success', 'Pembayaran Berhasil!', `Registrasi ${result.registration.registrationNumber} berhasil dibayar.`);
+              onSuccess: async function(midtransResult: any) {
+                try {
+                  const verifyRes = await fetch('/api/payment/auto-verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      paymentId: result.payment.id,
+                      registrationId: result.registration.id,
+                      userId: currentUserId
+                    })
+                  });
+                  if (verifyRes.ok) {
+                    await triggerTicketEmail(result.registration.id);
+                    addNotification('success', 'Pembayaran Berhasil!', `Registrasi ${result.registration.registrationNumber} berhasil dibayar & tiket telah dikirim.`);
+                  } else {
+                    addNotification('warning', 'Pembayaran Berhasil', `Pembayaran berhasil namun verifikasi tertunda.`);
+                  }
+                } catch (e) {
+                  console.error('Auto verify error', e);
+                  addNotification('warning', 'Pembayaran Berhasil', `Pembayaran berhasil. Menunggu sinkronisasi admin.`);
+                }
                 navigate('/dashboard');
               },
               onPending: function(midtransResult: any) {
@@ -400,12 +419,12 @@ export const EventDetailPage: React.FC = () => {
   return (
     <div className="min-h-screen  text-slate-900 dark:text-slate-100 pb-24">
       <Helmet>
-        <title>{event.name} — RacePro</title>
+        <title>{event.name} — EventHub by Guwigo</title>
         <meta name="description" content={event.description.substring(0, 160)} />
-        <meta property="og:title" content={`${event.name} — RacePro`} />
+        <meta property="og:title" content={`${event.name} — EventHub by Guwigo`} />
         <meta property="og:description" content={event.description.substring(0, 160)} />
         <meta property="og:image" content={event.banner} />
-        <meta name="twitter:title" content={`${event.name} — RacePro`} />
+        <meta name="twitter:title" content={`${event.name} — EventHub by Guwigo`} />
         <meta name="twitter:description" content={event.description.substring(0, 160)} />
         <meta name="twitter:image" content={event.banner} />
       </Helmet>
@@ -828,7 +847,7 @@ export const EventDetailPage: React.FC = () => {
                         </div>
                         <div>
                           <label className="block text-slate-600 dark:text--600 dark:text--400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nomor KTP (NIK) *</label>
-                          <input id={`nik-${index}`} type="text" required maxLength={16} value={data.nik} onChange={(e) => handleFormChange(index, 'nik', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
+                          <input id={`nik-${index}`} type="text" inputMode="numeric" required maxLength={16} value={data.nik} onChange={(e) => handleFormChange(index, 'nik', e.target.value.replace(/\D/g, ''))} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
                         <div>
                           <label className="block text-slate-600 dark:text--600 dark:text--400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Email *</label>
@@ -836,7 +855,7 @@ export const EventDetailPage: React.FC = () => {
                         </div>
                         <div>
                           <label className="block text-slate-600 dark:text--600 dark:text--400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Nomor WhatsApp *</label>
-                          <input id={`phone-${index}`} type="text" required value={data.phone} onChange={(e) => handleFormChange(index, 'phone', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
+                          <input id={`phone-${index}`} type="text" inputMode="numeric" required value={data.phone} onChange={(e) => handleFormChange(index, 'phone', e.target.value.replace(/\D/g, ''))} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 sm:col-span-2">
@@ -859,12 +878,25 @@ export const EventDetailPage: React.FC = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-600 dark:text--600 dark:text--400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Kota *</label>
-                          <input id={`city-${index}`} type="text" required value={data.city} onChange={(e) => handleFormChange(index, 'city', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
+                          <label className="block text-slate-600 dark:text--600 dark:text--400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Kota / Kabupaten *</label>
+                          <input id={`city-${index}`} list="cities-list" type="text" required value={data.city} onChange={(e) => handleFormChange(index, 'city', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
+                          <datalist id="cities-list">
+                            <option value="Jakarta Pusat" /><option value="Jakarta Selatan" /><option value="Jakarta Barat" /><option value="Jakarta Timur" /><option value="Jakarta Utara" />
+                            <option value="Bandung" /><option value="Kab. Bandung" /><option value="Surabaya" /><option value="Semarang" /><option value="Medan" /><option value="Makassar" /><option value="Denpasar" /><option value="Yogyakarta" />
+                            <option value="Bogor" /><option value="Kab. Bogor" /><option value="Depok" /><option value="Tangerang" /><option value="Kab. Tangerang" /><option value="Bekasi" /><option value="Kab. Bekasi" /><option value="Palembang" /><option value="Balikpapan" /><option value="Malang" /><option value="Kab. Malang" />
+                          </datalist>
                         </div>
                         <div>
                           <label className="block text-slate-600 dark:text--600 dark:text--400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Provinsi *</label>
-                          <input id={`province-${index}`} type="text" required value={data.province} onChange={(e) => handleFormChange(index, 'province', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
+                          <input id={`province-${index}`} list="provinces-list" type="text" required value={data.province} onChange={(e) => handleFormChange(index, 'province', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
+                          <datalist id="provinces-list">
+                            <option value="Aceh" /><option value="Sumatera Utara" /><option value="Sumatera Barat" /><option value="Riau" /><option value="Jambi" /><option value="Sumatera Selatan" /><option value="Bengkulu" /><option value="Lampung" /><option value="Kepulauan Bangka Belitung" /><option value="Kepulauan Riau" />
+                            <option value="DKI Jakarta" /><option value="Jawa Barat" /><option value="Jawa Tengah" /><option value="DI Yogyakarta" /><option value="Jawa Timur" /><option value="Banten" />
+                            <option value="Bali" /><option value="Nusa Tenggara Barat" /><option value="Nusa Tenggara Timur" />
+                            <option value="Kalimantan Barat" /><option value="Kalimantan Tengah" /><option value="Kalimantan Selatan" /><option value="Kalimantan Timur" /><option value="Kalimantan Utara" />
+                            <option value="Sulawesi Utara" /><option value="Sulawesi Tengah" /><option value="Sulawesi Selatan" /><option value="Sulawesi Tenggara" /><option value="Gorontalo" /><option value="Sulawesi Barat" />
+                            <option value="Maluku" /><option value="Maluku Utara" /><option value="Papua Barat" /><option value="Papua" /><option value="Papua Selatan" /><option value="Papua Tengah" /><option value="Papua Pegunungan" />
+                          </datalist>
                         </div>
 
                         <div className="sm:col-span-2 pt-6 border-t border-slate-300 dark:border-slate-700/50">
@@ -895,11 +927,19 @@ export const EventDetailPage: React.FC = () => {
                             </div>
                             <div>
                               <label className="block text-slate-600 dark:text--600 dark:text--400 text-[10px] font-bold uppercase tracking-wide mb-1.5">No HP Darurat *</label>
-                              <input id={`emergencyContactPhone-${index}`} type="text" required value={data.emergencyContactPhone} onChange={(e) => handleFormChange(index, 'emergencyContactPhone', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
+                              <input id={`emergencyContactPhone-${index}`} type="text" inputMode="numeric" required value={data.emergencyContactPhone} onChange={(e) => handleFormChange(index, 'emergencyContactPhone', e.target.value.replace(/\D/g, ''))} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
                             </div>
                             <div>
                               <label className="block text-slate-600 dark:text--600 dark:text--400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Hubungan *</label>
-                              <input id={`emergencyContactRelation-${index}`} type="text" required value={data.emergencyContactRelation} onChange={(e) => handleFormChange(index, 'emergencyContactRelation', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all" />
+                              <select id={`emergencyContactRelation-${index}`} required value={data.emergencyContactRelation} onChange={(e) => handleFormChange(index, 'emergencyContactRelation', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all">
+                                <option value="">Pilih Hubungan</option>
+                                <option value="Suami/Istri">Suami/Istri</option>
+                                <option value="Orang Tua">Orang Tua</option>
+                                <option value="Anak">Anak</option>
+                                <option value="Saudara">Saudara</option>
+                                <option value="Teman">Teman</option>
+                                <option value="Lainnya">Lainnya</option>
+                              </select>
                             </div>
                           </div>
                         </div>
@@ -1198,7 +1238,7 @@ export const EventDetailPage: React.FC = () => {
                         )}
                         {checkoutStep === 4 && (
                           <div className="pt-3 border-t border-slate-300 dark:border-slate-800">
-                            <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Promo</label>
+                            <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Promo <span className="normal-case font-normal">(opsional)</span></label>
                             <input 
                               type="text" 
                               value={promoCode} 
@@ -1221,7 +1261,7 @@ export const EventDetailPage: React.FC = () => {
 
                         <div className="flex justify-between text-base font-black pt-3 border-t border-slate-300 dark:border-slate-800">
                           <span className="text-slate-900 dark:text-white">Grand Total</span>
-                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-yellow-400">{formatRupiah(grandTotal)}</span>
+                          <span className="text-blue-600 dark:text-blue-400">{formatRupiah(grandTotal)}</span>
                         </div>
                       </div>
                     </div>
@@ -1240,12 +1280,26 @@ export const EventDetailPage: React.FC = () => {
                     <button
                       onClick={() => {
                         let invalidFieldId: string | null = null;
+                        let errorTitle = 'Form Belum Lengkap';
+                        let errorMessage = 'Mohon lengkapi semua data dengan tanda bintang (*) sebelum melanjutkan.';
                         
                         for (let i = 0; i < formsData.length; i++) {
                           const d = formsData[i];
                           if (!d.fullName) { invalidFieldId = `fullName-${i}`; break; }
                           if (!d.nik) { invalidFieldId = `nik-${i}`; break; }
+                          if (d.nik.length < 16) { 
+                            invalidFieldId = `nik-${i}`; 
+                            errorTitle = 'Validasi Gagal';
+                            errorMessage = `NIK Peserta ${i + 1} (${d.categoryName}) harus minimal 16 karakter.`;
+                            break; 
+                          }
                           if (!d.email) { invalidFieldId = `email-${i}`; break; }
+                          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) {
+                            invalidFieldId = `email-${i}`;
+                            errorTitle = 'Validasi Gagal';
+                            errorMessage = `Format email Peserta ${i + 1} (${d.categoryName}) tidak valid.`;
+                            break;
+                          }
                           if (!d.phone) { invalidFieldId = `phone-${i}`; break; }
                           if (!d.birthDate) { invalidFieldId = `birthDate-${i}`; break; }
                           if (!d.address) { invalidFieldId = `address-${i}`; break; }
@@ -1257,7 +1311,7 @@ export const EventDetailPage: React.FC = () => {
                         }
                         
                         if (invalidFieldId) {
-                          addNotification('error', 'Form Belum Lengkap', 'Mohon lengkapi semua data dengan tanda bintang (*) sebelum melanjutkan.');
+                          addNotification('error', errorTitle, errorMessage);
                           const el = document.getElementById(invalidFieldId);
                           if (el) {
                             el.scrollIntoView({ behavior: 'smooth', block: 'center' });

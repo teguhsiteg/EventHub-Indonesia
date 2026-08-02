@@ -15,7 +15,7 @@ export const MaintenancePage: React.FC = () => {
           </span>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase mt-2">Sistem Dalam Pemeliharaan</h1>
           <p className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400 leading-relaxed">
-            Platform RacePro Indonesia sedang menjalani pemeliharaan berkala untuk peningkatan performa server dan keamanan data. Silakan kembali dalam beberapa saat.
+            Platform EventHub by Guwigo Indonesia sedang menjalani pemeliharaan berkala untuk peningkatan performa server dan keamanan data. Silakan kembali dalam beberapa saat.
           </p>
         </div>
 

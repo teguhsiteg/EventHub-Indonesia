@@ -7,8 +7,8 @@ import { db } from '../../config/firebase';
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const [footerData, setFooterData] = useState({
-    about: 'RacePro adalah platform resmi manajemen event & olahraga. Temukan, daftar, dan kelola pengalaman event olahraga Anda bersama RacePro.',
-    copyright: `© ${currentYear} RacePro. All rights reserved.`,
+    about: 'EventHub by Guwigo adalah platform resmi manajemen event & olahraga. Temukan, daftar, dan kelola pengalaman event olahraga Anda bersama EventHub by Guwigo.',
+    copyright: `© ${currentYear} EventHub by Guwigo. All rights reserved.`,
     contactAddress: 'Jakarta, Indonesia',
     contactEmail: 'support@racepro.id',
     contactPhone: '+62 812-XXXX-XXXX',

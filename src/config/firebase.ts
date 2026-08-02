@@ -1,6 +1,6 @@
 // ============================================================
 // RACEPRO INDONESIA — Konfigurasi Firebase
-// Inisialisasi koneksi Firebase untuk frontend RacePro.
+// Inisialisasi koneksi Firebase untuk frontend EventHub by Guwigo.
 // ============================================================
 
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';

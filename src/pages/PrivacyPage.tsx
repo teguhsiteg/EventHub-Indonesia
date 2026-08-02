@@ -9,7 +9,7 @@ const DEFAULT_PRIVACY = `# Kebijakan Privasi
 
 **Terakhir diperbarui: Juli 2026**
 
-RacePro ("kami", "platform") berkomitmen untuk melindungi privasi dan keamanan data pribadi Anda. Kebijakan ini menjelaskan bagaimana kami mengumpulkan, menggunakan, menyimpan, dan melindungi informasi Anda.
+EventHub by Guwigo ("kami", "platform") berkomitmen untuk melindungi privasi dan keamanan data pribadi Anda. Kebijakan ini menjelaskan bagaimana kami mengumpulkan, menggunakan, menyimpan, dan melindungi informasi Anda.
 
 ---
 
@@ -84,7 +84,7 @@ Kami akan memberitahukan perubahan signifikan pada kebijakan privasi ini melalui
 
 ---
 
-> *Dengan menggunakan platform RacePro, Anda menyetujui praktik yang dijelaskan dalam kebijakan privasi ini. Jika Anda memiliki pertanyaan, hubungi **support@racepro.id**.*`;
+> *Dengan menggunakan platform EventHub by Guwigo, Anda menyetujui praktik yang dijelaskan dalam kebijakan privasi ini. Jika Anda memiliki pertanyaan, hubungi **support@racepro.id**.*`;
 
 export const PrivacyPage: React.FC = () => {
   const [content, setContent] = useState('');
@@ -142,7 +142,7 @@ export const PrivacyPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 text-emerald-500 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
             <Lock className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-            <span>RACEPRO — KEBIJAKAN PRIVASI</span>
+            <span>EventHub by Guwigo — KEBIJAKAN PRIVASI</span>
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight leading-[1.05]">
             Kebijakan <br />

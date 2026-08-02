@@ -142,6 +142,92 @@ app.post('/api/payment/midtrans-token', async (req: Request, res: Response) => {
   }
 });
 
+// 3.6. Midtrans Auto-Verify (Client calls this on onSuccess)
+app.post('/api/payment/auto-verify', async (req: Request, res: Response) => {
+  const { paymentId, registrationId, userId } = req.body;
+  if (!paymentId || !registrationId || !db) {
+    return res.status(400).json({ error: 'Missing parameters or db' });
+  }
+
+  try {
+    const now = new Date().toISOString();
+    const payRef = db.collection('payments').doc(paymentId);
+    const regRef = db.collection('registrations').doc(registrationId);
+
+    const regSnap = await regRef.get();
+    if (!regSnap.exists) return res.status(404).json({ error: 'Registration not found' });
+    const registration = regSnap.data();
+
+    // Fetch participants
+    const partSnap = await db.collection('participants').where('registrationId', '==', registrationId).get();
+    
+    // Generate BIBs
+    const participantsByCategory: any = {};
+    partSnap.forEach(d => {
+      const p = { id: d.id, ...d.data() };
+      if (!participantsByCategory[p.categoryId]) participantsByCategory[p.categoryId] = [];
+      participantsByCategory[p.categoryId].push(p);
+    });
+
+    for (const categoryId of Object.keys(participantsByCategory)) {
+      const catParticipants = participantsByCategory[categoryId];
+      const catSnap = await db.collection('event_categories').doc(categoryId).get();
+      if (!catSnap.exists) continue;
+      
+      const category = catSnap.data();
+      // Simple prefix generation inline
+      const distanceStr = category?.distance || '0K';
+      const cleanDist = distanceStr.replace(/[^0-9]/g, '').padStart(2, '0');
+      const words = (category?.name || '').trim().toUpperCase().split(' ');
+      let prefix = 'RC';
+      if (words.length >= 2) prefix = `${words[0][0]}${words[1][0]}`;
+      else if (words.length === 1 && words[0].length >= 2) prefix = words[0].substring(0, 2);
+      const categoryPrefix = `${prefix}${cleanDist}`;
+
+      const bibSnap = await db.collection('participants')
+        .where('eventId', '==', registration?.eventId)
+        .where('categoryId', '==', categoryId)
+        .get();
+      
+      let participantsWithBib = 0;
+      bibSnap.forEach(d => { if (d.data().bibNumber) participantsWithBib++; });
+      let nextBibCount = participantsWithBib + 1;
+
+      for (const pData of catParticipants) {
+        if (!pData.bibNumber) {
+          const newBib = `${categoryPrefix}-${String(nextBibCount).padStart(4, '0')}`;
+          const parts = pData.qrToken.split('_');
+          parts[3] = newBib; 
+          const newQrToken = parts.join('_');
+
+          await db.collection('participants').doc(pData.id).update({
+            bibNumber: newBib,
+            qrToken: newQrToken,
+            updatedAt: now
+          });
+          nextBibCount++;
+        }
+      }
+    }
+
+    await payRef.update({ status: 'PAID', paidAt: now, updatedAt: now });
+    await regRef.update({ status: 'VERIFIED', updatedAt: now });
+
+    // Update race packs
+    for (const pDoc of partSnap.docs) {
+      const packSnap = await db.collection('race_packs').where('participantId', '==', pDoc.id).limit(1).get();
+      if (!packSnap.empty) {
+        await db.collection('race_packs').doc(packSnap.docs[0].id).update({ pickupStatus: 'READY', updatedAt: now });
+      }
+    }
+
+    return res.json({ success: true });
+  } catch (err: any) {
+    console.error('Auto Verify Error:', err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 // 4. Public QR Code verification endpoint
 app.get('/api/verify/qr/:token', (req: Request, res: Response) => {
   const { token } = req.params;

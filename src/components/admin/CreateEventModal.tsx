@@ -274,7 +274,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         registrationEnd: new Date(eventRegEnd).toISOString(),
         status: initialData ? initialData.status : 'REGISTRATION_OPEN',
         organizerId: user.uid,
-        organizerName: organizerName || user.displayName || 'RacePro Admin',
+        organizerName: organizerName || user.displayName || 'EventHub by Guwigo Admin',
         organizerWebsite: organizerWebsite,
         organizerSocialMedia: organizerSocialMedia,
         featured: true,

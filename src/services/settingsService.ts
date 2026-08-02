@@ -5,7 +5,7 @@ import { collection, getDocs } from 'firebase/firestore';
 
 export const DEFAULT_SYSTEM_SETTINGS: SystemSettings = {
   id: 'general',
-  siteName: 'RacePro Indonesia',
+  siteName: 'EventHub by Guwigo Indonesia',
   siteDescription: 'Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia',
   logoUrl: '/logo.svg',
   contactEmail: 'support@racepro.id',
@@ -15,7 +15,7 @@ export const DEFAULT_SYSTEM_SETTINGS: SystemSettings = {
   paymentGatewayName: 'Manual Transfer / Gateway Unconfigured',
   manualPaymentBank: 'BCA',
   manualPaymentAccount: '1234567890',
-  manualPaymentName: 'RacePro Indonesia',
+  manualPaymentName: 'EventHub by Guwigo Indonesia',
   adminFee: 5000,
   oauthConfigured: false,
   updatedAt: new Date().toISOString()

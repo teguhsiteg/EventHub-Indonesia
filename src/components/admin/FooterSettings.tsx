@@ -101,7 +101,7 @@ export const FooterSettings: React.FC<{ addNotification: (type: 'success' | 'err
             value={copyright}
             onChange={(e) => setCopyright(e.target.value)}
             className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500/50 transition-all shadow-sm"
-            placeholder="© 2026 RacePro. Seluruh Hak Cipta Dilindungi."
+            placeholder="© 2026 EventHub by Guwigo. Seluruh Hak Cipta Dilindungi."
           />
         </div>
 

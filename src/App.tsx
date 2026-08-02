@@ -31,11 +31,35 @@ import { MaintenancePage } from './pages/MaintenancePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 
+import { RpcLayout } from './components/layout/RpcLayout';
+import { RpcDashboardPage } from './pages/rpc/RpcDashboardPage';
+
 const AppRoutes: React.FC = () => {
   const { settings } = useSettings();
+  const isRpcDomain = window.location.hostname.includes('rpc.');
 
   if (settings.maintenanceMode) {
     return <MaintenancePage />;
+  }
+
+  // If we are on the RPC domain, ONLY serve the RPC app
+  if (isRpcDomain) {
+    return (
+      <Routes>
+        <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
+        <Route 
+          path="/" 
+          element={
+            <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'ORGANIZER']}>
+              <RpcLayout>
+                <RpcDashboardPage />
+              </RpcLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    );
   }
 
   return (
@@ -80,6 +104,20 @@ const AppRoutes: React.FC = () => {
           </ProtectedRoute>
         } 
       />
+      
+      {/* Fallback RPC Route (if not using subdomain) */}
+      <Route 
+        path="/rpc" 
+        element={
+          <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'ORGANIZER']}>
+            <RpcLayout>
+              <RpcDashboardPage />
+            </RpcLayout>
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Fallback old check-in path -> redirects to RPC or Admin Dashboard */}
       <Route 
         path="/admin/check-in" 
         element={

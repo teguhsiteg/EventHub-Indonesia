@@ -135,17 +135,20 @@ export async function createRegistration(
     eventId,
     items: cartItems,
     ticketCount: totalTicketCount,
-    selectedAddons,
-    selectedHotels,
     status: 'WAITING_PAYMENT',
     amount: totalAmount,
-    webFeeAmount: webFee > 0 ? webFee : undefined,
-    promoCode: promoCode && discountAmount > 0 ? promoCode : undefined,
-    discountAmount: discountAmount > 0 ? discountAmount : undefined,
     invoiceId,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
   };
+
+  if (selectedAddons && selectedAddons.length > 0) registration.selectedAddons = selectedAddons;
+  if (selectedHotels && selectedHotels.length > 0) registration.selectedHotels = selectedHotels;
+  if (webFee > 0) registration.webFeeAmount = webFee;
+  if (promoCode && discountAmount > 0) {
+    registration.promoCode = promoCode;
+    registration.discountAmount = discountAmount;
+  }
 
   const participants: Participant[] = [];
   
@@ -239,24 +242,8 @@ export async function createRegistration(
     });
   }
 
-  // Trigger automated registration confirmation email
-  try {
-    fetch('/api/notifications/send-registration-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        recipientEmail: formsData[0].email,
-        participantName: formsData[0].fullName,
-        registrationNumber: regNumber,
-        eventName: event.name,
-        ticketCount: totalTicketCount,
-        eventDate: new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'full' }),
-        location: event.location,
-      }),
-    }).catch(err => console.warn('Notification trigger background notice:', err));
-  } catch (e) {
-    console.warn('Could not dispatch automated registration email notification:', e);
-  }
+  // The ticket email is no longer dispatched here.
+  // It will be dispatched when payment is VERIFIED / PAID via triggerTicketEmail().
 
   return { registration, participants, payment };
 }
@@ -316,4 +303,53 @@ export async function getParticipantByQrToken(qrToken: string): Promise<Particip
     return { id: snap.docs[0].id, ...snap.docs[0].data() } as Participant;
   }
   return null;
+}
+
+export async function triggerTicketEmail(registrationId: string): Promise<void> {
+  try {
+    const regSnap = await getDoc(doc(db, 'registrations', registrationId));
+    if (!regSnap.exists()) return;
+    const reg = regSnap.data() as Registration;
+
+    const eventSnap = await getDoc(doc(db, 'events', reg.eventId));
+    if (!eventSnap.exists()) return;
+    const event = eventSnap.data() as EventItem;
+
+    const partQ = query(collection(db, 'participants'), where('registrationId', '==', registrationId), limit(1));
+    const partSnap = await getDocs(partQ);
+    if (partSnap.empty) return;
+    const participant = partSnap.docs[0].data() as Participant;
+
+    await fetch('/api/notifications/send-registration-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        recipientEmail: participant.email,
+        participantName: participant.fullName,
+        registrationNumber: reg.registrationNumber,
+        eventName: event.name,
+        ticketCount: reg.ticketCount,
+        eventDate: new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'full' }),
+        location: event.location,
+      }),
+    }).catch(err => console.warn('Notification trigger background notice:', err));
+  } catch (e) {
+    console.warn('Could not dispatch automated ticket email notification:', e);
+  }
+}
+
+export async function getAllParticipantsAdmin(): Promise<Participant[]> {
+  const q = query(collection(db, 'participants'));
+  const snap = await getDocs(q);
+  // Sort in memory instead
+  const parts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Participant));
+  return parts.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+}
+
+export async function updateCheckInStatusAdmin(participantId: string, status: boolean): Promise<void> {
+  await updateDoc(doc(db, 'participants', participantId), {
+    checkInStatus: status,
+    checkInTime: status ? new Date().toISOString() : null,
+    updatedAt: new Date().toISOString()
+  });
 }

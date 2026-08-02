@@ -5,9 +5,9 @@ import { Loader2, Info, ChevronRight, Home, Shield, FileText, Star } from 'lucid
 import { Link } from 'react-router-dom';
 import app from '../config/firebase';
 
-const DEFAULT_ABOUT = `# Tentang RacePro
+const DEFAULT_ABOUT = `# Tentang EventHub by Guwigo
 
-**RacePro** adalah platform manajemen event olahraga terpadu yang dirancang khusus untuk memenuhi kebutuhan penyelenggara dan peserta. Kami hadir untuk membuat pengalaman event olahraga lebih profesional, modern, dan bebas hambatan.
+**EventHub by Guwigo** adalah platform manajemen event olahraga terpadu yang dirancang khusus untuk memenuhi kebutuhan penyelenggara dan peserta. Kami hadir untuk membuat pengalaman event olahraga lebih profesional, modern, dan bebas hambatan.
 
 ---
 
@@ -52,11 +52,11 @@ Dibangun dengan teknologi modern untuk performa maksimal:
 
 ---
 
-> *"Website dan ekosistem ini dibangun secara menyeluruh oleh tim **RacePro**."*
+> *"Website dan ekosistem ini dibangun secara menyeluruh oleh tim **EventHub by Guwigo**."*
 
 <div align="center" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #334155;">
   <p style="color: #94a3b8; font-size: 0.8rem;">
-    © {new Date().getFullYear()} RacePro — Platform Management Event Olahraga Profesional
+    © {new Date().getFullYear()} EventHub by Guwigo — Platform Management Event Olahraga Profesional
   </p>
 </div>`;
 
@@ -125,16 +125,16 @@ export const AboutPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 text-blue-500 dark:text-blue-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
             <Star className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
-            <span>RACEPRO — TENTANG KAMI</span>
+            <span>EventHub by Guwigo — TENTANG KAMI</span>
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight leading-[1.05]">
             Tentang <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-yellow-400 to-yellow-200">
-              RacePro
+              EventHub by Guwigo
             </span>
           </h1>
           <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-base mt-4 max-w-2xl leading-relaxed">
-            **RacePro** didirikan pada tahun 2026 dengan visi tunggal: *Mendigitalisasi dan menyatukan ekosistem olahraga di seluruh Indonesia*.
+            **EventHub by Guwigo** didirikan pada tahun 2026 dengan visi tunggal: *Mendigitalisasi dan menyatukan ekosistem olahraga di seluruh Indonesia*.
           </p>
         </div>
       </div>

@@ -5,13 +5,14 @@ import {
   getDocs, 
   getDoc, 
   updateDoc, 
+  deleteDoc,
   query, 
   where, 
   limit 
 } from 'firebase/firestore';
 import { Payment, PaymentStatus, Registration, EventCategory, Participant } from '../types';
 import { logAuditEvent } from './auditService';
-import { generateCategoryPrefix } from './registrationService';
+import { generateCategoryPrefix, triggerTicketEmail } from './registrationService';
 
 export async function getPaymentByRegistrationId(regId: string): Promise<Payment | null> {
   const q = query(collection(db, 'payments'), where('registrationId', '==', regId), limit(1));
@@ -163,6 +164,9 @@ export async function verifyPaymentByAdmin(
       }
     }
 
+    // Trigger ticket email now that payment is PAID and BIBs are generated
+    await triggerTicketEmail(registrationId);
+
     await logAuditEvent(adminUid, adminEmail, 'ADMIN', 'APPROVE_PAYMENT', 'payments', paymentId, { registrationId });
   } else {
     await updateDoc(payRef, {
@@ -177,4 +181,40 @@ export async function verifyPaymentByAdmin(
 
     await logAuditEvent(adminUid, adminEmail, 'ADMIN', 'REJECT_PAYMENT', 'payments', paymentId, { registrationId });
   }
+}
+
+export async function deletePaymentAdmin(
+  paymentId: string,
+  registrationId: string,
+  adminUid: string,
+  adminEmail: string
+): Promise<void> {
+  const payRef = doc(db, 'payments', paymentId);
+  const regRef = doc(db, 'registrations', registrationId);
+
+  // Jika kita menghapus payment, ubah registrasi kembali ke WAITING_PAYMENT
+  await updateDoc(regRef, {
+    status: 'WAITING_PAYMENT',
+    updatedAt: new Date().toISOString()
+  });
+
+  await deleteDoc(payRef);
+  
+  await logAuditEvent(adminUid, adminEmail, 'ADMIN', 'DELETE_PAYMENT', 'payments', paymentId, { registrationId });
+}
+
+export async function updatePaymentAdmin(
+  paymentId: string,
+  updates: Partial<Payment>,
+  adminUid: string,
+  adminEmail: string
+): Promise<void> {
+  const payRef = doc(db, 'payments', paymentId);
+  const updateData = {
+    ...updates,
+    updatedAt: new Date().toISOString()
+  };
+  
+  await updateDoc(payRef, updateData);
+  await logAuditEvent(adminUid, adminEmail, 'ADMIN', 'UPDATE_PAYMENT', 'payments', paymentId, updates);
 }

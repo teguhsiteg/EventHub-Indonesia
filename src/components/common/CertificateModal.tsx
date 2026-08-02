@@ -95,7 +95,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             {/* Footer Signatures */}
             <div className="flex items-end justify-between text-left text-[10px] text-slate-500 dark:text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-200 dark:border-slate-800">
               <div>
-                <p className="font-semibold text-slate-600 dark:text-slate-600 dark:text-slate-300">Sistem Verifikasi RacePro</p>
+                <p className="font-semibold text-slate-600 dark:text-slate-600 dark:text-slate-300">Sistem Verifikasi EventHub by Guwigo</p>
                 <p>Diterbitkan: {new Date(certificate.issuedAt).toLocaleDateString('id-ID', { dateStyle: 'medium' })}</p>
                 <p className="font-mono text-[9px] text-slate-500">ID: {certificate.id}</p>
               </div>
@@ -114,7 +114,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
         {/* Modal Controls */}
         <div className="p-6 bg-slate-50 dark:bg-blue-950/80 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <p className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400">
-            Sertifikat ini resmi dan dapat diverifikasi melalui database RacePro.
+            Sertifikat ini resmi dan dapat diverifikasi melalui database EventHub by Guwigo.
           </p>
           <div className="flex items-center gap-3">
             <button

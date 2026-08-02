@@ -3,13 +3,13 @@
 // Platform Manajemen Event & Kompetisi Olahraga Terdepan
 // ============================================================
 
-// ── Constanta Prefix RacePro ──
+// ── Constanta Prefix EventHub by Guwigo ──
 export const RACEPRO_QR_PREFIX = 'RACEPRO_QR_' as const;
 export const REGISTRATION_PREFIX = 'REG-' as const;
 export const CERTIFICATE_PREFIX = 'CERT-' as const;
 
 // ── Default Sistem ──
-export const DEFAULT_SITE_NAME = 'RacePro Indonesia' as const;
+export const DEFAULT_SITE_NAME = 'EventHub by Guwigo Indonesia' as const;
 export const DEFAULT_SITE_DESCRIPTION =
   'Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia' as const;
 export const DEFAULT_CONTACT_EMAIL = 'support@racepro.id' as const;
@@ -283,10 +283,10 @@ export interface RaceResult {
   updatedAt: string;
 }
 
-/** Sertifikat resmi RacePro — diterbitkan setelah peserta menyelesaikan event */
+/** Sertifikat resmi EventHub by Guwigo — diterbitkan setelah peserta menyelesaikan event */
 export interface Certificate {
   id: string;
-  certificateNumber: string; // CERT-2026-XXXXX (diterbitkan oleh RacePro)
+  certificateNumber: string; // CERT-2026-XXXXX (diterbitkan oleh EventHub by Guwigo)
   participantId: string;
   resultId: string;
   eventName: string;
@@ -340,10 +340,10 @@ export interface AuditLog {
   createdAt: string;
 }
 
-/** Pengaturan sistem RacePro Indonesia */
+/** Pengaturan sistem EventHub by Guwigo Indonesia */
 export interface SystemSettings {
   id: string;
-  siteName: string;          // Default: "RacePro Indonesia"
+  siteName: string;          // Default: "EventHub by Guwigo Indonesia"
   siteDescription: string;   // Default: "Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia"
   logoUrl: string;
   contactEmail: string;      // Default: "support@racepro.id"

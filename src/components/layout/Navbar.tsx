@@ -55,71 +55,54 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-blue-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/[0.06]">
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
 
           {/* Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className="relative w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
-               <Trophy className="w-4.5 h-4.5 text-white group-hover:scale-110 transition-transform duration-300" />
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
+            <div className="relative w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
+               <Trophy className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />
             </div>
-            <div className="leading-tight">
-              <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
-                RACE<span className="text-blue-600">PRO</span>
+            <div className="leading-tight flex flex-col justify-center">
+              <span className="text-xl font-black tracking-tight text-slate-900">
+                Event<span className="text-blue-600">Hub</span>
               </span>
-              <span className="block text-[9px] font-medium text-slate-600 dark:text-slate-500 tracking-wider uppercase">
-                Platform Event Indonesia
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
+                by Guwigo
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Pills */}
-          <nav className="hidden md:flex items-center gap-1 bg-slate-100/50 dark:bg-white/[0.04] p-1 rounded-full border border-slate-200 dark:border-white/[0.06] backdrop-blur-sm">
+          <nav className="hidden md:flex items-center gap-1 bg-slate-50/80 p-1.5 rounded-full border border-slate-100 backdrop-blur-md">
             {navLinks.map(link => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`relative px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
                   isActive(link.path) 
-                    ? 'text-blue-600 dark:text-white' 
-                    : 'text-slate-500 dark:text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-800 dark:text-slate-200'
+                    ? 'text-blue-600 bg-white shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
-                {isActive(link.path) && (
-                  <span className="absolute inset-0 rounded-full bg-blue-500/10 border border-blue-500/20" />
-                )}
                 <span className="relative z-10">{link.label}</span>
               </Link>
             ))}
           </nav>
 
           {/* Right Controls */}
-          <div className="hidden md:flex items-center gap-2.5">
-            {/* Theme Toggle */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              title={theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}
-              aria-label="Ganti Tema"
-              className="p-2 rounded-xl bg-slate-100/50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06] text-slate-500 dark:text-slate-500 dark:text-slate-400 hover:text-yellow-500 dark:hover:text-yellow-400 hover:border-blue-500/30 transition-all duration-300"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-yellow-400" />
-              ) : (
-                <Moon className="w-4 h-4" />
-              )}
-            </button>
+          <div className="hidden md:flex items-center gap-4">
 
             {user ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {/* Admin/Organizer badge */}
                 {(isAdmin || isOrganizer) && (
                   <Link
                     to="/admin"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold hover:bg-blue-500/20 transition-all duration-300"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-bold hover:bg-blue-100 transition-all duration-300"
                   >
-                    <ShieldAlert className="w-3.5 h-3.5" />
+                    <ShieldAlert className="w-4 h-4" />
                     <span>Admin</span>
                   </Link>
                 )}
@@ -128,25 +111,25 @@ export const Navbar: React.FC = () => {
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06] hover:border-slate-300 dark:hover:border-white/[0.12] transition-all duration-300 group"
+                    className="flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 shadow-sm transition-all duration-300 group"
                   >
-                    <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${roleGradient} flex items-center justify-center text-[10px] font-bold text-white shadow-md`}>
-                      {user.displayName?.charAt(0).toUpperCase() || <User className="w-3.5 h-3.5" />}
+                    <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${roleGradient} flex items-center justify-center text-xs font-bold text-white shadow-sm`}>
+                      {user.displayName?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
                     </div>
-                    <span className="text-sm text-slate-700 dark:text-slate-600 dark:text-slate-300 max-w-[100px] truncate hidden lg:block">
+                    <span className="text-sm font-bold text-slate-700 max-w-[120px] truncate hidden lg:block">
                       {user.displayName}
                     </span>
-                    <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   {/* Dropdown */}
                   {userMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-white/[0.08] shadow-2xl shadow-black/10 dark:shadow-black/40 backdrop-blur-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                    <div className="absolute right-0 mt-3 w-64 rounded-3xl bg-white border border-slate-100 shadow-elegant overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
                       {/* User info */}
-                      <div className="px-4 py-3 border-b border-slate-100 dark:border-white/[0.06]">
-                        <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{user.displayName}</p>
-                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
-                        <span className={`inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r ${roleGradient} bg-clip-text text-transparent`} style={{ backgroundClip: 'text', WebkitBackgroundClip: 'text', color: '#fb923c' }}>
+                      <div className="px-5 py-4 border-b border-slate-50 bg-slate-50/50">
+                        <p className="text-sm font-bold text-slate-900 truncate">{user.displayName}</p>
+                        <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
+                        <span className={`inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white border border-slate-200 text-slate-600`}>
                           {roleLabel}
                         </span>
                       </div>

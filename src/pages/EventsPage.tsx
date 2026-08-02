@@ -29,21 +29,21 @@ export const EventsPage: React.FC = () => {
   }, [handleSearch]);
 
   return (
-    <div className="min-h-screen  text-slate-900 dark:text-slate-100 py-12">
+    <div className="min-h-screen bg-slate-50/50 text-slate-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* HEADER */}
         <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text--600 dark:text--400 text-[10px] font-black uppercase tracking-wider mb-3">
-              <Star className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
-              <span>RacePro Search</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold uppercase tracking-wider mb-4">
+              <Star className="w-3.5 h-3.5 text-blue-500" />
+              <span>EventHub by Guwigo Search</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight">
-              Jelajahi <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">Event Olahraga</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+              Explore <span className="text-blue-600">Events</span>
             </h1>
-            <p className="text-slate-600 dark:text-slate-500 dark:text--600 dark:text--400 text-xs mt-2 max-w-xl">
-              Filter dan cari event lari, trail run, marathon, atau cycling langsung dari database RacePro.
+            <p className="text-slate-500 text-sm mt-3 max-w-xl">
+              Filter and search for running events, trail runs, marathons, or cycling directly from the EventHub by Guwigo database.
             </p>
           </div>
         </div>
@@ -57,113 +57,111 @@ export const EventsPage: React.FC = () => {
 
         {/* Event List Grid */}
         {loading || isSearching ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="bg-white/60 dark:bg-blue-950/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden animate-pulse">
+              <div key={i} className="bg-white border border-slate-100 rounded-3xl overflow-hidden animate-pulse shadow-sm">
                 <div className="flex flex-col md:flex-row">
-                  <div className="w-full md:w-56 h-48 md:h-auto bg-slate-200 dark:bg-slate-800/50 shrink-0" />
-                  <div className="p-5 flex-1 space-y-3">
-                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded-full w-1/4" />
-                    <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded-full w-3/4" />
-                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded-full w-full" />
-                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded-full w-2/3" />
-                    <div className="flex gap-2 pt-2">
-                      <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-16" />
-                      <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-16" />
-                    </div>
-                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                      <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded-full w-24" />
-                      <div className="h-9 bg-slate-200 dark:bg-slate-800 rounded-xl w-20" />
-                    </div>
+                  <div className="w-full md:w-56 h-48 md:h-auto bg-slate-100 shrink-0" />
+                  <div className="p-6 flex-1 space-y-4">
+                    <div className="h-3 bg-slate-100 rounded-full w-1/4" />
+                    <div className="h-5 bg-slate-100 rounded-full w-3/4" />
+                    <div className="h-3 bg-slate-100 rounded-full w-full" />
+                    <div className="h-3 bg-slate-100 rounded-full w-2/3" />
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : events.length === 0 ? (
-          <div className="p-16 text-center bg-white/40 dark:bg-blue-950/40 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg mx-auto backdrop-blur-sm">
-            <div className="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-center mx-auto mb-6">
-              <Search className="w-8 h-8 text-slate-600 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500" />
+          <div className="p-16 text-center bg-white border border-slate-100 rounded-3xl max-w-lg mx-auto shadow-sm">
+            <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto mb-6">
+              <Search className="w-8 h-8 text-slate-400" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Event Tidak Ditemukan</h3>
-            <p className="text-xs text-slate-500 mt-2 leading-relaxed max-w-sm mx-auto">
-              Tidak ada event di Firestore yang cocok dengan kata kunci, lokasi, atau kategori yang Anda pilih. Coba ubah filter pencarian.
+            <h3 className="text-lg font-bold text-slate-900">Event Tidak Ditemukan</h3>
+            <p className="text-sm text-slate-500 mt-2 leading-relaxed max-w-sm mx-auto">
+              Tidak ada event di database yang cocok dengan filter pencarian Anda. Coba ubah kategori atau lokasi.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {events.map(event => (
               <div
                 key={event.id}
-                className="group glass-card-interactive overflow-hidden transition-all duration-300"
+                className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-elegant hover:shadow-xl transition-all duration-300"
               >
-                <div className="flex flex-col md:flex-row">
+                <div className="flex flex-col md:flex-row h-full">
                   {/* Image */}
-                  <div className="relative w-full md:w-56 shrink-0 h-48 md:h-auto overflow-hidden">
+                  <div className="relative w-full md:w-64 shrink-0 h-56 md:h-auto overflow-hidden bg-slate-100 p-2">
                     <img
                       src={event.banner}
                       alt={event.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-slate-50 dark:to-[#020617] md:bg-gradient-to-t md:from-slate-50 md:dark:from-[#020617] md:via-transparent md:to-transparent" />
                     
                     {/* Status badge */}
-                    <div className="absolute top-3 left-3">
-                      <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-md backdrop-blur-md shadow-lg ${
+                    <div className="absolute top-4 left-4">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 ${
                         event.status === 'REGISTRATION_OPEN'
-                          ? 'bg-blue-500/90 text-white'
-                          : 'bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-600 dark:text-slate-300'
+                          ? 'bg-blue-600/90 text-white'
+                          : 'bg-white/90 text-slate-700'
                       }`}>
-                        {event.status === 'REGISTRATION_OPEN' ? 'Dibuka' : event.status}
+                        {event.status === 'REGISTRATION_OPEN' ? 'Open' : event.status}
                       </span>
                     </div>
 
                     {/* Category badge */}
                     {event.category && (
-                      <div className="absolute top-3 right-3 bg-white/80 dark:bg-blue-950/80 backdrop-blur-md border border-slate-200 dark:border-slate-700/50 text-yellow-500 dark:text--600 dark:text--400 text-[10px] font-bold uppercase px-2.5 py-1 rounded-md flex items-center gap-1">
-                        <Tag className="w-3 h-3" />
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md border border-slate-100 text-slate-600 text-[10px] font-bold uppercase px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                        <Tag className="w-3 h-3 text-blue-500" />
                         <span>{event.category}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-500 dark:text--600 dark:text--400 mb-1.5">
-                        <MapPin className="w-3.5 h-3.5 text--600 dark:text--400 shrink-0" />
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-3">
+                        <MapPin className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                         <span className="truncate">{event.location}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-1 group-hover:text-blue-500 dark:group-hover:text--600 dark:text--400 transition-colors">
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
                         {event.name}
                       </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-slate-500 mt-2 line-clamp-2 leading-relaxed">
                         {event.description}
                       </p>
 
                       {/* Category chips */}
                       {event.categories && event.categories.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mt-3">
+                        <div className="flex flex-wrap gap-2 mt-4">
                           {event.categories.slice(0, 3).map((cat, idx) => (
-                            <span key={idx} className="text-[10px] bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-500 dark:text--600 dark:text--400 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700/50">
+                            <span key={idx} className="text-[10px] font-bold bg-slate-50 text-slate-500 px-3 py-1 rounded-full border border-slate-100">
                               {cat}
                             </span>
                           ))}
+                          {event.categories.length > 3 && (
+                            <span className="text-[10px] font-bold bg-slate-50 text-slate-500 px-3 py-1 rounded-full border border-slate-100">
+                              +{event.categories.length - 3}
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-500 dark:text--600 dark:text--400 font-medium">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'medium' })}
-                      </span>
+                    <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tanggal Event</span>
+                        <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                          <Calendar className="w-4 h-4 text-blue-500" />
+                          {new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </div>
+                      </div>
                       <Link
                         to={`/events/${event.slug}`}
-                        className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all group/link"
+                        className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white text-slate-400 transition-all shadow-sm"
                       >
-                        <span>Detail</span>
-                        <ChevronRight className="w-4 h-4 group-hover/link:translate-x-0.5 transition-transform" />
+                        <ChevronRight className="w-4 h-4" />
                       </Link>
                     </div>
                   </div>
@@ -172,7 +170,6 @@ export const EventsPage: React.FC = () => {
             ))}
           </div>
         )}
-
       </div>
     </div>
   );

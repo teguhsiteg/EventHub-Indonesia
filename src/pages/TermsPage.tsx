@@ -7,7 +7,7 @@ import app from '../config/firebase';
 
 const DEFAULT_TERMS = `# Syarat dan Ketentuan
 
-Berlaku untuk seluruh platform **RacePro** ("kami", "platform"). Dengan mendaftar, mengakses, atau menggunakan layanan ini, Anda ("Pengguna") menyetujui seluruh ketentuan berikut.
+Berlaku untuk seluruh platform **EventHub by Guwigo** ("kami", "platform"). Dengan mendaftar, mengakses, atau menggunakan layanan ini, Anda ("Pengguna") menyetujui seluruh ketentuan berikut.
 
 ---
 
@@ -15,7 +15,7 @@ Berlaku untuk seluruh platform **RacePro** ("kami", "platform"). Dengan mendafta
 
 | Istilah | Arti |
 |---------|------|
-| **Platform** | Sistem manajemen event RacePro yang diakses melalui web |
+| **Platform** | Sistem manajemen event EventHub by Guwigo yang diakses melalui web |
 | **Penyelenggara** | Pihak yang membuat dan mengelola event melalui platform |
 | **Peserta** | Individu yang mendaftar untuk mengikuti suatu event |
 | **Pengguna** | Seluruh pihak yang mengakses platform, termasuk Penyelenggara dan Peserta |
@@ -48,7 +48,7 @@ Berlaku untuk seluruh platform **RacePro** ("kami", "platform"). Dengan mendafta
 
 ## 5. Hak Kekayaan Intelektual
 
-5.1 Seluruh konten, desain, dan kode platform adalah milik **RacePro Indonesia**.
+5.1 Seluruh konten, desain, dan kode platform adalah milik **EventHub by Guwigo Indonesia**.
 
 5.2 Dilarang menyalin, memodifikasi, atau mendistribusikan ulang konten platform tanpa izin tertulis.
 
@@ -66,7 +66,7 @@ Berlaku untuk seluruh platform **RacePro** ("kami", "platform"). Dengan mendafta
 
 ---
 
-> *Ketentuan ini diperbarui terakhir: **Juli 2026** — Dikelola oleh **RacePro**.*`;
+> *Ketentuan ini diperbarui terakhir: **Juli 2026** — Dikelola oleh **EventHub by Guwigo**.*`;
 
 export const TermsPage: React.FC = () => {
   const [content, setContent] = useState('');
@@ -124,7 +124,7 @@ export const TermsPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 text-blue-500 dark:text-blue-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
             <FileBadge className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-            <span>RACEPRO — SYARAT & KETENTUAN</span>
+            <span>EventHub by Guwigo — SYARAT & KETENTUAN</span>
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight leading-[1.05]">
             Syarat & <br />
@@ -133,7 +133,7 @@ export const TermsPage: React.FC = () => {
             </span>
           </h1>
           <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-base mt-4 max-w-2xl leading-relaxed">
-            Dengan menggunakan platform RacePro, Anda menyetujui seluruh ketentuan yang tercantum di halaman ini. Harap baca dengan saksama sebelum mendaftar atau menggunakan layanan kami.
+            Dengan menggunakan platform EventHub by Guwigo, Anda menyetujui seluruh ketentuan yang tercantum di halaman ini. Harap baca dengan saksama sebelum mendaftar atau menggunakan layanan kami.
           </p>
         </div>
       </div>

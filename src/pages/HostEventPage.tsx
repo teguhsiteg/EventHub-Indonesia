@@ -42,7 +42,7 @@ export const HostEventPage: React.FC = () => {
       
       // WhatsApp notification redirect
       const adminPhone = '6281234567890'; // Default phone
-      const waMessage = `Halo Admin RacePro,
+      const waMessage = `Halo Admin EventHub by Guwigo,
 Saya telah mengirimkan formulir Permohonan Event baru.
 
 *Data EO & PIC*
@@ -83,7 +83,7 @@ Mohon untuk ditinjau. Terima kasih!`;
           </div>
           <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 uppercase">Permohonan Berhasil</h2>
           <p className="text-slate-600 dark:text-slate-400 text-sm mb-8">
-            Terima kasih telah mengajukan event Anda di RacePro. Formulir Anda telah kami terima dan tim kami akan segera menghubungi Anda untuk proses verifikasi selanjutnya.
+            Terima kasih telah mengajukan event Anda di EventHub by Guwigo. Formulir Anda telah kami terima dan tim kami akan segera menghubungi Anda untuk proses verifikasi selanjutnya.
           </p>
           <Link to="/" className="inline-block px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold rounded-xl transition-colors">
             Kembali ke Beranda
@@ -106,7 +106,7 @@ Mohon untuk ditinjau. Terima kasih!`;
             Selenggarakan <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-yellow-400">Event</span>
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-sm max-w-xl mx-auto">
-            Jadikan event olahraga Anda lebih profesional dengan manajemen registrasi, pembayaran, dan timing terintegrasi dari RacePro.
+            Jadikan event olahraga Anda lebih profesional dengan manajemen registrasi, pembayaran, dan timing terintegrasi dari EventHub by Guwigo.
           </p>
         </div>
 

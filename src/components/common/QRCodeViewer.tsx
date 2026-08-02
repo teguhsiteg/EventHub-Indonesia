@@ -64,7 +64,7 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500/20 to-yellow-500/20 border border-blue-500/20 flex items-center justify-center">
           <QrCode className="w-3.5 h-3.5" />
         </div>
-        <span>Token Verifikasi QR RacePro</span>
+        <span>Token Verifikasi QR EventHub by Guwigo</span>
       </div>
 
       {/* QR Code Canvas with Logo Overlay */}
@@ -72,7 +72,7 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
         <div className="relative inline-block flex justify-center items-center">
           <div ref={containerRef} className="block" />
           
-          {/* RacePro Logo Overlay */}
+          {/* EventHub by Guwigo Logo Overlay */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div 
               className="rounded-full bg-gradient-to-br from-blue-500 to-yellow-400 shadow-lg shadow-blue-500/30 flex items-center justify-center border-4 border-white"
@@ -92,7 +92,7 @@ export const QRCodeViewer: React.FC<QRCodeViewerProps> = ({
       {/* Validation Badge */}
       <div className="mt-4 flex items-center gap-2 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full">
         <ShieldCheck className="w-3.5 h-3.5" />
-        <span>Tervalidasi Sistem RacePro</span>
+        <span>Tervalidasi Sistem EventHub by Guwigo</span>
       </div>
 
       {/* Label */}
