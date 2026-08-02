@@ -21,9 +21,11 @@ import {
   MedicalAssessment, 
   RaceResult, 
   Certificate,
-  EventItem 
+  EventItem,
+  EventCategory 
 } from '../types';
 import { ETicketTemplate } from '../components/common/ETicketTemplate';
+import { QRCodeViewer } from '../components/common/QRCodeViewer';
 import * as htmlToImage from 'html-to-image';
 import { CertificateModal } from '../components/common/CertificateModal';
 import { 
@@ -280,7 +282,7 @@ export const ParticipantDashboardPage: React.FC = () => {
               <ETicketTemplate 
                 participant={participant} 
                 event={eventData} 
-                category={eventData.categories?.find((c: any) => c.id === participant.categoryId) || null} 
+                category={null} 
               />
             </div>
           </div>

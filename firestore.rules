@@ -18,17 +18,21 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      return isAuthenticated() && (
-        getUserData().role == 'SUPER_ADMIN' || 
-        getUserData().role == 'ADMIN'
-      );
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             (
+               getUserData().role == 'SUPER_ADMIN' || 
+               getUserData().role == 'ADMIN'
+             );
     }
     
     function isOrganizer() {
-      return isAuthenticated() && (
-        getUserData().role == 'ORGANIZER' || 
-        isAdmin()
-      );
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             (
+               getUserData().role == 'ORGANIZER' || 
+               isAdmin()
+             );
     }
 
     // ==========================================

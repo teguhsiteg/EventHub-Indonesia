@@ -17,7 +17,7 @@ import { submitOrUpdateRaceResult, getPublicRaceResults, deleteRaceResult } from
 import { updateUserRoleBySuperAdmin, banUserBySuperAdmin } from '../services/authService';
 import { updateSystemSettings } from '../services/settingsService';
 import { getEventRequests } from '../services/requestService';
-import { EventItem, Registration, Payment, EventCategory, UserRole, PayoutRequest, EventRequest, RaceResult } from '../types';
+import { EventItem, Registration, Payment, EventCategory, UserRole, PayoutRequest, EventRequest, RaceResult, UserProfile } from '../types';
 import { db } from '../config/firebase';
 import { collection, getDocs, query, limit } from 'firebase/firestore';
 import { CreateEventModal } from '../components/admin/CreateEventModal';
@@ -725,7 +725,9 @@ export const AdminDashboardPage: React.FC = () => {
                                   const reg = registrations.find(r => r.id === pay.registrationId);
                                   return (
                                     <div>
-                                      <p className="text-xs font-bold text-slate-900 dark:text-white">{reg?.participants?.[0]?.name || 'Peserta tidak dikenal'}</p>
+                                      <p className="text-xs font-bold text-slate-900 dark:text-white">
+                                        {reg ? (usersList.find(u => u.uid === reg.userId)?.displayName || reg.registrationNumber) : 'Peserta tidak dikenal'}
+                                      </p>
                                       <p className="text-[10px] font-mono text-slate-500">{pay.invoiceId}</p>
                                     </div>
                                   );

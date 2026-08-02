@@ -23,6 +23,10 @@ import {
   Sparkles,
   ArrowLeft,
   ShoppingCart,
+  MessageSquare,
+  Gift,
+  Search,
+  Star,
   CreditCard,
   Ticket,
   Users
@@ -388,7 +392,7 @@ export const EventDetailPage: React.FC = () => {
   const isAfterClose = nowDt > regEnd;
   const isRegistrationOpen = event.status === 'REGISTRATION_OPEN' && !isBeforeOpen && !isAfterClose;
 
-  let displayStatus = event.status;
+  let displayStatus: string = event.status;
   if (isBeforeOpen) displayStatus = 'Segera Hadir';
   else if (isAfterClose) displayStatus = 'Pendaftaran Ditutup';
   else if (event.status === 'REGISTRATION_OPEN') displayStatus = 'Pendaftaran Dibuka';
