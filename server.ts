@@ -88,10 +88,47 @@ setInterval(async () => {
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
+// Trust Cloudflare proxy — required for correct client IP & HTTPS detection
+app.set('trust proxy', true);
+
 app.use(express.json());
 
-// Set COOP header to fix Firebase Auth popup issue in dev
+// Cloudflare verification token route (TXT alternative)
+// Set CLOUDFLARE_VERIFY_TOKEN env var in Render dashboard
+const CLOUDFLARE_TOKEN = process.env.CLOUDFLARE_VERIFY_TOKEN || '';
+app.get('/.well-known/cloudflare-verify', (req, res) => {
+  if (CLOUDFLARE_TOKEN) {
+    res.type('text/plain').send(CLOUDFLARE_TOKEN);
+  } else {
+    res.status(404).send('not configured');
+  }
+});
+
+// Security headers + HTTPS redirect behind Cloudflare proxy
 app.use((req, res, next) => {
+  // HTTPS enforcement — Cloudflare sends X-Forwarded-Proto
+  const proto = req.headers['x-forwarded-proto'];
+  if (proto && proto !== 'https' && process.env.NODE_ENV === 'production') {
+    return res.redirect(301, `https://${req.hostname}${req.originalUrl}`);
+  }
+
+  // HSTS (only when HTTPS)
+  if (proto === 'https') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
+
+  // Cloudflare-compatible security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // Restore client IP from Cloudflare
+  const clientIP = req.headers['cf-connecting-ip'] as string;
+  if (clientIP) {
+    (req as any).clientIP = clientIP;
+  }
+
+  // COOP for Firebase Auth
   res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
   res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
   next();
