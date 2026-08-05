@@ -26,6 +26,7 @@ export interface RegistrationFormData {
   address: string;
   city: string;
   province: string;
+  district: string;
   bloodType: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | 'UNSPECIFIED';
   emergencyContactName: string;
   emergencyContactPhone: string;
@@ -178,6 +179,7 @@ export async function createRegistration(
       address: formData.address,
       city: formData.city,
       province: formData.province,
+      district: formData.district,
       bloodType: formData.bloodType,
       emergencyContactName: formData.emergencyContactName,
       emergencyContactPhone: formData.emergencyContactPhone,

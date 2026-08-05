@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { getEventBySlug, getEventCategories } from '../services/eventService';
 import { createRegistration, triggerTicketEmail } from '../services/registrationService';
 import { EventItem, EventCategory } from '../types';
+import { getProvinces, getCities, getDistricts } from '../data/indonesia-locations';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { auth, db } from '../config/firebase';
@@ -160,6 +161,7 @@ export const EventDetailPage: React.FC = () => {
           address: '', 
           city: '', 
           province: '',
+          district: '',
           bloodType: 'UNSPECIFIED', 
           emergencyContactName: '', 
           emergencyContactPhone: '', 
@@ -878,25 +880,58 @@ export const EventDetailPage: React.FC = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-600 dark:text-red-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Kota / Kabupaten *</label>
-                          <input id={`city-${index}`} list="cities-list" type="text" required value={data.city} onChange={(e) => handleFormChange(index, 'city', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition-all" />
-                          <datalist id="cities-list">
-                            <option value="Jakarta Pusat" /><option value="Jakarta Selatan" /><option value="Jakarta Barat" /><option value="Jakarta Timur" /><option value="Jakarta Utara" />
-                            <option value="Bandung" /><option value="Kab. Bandung" /><option value="Surabaya" /><option value="Semarang" /><option value="Medan" /><option value="Makassar" /><option value="Denpasar" /><option value="Yogyakarta" />
-                            <option value="Bogor" /><option value="Kab. Bogor" /><option value="Depok" /><option value="Tangerang" /><option value="Kab. Tangerang" /><option value="Bekasi" /><option value="Kab. Bekasi" /><option value="Palembang" /><option value="Balikpapan" /><option value="Malang" /><option value="Kab. Malang" />
-                          </datalist>
+                          <label className="block text-slate-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Provinsi *</label>
+                          <select 
+                            id={`province-${index}`} 
+                            required 
+                            value={data.province} 
+                            onChange={(e) => {
+                              handleFormChange(index, 'province', e.target.value);
+                              handleFormChange(index, 'city', '');
+                              handleFormChange(index, 'district', '');
+                            }}
+                            className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition-all"
+                          >
+                            <option value="">Pilih Provinsi</option>
+                            {getProvinces().map(p => (
+                              <option key={p} value={p}>{p}</option>
+                            ))}
+                          </select>
                         </div>
                         <div>
-                          <label className="block text-slate-600 dark:text-red-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Provinsi *</label>
-                          <input id={`province-${index}`} list="provinces-list" type="text" required value={data.province} onChange={(e) => handleFormChange(index, 'province', e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white placeholder-slate-500 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition-all" />
-                          <datalist id="provinces-list">
-                            <option value="Aceh" /><option value="Sumatera Utara" /><option value="Sumatera Barat" /><option value="Riau" /><option value="Jambi" /><option value="Sumatera Selatan" /><option value="Bengkulu" /><option value="Lampung" /><option value="Kepulauan Bangka Belitung" /><option value="Kepulauan Riau" />
-                            <option value="DKI Jakarta" /><option value="Jawa Barat" /><option value="Jawa Tengah" /><option value="DI Yogyakarta" /><option value="Jawa Timur" /><option value="Banten" />
-                            <option value="Bali" /><option value="Nusa Tenggara Barat" /><option value="Nusa Tenggara Timur" />
-                            <option value="Kalimantan Barat" /><option value="Kalimantan Tengah" /><option value="Kalimantan Selatan" /><option value="Kalimantan Timur" /><option value="Kalimantan Utara" />
-                            <option value="Sulawesi Utara" /><option value="Sulawesi Tengah" /><option value="Sulawesi Selatan" /><option value="Sulawesi Tenggara" /><option value="Gorontalo" /><option value="Sulawesi Barat" />
-                            <option value="Maluku" /><option value="Maluku Utara" /><option value="Papua Barat" /><option value="Papua" /><option value="Papua Selatan" /><option value="Papua Tengah" /><option value="Papua Pegunungan" />
-                          </datalist>
+                          <label className="block text-slate-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Kota / Kabupaten *</label>
+                          <select 
+                            id={`city-${index}`} 
+                            required 
+                            value={data.city} 
+                            disabled={!data.province}
+                            onChange={(e) => {
+                              handleFormChange(index, 'city', e.target.value);
+                              handleFormChange(index, 'district', '');
+                            }}
+                            className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition-all disabled:opacity-50"
+                          >
+                            <option value="">{data.province ? 'Pilih Kota/Kabupaten' : 'Pilih Provinsi dulu'}</option>
+                            {data.province && getCities(data.province).map(c => (
+                              <option key={c.name} value={c.name}>{c.type} {c.name}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-slate-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-wide mb-1.5">Kecamatan *</label>
+                          <select 
+                            id={`district-${index}`} 
+                            required 
+                            value={data.district} 
+                            disabled={!data.city}
+                            onChange={(e) => handleFormChange(index, 'district', e.target.value)}
+                            className="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/50 rounded-xl p-3 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition-all disabled:opacity-50"
+                          >
+                            <option value="">{data.city ? 'Pilih Kecamatan' : 'Pilih Kota dulu'}</option>
+                            {data.province && data.city && getDistricts(data.province, data.city).map(d => (
+                              <option key={d} value={d}>{d}</option>
+                            ))}
+                          </select>
                         </div>
 
                         <div className="sm:col-span-2 pt-6 border-t border-slate-300 dark:border-slate-700/50">
@@ -1328,6 +1363,7 @@ export const EventDetailPage: React.FC = () => {
                           if (!d.address) { invalidFieldId = `address-${i}`; break; }
                           if (!d.city) { invalidFieldId = `city-${i}`; break; }
                           if (!d.province) { invalidFieldId = `province-${i}`; break; }
+                          if (!d.district) { invalidFieldId = `district-${i}`; break; }
                           if (!d.emergencyContactName) { invalidFieldId = `emergencyContactName-${i}`; break; }
                           if (!d.emergencyContactPhone) { invalidFieldId = `emergencyContactPhone-${i}`; break; }
                           if (!d.emergencyContactRelation) { invalidFieldId = `emergencyContactRelation-${i}`; break; }
