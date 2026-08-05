@@ -142,6 +142,36 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', app: 'Guwigo Indonesia Platform API', timestamp: new Date().toISOString() });
 });
 
+// 1.5 AI Chat Assistant (Gemini)
+const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
+app.post('/api/chat', async (req: Request, res: Response) => {
+  const { message } = req.body;
+  if (!message) return res.status(400).json({ error: 'message required' });
+  if (!GEMINI_KEY) return res.status(503).json({ error: 'AI assistant not configured' });
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `Kamu adalah asisten virtual Guwigo Events, platform event olahraga terdepan di Indonesia. Bantu pelanggan dengan ramah dalam Bahasa Indonesia. Jawab singkat dan helpful.\n\nPelanggan: ${message}`
+            }]
+          }]
+        })
+      }
+    );
+    const data = await response.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Maaf, saya tidak bisa menjawab saat ini.';
+    res.json({ reply });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // 2. Service Abstraction: OAuth2 Endpoint Info
 app.get('/api/auth/oauth2/authorize', (req: Request, res: Response) => {
   res.json({ 

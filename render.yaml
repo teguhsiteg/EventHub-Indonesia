@@ -35,3 +35,5 @@ services:
         sync: false
       - key: CLOUDFLARE_VERIFY_TOKEN
         sync: false
+      - key: GEMINI_API_KEY
+        sync: false

@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { ToastContainer } from '../common/ToastContainer';
+import { ChatWidget } from '../common/ChatWidget';
 import { AutoLogout } from '../auth/AutoLogout';
 
 interface PublicLayoutProps {
@@ -17,6 +18,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
       </main>
       <Footer />
       <ToastContainer />
+      <ChatWidget />
       <AutoLogout />
     </div>
   );
