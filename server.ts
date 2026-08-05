@@ -107,8 +107,9 @@ app.get('/.well-known/cloudflare-verify', (req, res) => {
 // Security headers + HTTPS redirect behind Cloudflare proxy
 app.use((req, res, next) => {
   // HTTPS enforcement — Cloudflare sends X-Forwarded-Proto
+  // Only redirect browser page loads (GET/HEAD), never API calls (POST etc)
   const proto = req.headers['x-forwarded-proto'];
-  if (proto && proto !== 'https' && process.env.NODE_ENV === 'production') {
+  if (proto && proto !== 'https' && process.env.NODE_ENV === 'production' && req.method === 'GET') {
     return res.redirect(301, `https://${req.hostname}${req.originalUrl}`);
   }
 
