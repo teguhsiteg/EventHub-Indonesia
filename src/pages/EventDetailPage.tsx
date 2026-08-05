@@ -46,7 +46,7 @@ export const EventDetailPage: React.FC = () => {
   const [specialVoucherCode, setSpecialVoucherCode] = useState('');
   const [promoCode, setPromoCode] = useState('');
   const [timeLeft, setTimeLeft] = useState<number>(15 * 60);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('QRIS');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
 
   const [tempUserId, setTempUserId] = useState<string | null>(null);
 
@@ -1024,21 +1024,76 @@ export const EventDetailPage: React.FC = () => {
                     Pilih Metode Pembayaran
                   </h3>
                   
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-                    {['QRIS', 'VA BCA', 'VA Mandiri', 'VA BNI', 'VA BRI', 'OVO', 'GoPay', 'ShopeePay'].map((method) => (
+                  {/* Metode Pembayaran — dinamis berdasarkan konfigurasi admin */}
+                  <div className="space-y-4 mb-8">
+                    {/* Payment Gateway (Midtrans) — hanya muncul jika admin mengaktifkan */}
+                    {settings?.paymentGatewayConfigured ? (
                       <button
-                        key={method}
                         type="button"
-                        onClick={() => setSelectedPaymentMethod(method)}
-                        className={`p-3 rounded-xl border text-xs font-bold uppercase transition-all flex flex-col items-center justify-center gap-2 ${
-                          selectedPaymentMethod === method 
-                            ? 'bg-blue-500/10 border-blue-500 text--600 dark:text--400' 
-                            : 'bg-slate-100 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700/50 text-slate-500 hover:border-blue-500/50'
+                        onClick={() => setSelectedPaymentMethod('MIDTRANS')}
+                        className={`w-full p-5 rounded-xl border text-left transition-all flex items-center gap-4 ${
+                          selectedPaymentMethod === 'MIDTRANS'
+                            ? 'bg-blue-500/10 border-blue-500 shadow-lg shadow-blue-500/10'
+                            : 'bg-slate-100 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700/50 hover:border-blue-500/50'
                         }`}
                       >
-                        {method}
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                          selectedPaymentMethod === 'MIDTRANS' ? 'border-blue-500' : 'border-slate-400'
+                        }`}>
+                          {selectedPaymentMethod === 'MIDTRANS' && <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white uppercase">
+                            Pembayaran Otomatis {settings?.paymentGatewayName ? `(${settings.paymentGatewayName})` : ''}
+                          </p>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Bayar via QRIS, Virtual Account, GoPay, ShopeePay, dan lainnya — diproses otomatis
+                          </p>
+                        </div>
+                        <CreditCard className={`w-6 h-6 shrink-0 ${selectedPaymentMethod === 'MIDTRANS' ? 'text-blue-500' : 'text-slate-400'}`} />
                       </button>
-                    ))}
+                    ) : (
+                      <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-slate-300 dark:border-slate-700/50 text-center">
+                        <p className="text-xs text-slate-500">Payment gateway belum dikonfigurasi oleh admin.</p>
+                      </div>
+                    )}
+
+                    {/* Transfer Manual — hanya muncul jika admin mengisi data bank */}
+                    {settings?.manualPaymentBank && settings?.manualPaymentAccount ? (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedPaymentMethod('MANUAL_TRANSFER')}
+                        className={`w-full p-5 rounded-xl border text-left transition-all flex items-center gap-4 ${
+                          selectedPaymentMethod === 'MANUAL_TRANSFER'
+                            ? 'bg-blue-500/10 border-blue-500 shadow-lg shadow-blue-500/10'
+                            : 'bg-slate-100 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700/50 hover:border-blue-500/50'
+                        }`}
+                      >
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                          selectedPaymentMethod === 'MANUAL_TRANSFER' ? 'border-blue-500' : 'border-slate-400'
+                        }`}>
+                          {selectedPaymentMethod === 'MANUAL_TRANSFER' && <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white uppercase">
+                            Transfer Manual — {settings.manualPaymentBank}
+                          </p>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            {settings.manualPaymentName} • {settings.manualPaymentAccount}
+                          </p>
+                          <p className="text-[10px] text-slate-400 mt-1">
+                            Transfer ke rekening di atas, lalu upload bukti pembayaran
+                          </p>
+                        </div>
+                        <svg className={`w-6 h-6 shrink-0 ${selectedPaymentMethod === 'MANUAL_TRANSFER' ? 'text-blue-500' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                        </svg>
+                      </button>
+                    ) : (
+                      <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-slate-300 dark:border-slate-700/50 text-center">
+                        <p className="text-xs text-slate-500">Metode transfer manual belum dikonfigurasi oleh admin.</p>
+                      </div>
+                    )}
                   </div>
 
                   <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase flex items-center gap-3 mb-6 border-t border-slate-300 dark:border-slate-800 pt-6">
@@ -1062,10 +1117,13 @@ export const EventDetailPage: React.FC = () => {
                     </span>
                   </label>
                   
-                  {event?.paymentType === 'WEB' && selectedPaymentMethod === 'QRIS' && (
-                    <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl mt-6">
-                      <p className="text-xs font-bold text--600 dark:text--400">Info Pembayaran QRIS</p>
-                      <p className="text-[11px] text--600 dark:text--400 mt-1">Bayar via QRIS — matikan mode gelap agar QR code terlihat jelas saat di-scan.</p>
+                  {selectedPaymentMethod === 'MIDTRANS' && (
+                    <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl mt-6">
+                      <p className="text-xs font-bold text-blue-600 dark:text-blue-400">Info Pembayaran Otomatis</p>
+                      <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1">
+                        Anda akan diarahkan ke halaman pembayaran {settings?.paymentGatewayName || 'Midtrans'} setelah klik Bayar Sekarang. 
+                        Tersedia QRIS, Virtual Account, GoPay, ShopeePay, dan kartu kredit/debit.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -1201,41 +1259,6 @@ export const EventDetailPage: React.FC = () => {
                           </div>
                         )}
 
-                        {checkoutStep === 4 && (
-                          <div className="pt-4 border-t border-slate-300 dark:border-slate-800">
-                            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase mb-3">Metode Pembayaran</h4>
-                            <div className="space-y-2">
-                              {settings?.paymentGatewayConfigured && (
-                                <label 
-                                  onClick={() => setSelectedPaymentMethod('MIDTRANS')}
-                                  className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-all ${selectedPaymentMethod === 'MIDTRANS' ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10' : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'}`}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedPaymentMethod === 'MIDTRANS' ? 'border-blue-500' : 'border-slate-300'}`}>
-                                      {selectedPaymentMethod === 'MIDTRANS' && <div className="w-2 h-2 rounded-full bg-blue-500" />}
-                                    </div>
-                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Otomatis (Midtrans)</span>
-                                  </div>
-                                  <CreditCard className={`w-5 h-5 ${selectedPaymentMethod === 'MIDTRANS' ? 'text-blue-500' : 'text--600 dark:text--400'}`} />
-                                </label>
-                              )}
-                              {settings?.manualPaymentBank && (
-                                <label 
-                                  onClick={() => setSelectedPaymentMethod('MANUAL_TRANSFER')}
-                                  className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-all ${selectedPaymentMethod === 'MANUAL_TRANSFER' ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10' : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'}`}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedPaymentMethod === 'MANUAL_TRANSFER' ? 'border-blue-500' : 'border-slate-300'}`}>
-                                      {selectedPaymentMethod === 'MANUAL_TRANSFER' && <div className="w-2 h-2 rounded-full bg-blue-500" />}
-                                    </div>
-                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Transfer Manual ({settings.manualPaymentBank})</span>
-                                  </div>
-                                  <svg className={`w-5 h-5 ${selectedPaymentMethod === 'MANUAL_TRANSFER' ? 'text-blue-500' : 'text--600 dark:text--400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
-                                </label>
-                              )}
-                            </div>
-                          </div>
-                        )}
                         {checkoutStep === 4 && (
                           <div className="pt-3 border-t border-slate-300 dark:border-slate-800">
                             <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Promo <span className="normal-case font-normal">(opsional)</span></label>

@@ -11,7 +11,14 @@ import { getFirestore } from 'firebase-admin/firestore';
 const serviceAccountPath = path.join(process.cwd(), 'profilcode-firebase-adminsdk-fbsvc-79c6afa1de.json');
 let db: FirebaseFirestore.Firestore;
 try {
-  const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+  let serviceAccount: any;
+  if (fs.existsSync(serviceAccountPath)) {
+    serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+  } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  } else {
+    throw new Error('No Firebase service account found. Set FIREBASE_SERVICE_ACCOUNT env var or place JSON file.');
+  }
   initializeApp({
     credential: cert(serviceAccount)
   });
@@ -20,6 +27,17 @@ try {
 } catch (err) {
   console.error('Failed to initialize Firebase Admin:', err);
 }
+
+// Email Transporter (shared across all email endpoints)
+const EMAIL_USER = process.env.GMAIL_USER || 'parthner@guwigo.com';
+const EMAIL_PASS = process.env.GMAIL_APP_PASSWORD || '';
+const emailTransporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: EMAIL_USER,
+    pass: EMAIL_PASS
+  }
+});
 
 // Automated Cleanup Job for Unverified Users (Runs every hour)
 const CLEANUP_INTERVAL = 60 * 60 * 1000; // 1 hour
@@ -68,7 +86,7 @@ setInterval(async () => {
 }, CLEANUP_INTERVAL);
 
 const app = express();
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 
 app.use(express.json());
 
@@ -164,7 +182,8 @@ app.post('/api/payment/auto-verify', async (req: Request, res: Response) => {
     // Generate BIBs
     const participantsByCategory: any = {};
     partSnap.forEach(d => {
-      const p = { id: d.id, ...d.data() };
+      const data = d.data() as any;
+      const p = { id: d.id, ...data };
       if (!participantsByCategory[p.categoryId]) participantsByCategory[p.categoryId] = [];
       participantsByCategory[p.categoryId].push(p);
     });
@@ -358,15 +377,7 @@ app.post('/api/notifications/send-registration-email', async (req: Request, res:
   `;
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'parthner@guwigo.com',
-        pass: 'iiwh kcgf bkdo kxop'
-      }
-    });
-
-    const info = await transporter.sendMail({
+    const info = await emailTransporter.sendMail({
       from: '"GuwiGo Events" <parthner@guwigo.com>',
       to: recipientEmail,
       subject: `[GuwiGo] Konfirmasi Pendaftaran: ${eventName} (${bibNumber || 'PENDING'})`,
@@ -452,15 +463,7 @@ app.post('/api/auth/send-reset-password', async (req: Request, res: Response) =>
       </html>
     `;
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'parthner@guwigo.com',
-        pass: 'iiwh kcgf bkdo kxop' // NOTE: in production, this should be an env variable
-      }
-    });
-
-    const info = await transporter.sendMail({
+    const info = await emailTransporter.sendMail({
       from: '"GuwiGo Events" <parthner@guwigo.com>',
       to: email,
       subject: '[GuwiGo] Atur Ulang Kata Sandi Akun Anda',
@@ -532,15 +535,7 @@ app.post('/api/auth/send-verification-email', async (req: Request, res: Response
       </html>
     `;
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'parthner@guwigo.com',
-        pass: 'iiwh kcgf bkdo kxop' // NOTE: in production, this should be an env variable
-      }
-    });
-
-    const info = await transporter.sendMail({
+    const info = await emailTransporter.sendMail({
       from: '"GuwiGo Events" <parthner@guwigo.com>',
       to: email,
       subject: '[GuwiGo] Verifikasi Alamat Email Anda',

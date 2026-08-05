@@ -209,7 +209,7 @@ export interface Participant {
   updatedAt: string;
 }
 
-export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'EXPIRED' | 'REFUNDED';
+export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'EXPIRED' | 'REFUNDED' | 'VERIFIED' | 'PAYMENT_REVIEW';
 
 export interface Payment {
   id: string;

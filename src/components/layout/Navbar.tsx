@@ -20,9 +20,17 @@ export const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Scroll detection
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -44,7 +52,7 @@ export const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const roleLabel = isAdmin ? 'Admin' : isOrganizer ? 'Penyelenggara' : 'Peserta';
-  const roleGradient = isAdmin ? 'from-yellow-400 to-blue-500' : isOrganizer ? 'from-blue-400 to-yellow-500' : 'from-slate-400 to-slate-500';
+  const roleGradient = isAdmin ? 'from-amber-400 to-red-500' : isOrganizer ? 'from-red-400 to-amber-500' : 'from-gray-400 to-gray-500';
 
   const navLinks = [
     { path: '/', label: 'Beranda' },
@@ -55,35 +63,41 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/85 dark:bg-[#0B0F14]/85 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm' 
+          : 'bg-transparent border-b border-transparent'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 md:h-20">
 
           {/* Brand */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0">
-            <div className="relative w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
-               <Trophy className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />
-            </div>
-            <div className="leading-tight flex flex-col justify-center">
-              <span className="text-xl font-black tracking-tight text-slate-900">
-                Event<span className="text-blue-600">Hub</span>
-              </span>
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
-                by Guwigo
+          <Link to="/" className="flex items-center gap-2 group shrink-0">
+            <div className="w-auto h-10 flex items-center group-hover:scale-105 transition-transform">
+              <span className="font-display text-2xl tracking-wider text-white dark:text-white"
+                style={{ textShadow: scrolled ? 'none' : '0 2px 8px rgba(0,0,0,0.3)' }}>
+                <span className={scrolled ? 'text-red-600 dark:text-amber-400' : 'text-white'}>
+                  GUWIGO
+                </span>
+                <span className={scrolled ? 'text-gray-800 dark:text-white' : 'text-white/90'}>
+                  EVENTS
+                </span>
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Pills */}
-          <nav className="hidden md:flex items-center gap-1 bg-slate-50/80 p-1.5 rounded-full border border-slate-100 backdrop-blur-md">
+          <nav className="hidden md:flex items-center gap-1 bg-white/10 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-white/20 dark:border-white/10">
             {navLinks.map(link => (
               <Link
                 key={link.path}
                 to={link.path}
                 className={`relative px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
                   isActive(link.path) 
-                    ? 'text-blue-600 bg-white shadow-sm' 
-                    : 'text-slate-500 hover:text-slate-900 hover:bg-white/50'
+                    ? 'text-red-600 dark:text-amber-400 bg-white dark:bg-gray-800 shadow-sm' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-amber-400'
                 }`}
               >
                 <span className="relative z-10">{link.label}</span>
@@ -92,77 +106,75 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* Right Controls */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-amber-400" />
+              ) : (
+                <Moon className="w-5 h-5 text-gray-600" />
+              )}
+            </button>
 
             {user ? (
               <div className="flex items-center gap-3">
-                {/* Admin/Organizer badge */}
                 {(isAdmin || isOrganizer) && (
                   <Link
                     to="/admin"
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 text-blue-600 text-xs font-bold hover:bg-blue-100 transition-all duration-300"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-amber-400 text-xs font-bold hover:bg-red-100 dark:hover:bg-red-900/40 transition"
                   >
                     <ShieldAlert className="w-4 h-4" />
                     <span>Admin</span>
                   </Link>
                 )}
 
-                {/* User Menu */}
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 shadow-sm transition-all duration-300 group"
+                    className="flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-amber-500/30 shadow-sm transition-all group"
                   >
                     <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${roleGradient} flex items-center justify-center text-xs font-bold text-white shadow-sm`}>
                       {user.displayName?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
                     </div>
-                    <span className="text-sm font-bold text-slate-700 max-w-[120px] truncate hidden lg:block">
+                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300 max-w-[120px] truncate hidden lg:block">
                       {user.displayName}
                     </span>
-                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
                   </button>
 
-                  {/* Dropdown */}
                   {userMenuOpen && (
-                    <div className="absolute right-0 mt-3 w-64 rounded-3xl bg-white border border-slate-100 shadow-elegant overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                      {/* User info */}
-                      <div className="px-5 py-4 border-b border-slate-50 bg-slate-50/50">
-                        <p className="text-sm font-bold text-slate-900 truncate">{user.displayName}</p>
-                        <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
-                        <span className={`inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white border border-slate-200 text-slate-600`}>
+                    <div className="absolute right-0 mt-3 w-64 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 shadow-elegant overflow-hidden z-50">
+                      <div className="px-5 py-4 border-b border-gray-50 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                        <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user.displayName}</p>
+                        <p className="text-xs text-gray-500 truncate mt-0.5">{user.email}</p>
+                        <span className="inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400">
                           {roleLabel}
                         </span>
                       </div>
 
-                      {/* Links */}
                       <div className="py-1">
                         {isAdmin || isOrganizer ? (
-                          <Link
-                            to="/admin"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-600 dark:text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.04] hover:text-slate-900 dark:hover:text-white transition-colors"
-                          >
-                            <ShieldAlert className="w-4 h-4 text-yellow-400" />
+                          <Link to="/admin" onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors">
+                            <ShieldAlert className="w-4 h-4 text-amber-400" />
                             Panel Admin
                           </Link>
                         ) : (
-                          <Link
-                            to="/dashboard"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-600 dark:text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.04] hover:text-slate-900 dark:hover:text-white transition-colors"
-                          >
-                            <Medal className="w-4 h-4 text-blue-400" />
+                          <Link to="/dashboard" onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors">
+                            <Medal className="w-4 h-4 text-red-400" />
                             Dashboard Saya
                           </Link>
                         )}
                       </div>
 
-                      {/* Logout */}
-                      <div className="border-t border-slate-200 dark:border-white/[0.06] py-1">
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400 transition-colors"
-                        >
+                      <div className="border-t border-gray-100 dark:border-gray-800 py-1">
+                        <button onClick={handleLogout}
+                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400 transition-colors">
                           <LogOut className="w-4 h-4" />
                           Keluar
                         </button>
@@ -173,18 +185,13 @@ export const Navbar: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link
-                  to="/login"
-                  className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 dark:text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/[0.04] transition-all duration-300"
-                >
+                <Link to="/login"
+                  className="px-4 py-2 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition">
                   Masuk
                 </Link>
-                <Link
-                  to="/register"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold shadow-lg shadow-blue-500/20 transition-all duration-300"
-                >
+                <Link to="/register"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-semibold shadow-lg shadow-red-500/30 hover:shadow-red-500/50 hover:scale-105 transition">
                   <span>Daftar</span>
-                  <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
                 </Link>
               </div>
             )}
@@ -192,20 +199,12 @@ export const Navbar: React.FC = () => {
 
           {/* Mobile buttons */}
           <div className="md:hidden flex items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              title={theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}
-              aria-label="Ganti Tema"
-              className="p-2 rounded-lg bg-slate-100/50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06] text-slate-500 dark:text-slate-500 dark:text-slate-400"
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4" />}
+            <button onClick={toggleTheme} aria-label="Toggle theme"
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
             </button>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-slate-100/50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06] text-slate-600 dark:text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
@@ -214,24 +213,20 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white/95 dark:bg-blue-950/95 backdrop-blur-xl border-b border-slate-200 dark:border-white/[0.06] animate-in slide-in-from-top-2 duration-200">
-          <div className="px-4 pt-2 pb-5 space-y-1">
+        <div className="md:hidden bg-white dark:bg-[#0B0F14] border-t border-gray-100 dark:border-gray-800">
+          <div className="px-4 py-4 space-y-2">
             {navLinks.map(link => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              <Link key={link.path} to={link.path} onClick={() => setMobileMenuOpen(false)}
+                className={`block py-2.5 px-4 rounded-xl text-sm font-medium transition ${
                   isActive(link.path)
-                    ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
-                    : 'text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/[0.03]'
-                }`}
-              >
+                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-amber-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                }`}>
                 {link.label}
               </Link>
             ))}
 
-            <div className="pt-3 mt-3 border-t border-slate-200 dark:border-white/[0.06] space-y-2">
+            <div className="pt-3 mt-3 border-t border-gray-100 dark:border-gray-800 space-y-2">
               {user ? (
                 <>
                   <div className="flex items-center gap-3 px-4 py-2">
@@ -239,52 +234,35 @@ export const Navbar: React.FC = () => {
                       {user.displayName?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">{user.displayName}</p>
-                      <p className="text-[10px] text-slate-500">{user.email}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{user.displayName}</p>
+                      <p className="text-[10px] text-gray-500">{user.email}</p>
                     </div>
                   </div>
                   {(isAdmin || isOrganizer) && (
-                    <Link
-                      to="/admin"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 border border-yellow-500/20"
-                    >
-                      <ShieldAlert className="w-4 h-4" />
-                      Panel Admin
+                    <Link to="/admin" onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-amber-400 bg-red-50 dark:bg-red-900/20">
+                      <ShieldAlert className="w-4 h-4" /> Panel Admin
                     </Link>
                   )}
                   {isParticipant && !isAdmin && !isOrganizer && (
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-500/10 border border-blue-500/20"
-                    >
-                      <Medal className="w-4 h-4" />
-                      Dashboard Saya
+                    <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-amber-400 bg-red-50 dark:bg-red-900/20">
+                      <Medal className="w-4 h-4" /> Dashboard Saya
                     </Link>
                   )}
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Keluar
+                  <button onClick={handleLogout}
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                    <LogOut className="w-4 h-4" /> Keluar
                   </button>
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-600 dark:text-slate-300 bg-white/[0.04] border border-slate-200 dark:border-white/[0.06]"
-                  >
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
                     Masuk
                   </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-500/20 transition-colors"
-                  >
+                  <Link to="/register" onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-center py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-red-700 shadow-lg shadow-red-500/30">
                     Daftar Akun
                   </Link>
                 </>

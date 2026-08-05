@@ -6,7 +6,7 @@ interface PaymentActionModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode: 'VIEW' | 'EDIT';
-  payment: Payment;
+  payment: Payment & { status: string };
   registration?: Registration;
   participantName: string;
   onUpdate: (paymentId: string, updates: Partial<Payment>) => Promise<void>;

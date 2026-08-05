@@ -105,6 +105,7 @@ export const AdminDashboardPage: React.FC = () => {
       | "payments"
       | "payouts"
       | "results"
+      | "participants"
       | "users"
       | "settings") || "stats";
   // Data States
@@ -503,11 +504,11 @@ export const AdminDashboardPage: React.FC = () => {
   ) => {
     try {
       await updateCheckInStatusAdmin(participantId, !currentStatus);
-      addNotification(`Status RPC peserta berhasil diperbarui.`, 'success');
+      addNotification('success', 'Status RPC', 'Status RPC peserta berhasil diperbarui.');
       await loadAdminData();
     } catch (e) {
       console.error(e);
-      addNotification('Gagal mengupdate status RPC peserta', 'error');
+      addNotification('error', 'Gagal', 'Gagal mengupdate status RPC peserta');
     }
   };
 

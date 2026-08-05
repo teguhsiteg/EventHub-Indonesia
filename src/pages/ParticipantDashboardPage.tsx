@@ -44,7 +44,8 @@ import {
   User,
   Bell,
   AlertTriangle,
-  Download
+  Download,
+  X
 } from 'lucide-react';
 
 export const ParticipantDashboardPage: React.FC = () => {

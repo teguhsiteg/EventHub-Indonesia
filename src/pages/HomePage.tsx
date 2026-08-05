@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getPublicEvents } from '../services/eventService';
 import { getSponsors } from '../services/settingsService';
@@ -8,13 +8,45 @@ import {
   Calendar, 
   MapPin, 
   ChevronRight, 
-  ArrowRight
+  ArrowRight,
+  Users,
+  Medal,
+  Flag,
+  Sparkles,
+  Clock
 } from 'lucide-react';
+
+// Inline IntersectionObserver for scroll reveal
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('in-view');
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    // Also observe all .reveal children
+    el.querySelectorAll('.reveal:not(.in-view)').forEach(c => observer.observe(c));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
 
 export const HomePage: React.FC = () => {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
   const [loading, setLoading] = useState(true);
+  const heroRef = useScrollReveal();
+  const featuresRef = useScrollReveal();
+  const eventsRef = useScrollReveal();
+  const ctaRef = useScrollReveal();
 
   useEffect(() => {
     async function loadHomeData() {
@@ -33,72 +65,110 @@ export const HomePage: React.FC = () => {
   }, []);
 
   const featuredEvents = events.slice(0, 6);
+  const upcomingEvents = events.filter(e => e.status === 'REGISTRATION_OPEN').slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-white text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-white dark:bg-[#0B0F14] text-slate-800 dark:text-gray-200 flex flex-col font-sans antialiased">
 
-      {/* HERO SECTION */}
-      <section className="relative pt-32 pb-32 md:pt-48 md:pb-40 overflow-hidden bg-white">
-        
-        {/* Elegant Soft Blue Glows (Ticketly Style) */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
-          <div className="absolute top-0 w-[800px] h-[800px] bg-gradient-to-b from-blue-400/40 via-blue-200/20 to-transparent blur-[120px] rounded-full" />
-          <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-blue-100/40 blur-[100px] rounded-full" />
-          <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-blue-100/40 blur-[100px] rounded-full" />
+      {/* ===== HERO SECTION ===== */}
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-16">
+        {/* Background image */}
+        <div className="absolute inset-0 -z-30">
+          <img 
+            src="https://images.unsplash.com/photo-1552674605-15c82513bb15?auto=format&fit=crop&w=1920&q=80" 
+            alt="Guwigo Events" 
+            className="w-full h-full object-cover brightness-75 saturate-150"
+          />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <div className="max-w-4xl mx-auto space-y-8">
-            
-            {/* Pill Badge */}
-            <div className="inline-flex items-center justify-center">
-              <div className="px-5 py-2 rounded-full bg-blue-50/80 border border-blue-100 text-blue-600 text-[11px] font-bold uppercase tracking-wider shadow-sm">
-                World no. 1 event ticket platform
-              </div>
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-red-900/35 to-black/60 -z-20" />
+        <div className="absolute inset-0 hero-grid-pattern -z-10 opacity-10" />
+
+        {/* Glow orbs */}
+        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl animate-pulse-soft -z-10" />
+        <div className="absolute bottom-1/4 -left-32 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-float -z-10" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20" ref={heroRef}>
+          <div className="text-center text-white">
+            {/* Pill badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 reveal">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-xs font-semibold tracking-wider uppercase">
+                Platform Event Olahraga Terdepan di Indonesia
+              </span>
             </div>
 
-            {/* Main headline */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-slate-900 tracking-tight leading-[1.15]">
-              Convenience for Yourself to <br className="hidden md:block"/>
-              Get Ticket Events!
+            <h1 className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-wider mb-4 reveal">
+              GUWIGO EVENTS
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-slate-500 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto font-medium">
-              EventHub by Guwigo is a platform that provides online event ticket sales, already widely used in various regions.
+            <p className="text-xl md:text-2xl font-light mb-2 reveal text-white/90">
+              Lebih dari Sekadar Lomba
+            </p>
+            <p className="text-base md:text-lg text-white/70 max-w-2xl mx-auto mb-10 reveal">
+              Temukan event lari, triathlon, dan olahraga terbaik di Indonesia. Daftar mudah, 
+              pembayaran aman, dan nikmati pengalaman event yang tak terlupakan.
             </p>
 
-            {/* Hero CTAs */}
-            <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 reveal">
               <Link
                 to="/events"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white text-blue-600 font-bold text-sm tracking-wide shadow-elegant hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-amber-500 text-red-900 font-bold text-base shadow-xl shadow-amber-500/30 hover:bg-amber-400 hover:scale-105 transition"
               >
-                <span>Download Apps</span>
-                <ArrowRight className="w-4 h-4 -rotate-45" />
+                <Flag className="w-5 h-5" />
+                Jelajahi Event
               </Link>
               <Link
                 to="/about"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-transparent border border-blue-200 text-blue-600 font-bold text-sm tracking-wide hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white/10 backdrop-blur-md border border-white/30 text-white font-semibold hover:bg-white/20 transition"
               >
-                <span>Learn More</span>
+                <Sparkles className="w-5 h-5" />
+                Tentang Kami
               </Link>
+            </div>
+
+            {/* Stats row */}
+            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12 reveal">
+              {[
+                { icon: Users, value: '1000+', label: 'Peserta' },
+                { icon: Flag, value: '50+', label: 'Event' },
+                { icon: Medal, value: '25+', label: 'Kota' },
+                { icon: Trophy, value: '4.9', label: 'Rating' },
+              ].map((stat, i) => (
+                <div key={i} className="text-center">
+                  <stat.icon className="w-5 h-5 text-amber-400 mx-auto mb-2" />
+                  <p className="font-display text-3xl md:text-4xl tracking-wider">{stat.value}</p>
+                  <p className="text-xs text-white/60 uppercase tracking-wider">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
+
+        {/* Wave divider */}
+        <div className="absolute bottom-0 left-0 right-0 -z-0">
+          <svg viewBox="0 0 1440 120" className="w-full h-auto fill-white dark:fill-[#0B0F14] transition-colors duration-300">
+            <path d="M0,64L60,69.3C120,75,240,85,360,80C480,75,600,53,720,48C840,43,960,53,1080,64C1200,75,1320,85,1380,90.7L1440,96L1440,120L0,120Z" />
+          </svg>
+        </div>
       </section>
 
-      {/* SPONSOR LOGOS (Minimalist) */}
+      {/* ===== SPONSORS BAR ===== */}
       {sponsors.length > 0 && (
-        <section className="py-12 border-b border-slate-100 bg-white relative z-20">
-          <div className="max-w-7xl mx-auto px-4 overflow-hidden">
-             <div className="flex justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap">
-              {sponsors.slice(0, 5).map((sp) => (
+        <section className="py-10 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#0B0F14]">
+          <div className="max-w-7xl mx-auto px-4">
+            <p className="text-center text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-6">
+              Dipercaya Oleh
+            </p>
+            <div className="flex justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap">
+              {sponsors.slice(0, 6).map((sp) => (
                 <div key={sp.id} className="flex items-center gap-2">
                   {sp.logoUrl ? (
-                    <img src={sp.logoUrl} alt={sp.name} className="h-8 object-contain" />
+                    <img src={sp.logoUrl} alt={sp.name} className="h-8 md:h-10 object-contain" />
                   ) : (
-                    <span className="text-xl font-black tracking-tighter text-slate-400">{sp.name}</span>
+                    <span className="text-xl font-black tracking-tighter text-gray-400">{sp.name}</span>
                   )}
                 </div>
               ))}
@@ -107,128 +177,60 @@ export const HomePage: React.FC = () => {
         </section>
       )}
 
-      {/* FEATURES SECTION (Light & Clean) */}
-      <section className="py-24 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-500 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-100">
-              Our Features
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
-              makes it easy to find the <br/> latest tickets
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { title: 'categorization', desc: 'that makes it easy to find event tickets. Categorize them properly so that users can easily use them.', num: '/ 01' },
-              { title: 'ease of buying', desc: 'tickets can provide a different experience. Making it easy for you to find concert and race tickets.', num: '/ 02' },
-              { title: 'choosing a seat', desc: 'can now be done by looking at the actual map. Easy to use map for event selections.', num: '/ 03' },
-            ].map((feat, idx) => (
-              <div key={idx} className="bg-white rounded-3xl p-8 shadow-elegant border border-slate-100 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
-                <div>
-                  <span className="text-blue-500 font-bold mb-4 block">{feat.num}</span>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4 leading-tight">
-                    <span className="bg-blue-500 text-white px-2 py-0.5 rounded mr-1">{feat.title}</span> 
-                    {feat.desc.split('.')[0]}
-                  </h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">
-                    {feat.desc.split('.').slice(1).join('.')}
-                  </p>
-                </div>
-                <div className="mt-8">
-                  <button className="px-6 py-2.5 rounded-full border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition-colors">
-                    Learn More
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURED EVENTS */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
-                Upcoming Events
+      {/* ===== UPCOMING EVENTS (Highlight) ===== */}
+      {upcomingEvents.length > 0 && (
+        <section className="py-20 md:py-28 bg-gray-50 dark:bg-gray-900/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={eventsRef}>
+            <div className="text-center mb-14 reveal">
+              <p className="text-sm font-semibold tracking-widest uppercase text-red-600 dark:text-amber-400 mb-2">
+                Segera Hadir
+              </p>
+              <h2 className="font-display text-4xl md:text-5xl tracking-wider mb-3">
+                Event Mendatang
               </h2>
-              <p className="text-slate-500 mt-2 font-medium">Discover the best sports and running events.</p>
+              <p className="opacity-70 max-w-2xl mx-auto">
+                Daftar sekarang sebelum kehabisan slot. Event terbaik menantimu!
+              </p>
             </div>
-            <Link
-              to="/events"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-blue-50 text-blue-600 font-bold text-sm tracking-wide hover:bg-blue-100 transition-colors"
-            >
-              <span>See All Events</span>
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="bg-white border border-slate-100 rounded-3xl h-[400px] animate-pulse shadow-sm" />
-              ))}
-            </div>
-          ) : events.length === 0 ? (
-            <div className="p-16 text-center bg-slate-50 rounded-3xl border border-slate-100 max-w-lg mx-auto">
-              <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-slate-900">Belum ada event tersedia.</h3>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredEvents.map((event) => (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {upcomingEvents.map((event) => (
                 <Link
                   key={event.id}
                   to={`/events/${event.slug}`}
-                  className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-elegant hover:shadow-xl transition-all duration-500 flex flex-col"
+                  className="event-card group flex flex-col"
                 >
-                  {/* Banner */}
-                  <div className="relative h-56 overflow-hidden bg-slate-100 p-2">
+                  <div className="relative h-52 overflow-hidden bg-gray-100 dark:bg-gray-800">
                     <img
                       src={event.banner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=800&q=80'}
                       alt={event.name}
-                      className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent dark:from-gray-900/80" />
                     <div className="absolute top-4 left-4">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 ${
-                        event.status === 'REGISTRATION_OPEN' 
-                          ? 'bg-blue-600/90 text-white' 
-                          : 'bg-white/90 text-slate-700'
-                      }`}>
-                        {event.status === 'REGISTRATION_OPEN' ? 'Open' : event.status}
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 bg-red-600/90 text-white">
+                        Buka Pendaftaran
                       </span>
                     </div>
                   </div>
 
-                  {/* Body */}
-                  <div className="p-6 flex-1 flex flex-col justify-between">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500">
-                          <MapPin className="w-3.5 h-3.5 text-blue-500" />
-                          <span className="truncate max-w-[150px]">{event.location}</span>
-                        </div>
-                        <div className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
-                           <Calendar className="w-3.5 h-3.5 text-blue-500" />
-                           {new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
-                        </div>
+                  <div className="p-6 flex-1 flex flex-col justify-between relative z-10 -mt-8">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 text-xs font-bold text-gray-500 dark:text-gray-400">
+                        <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-red-500" />{event.location}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-red-500" />{new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                      <h3 className="font-display text-2xl tracking-wider text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
                         {event.name}
                       </h3>
-                      <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
                         {event.description}
                       </p>
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
-                       <span className="text-lg font-black text-blue-600">
-                          {event.status === 'REGISTRATION_OPEN' ? 'Register Now' : 'View Details'}
-                       </span>
-                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white text-slate-400 transition-all">
+                    <div className="pt-5 mt-5 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                      <span className="text-sm font-bold text-red-600 dark:text-amber-400">Daftar Sekarang</span>
+                      <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center group-hover:bg-red-600 dark:group-hover:bg-amber-500 group-hover:text-white text-gray-400 transition-all">
                         <ArrowRight className="w-4 h-4 -rotate-45" />
                       </div>
                     </div>
@@ -236,26 +238,189 @@ export const HomePage: React.FC = () => {
                 </Link>
               ))}
             </div>
-          )}
+
+            <div className="text-center mt-12 reveal">
+              <Link
+                to="/events"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg shadow-red-500/30 transition"
+              >
+                Lihat Semua Event
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ===== FEATURES SECTION ===== */}
+      <section className="py-20 md:py-28 bg-white dark:bg-[#0B0F14]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={featuresRef}>
+          <div className="text-center mb-14 reveal">
+            <p className="text-sm font-semibold tracking-widest uppercase text-red-600 dark:text-amber-400 mb-2">
+              Kenapa Guwigo?
+            </p>
+            <h2 className="font-display text-4xl md:text-5xl tracking-wider mb-3">
+              Pengalaman Event Premium
+            </h2>
+            <p className="opacity-70 max-w-2xl mx-auto">
+              Semua yang kamu butuhkan untuk mengelola dan mengikuti event olahraga, dalam satu platform.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {[
+              { icon: '🎫', title: 'Registrasi Mudah', desc: 'Pendaftaran online cepat dengan berbagai metode pembayaran.' },
+              { icon: '⏱️', title: 'Timing Chip', desc: 'Pencatatan waktu akurat dengan teknologi chip profesional.' },
+              { icon: '🏅', title: 'Sertifikat Digital', desc: 'E-sertifikat resmi langsung setelah menyelesaikan event.' },
+              { icon: '📋', title: 'Cek Hasil Live', desc: 'Pantau hasil & klasemen secara real-time selama event.' },
+              { icon: '📍', title: 'QR Check-in', desc: 'Check-in peserta cepat dengan QR code di race pack.' },
+              { icon: '📸', title: 'Foto Event', desc: 'Galeri foto event yang bisa diakses semua peserta.' },
+              { icon: '🛡️', title: 'Asuransi', desc: 'Perlindungan asuransi selama mengikuti event.' },
+              { icon: '🎽', title: 'Race Pack', desc: 'Perlengkapan race pack eksklusif dengan jersey & BIB.' },
+            ].map((feat, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-2xl bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 hover:border-red-500 dark:hover:border-amber-500/30 hover:shadow-lg transition reveal group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition">
+                  {feat.icon}
+                </div>
+                <h3 className="font-semibold mb-1 text-gray-900 dark:text-white">{feat.title}</h3>
+                <p className="text-sm opacity-70">{feat.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* BOTTOM CTA (Clean Ticketly Style) */}
-      <section className="py-24 bg-blue-50/50">
-        <div className="max-w-4xl mx-auto text-center px-4 space-y-8">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-blue-100/50 text-blue-600 text-xs font-bold uppercase tracking-wider mb-2">
-            Active User
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
-            Our application has spread across <br/> continents and has many active users
-          </h2>
-          <div className="pt-8 flex flex-col sm:flex-row justify-center gap-4">
-             <Link
-                to="/register"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+      {/* ===== ALL EVENTS GRID ===== */}
+      {featuredEvents.length > 0 && upcomingEvents.length === 0 && (
+        <section className="py-20 md:py-28 bg-gray-50 dark:bg-gray-900/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4 reveal">
+              <div>
+                <p className="text-sm font-semibold tracking-widest uppercase text-red-600 dark:text-amber-400 mb-2">
+                  Katalog Event
+                </p>
+                <h2 className="font-display text-4xl md:text-5xl tracking-wider">
+                  Semua Event
+                </h2>
+              </div>
+              <Link
+                to="/events"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-amber-400 font-bold text-sm hover:bg-red-100 dark:hover:bg-red-900/40 transition"
               >
-                <span>Get Started Now</span>
+                Lihat Semua
+                <ChevronRight className="w-4 h-4" />
               </Link>
+            </div>
+
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="event-card h-[420px] animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredEvents.map((event) => (
+                  <Link
+                    key={event.id}
+                    to={`/events/${event.slug}`}
+                    className="event-card group flex flex-col reveal"
+                  >
+                    <div className="relative h-52 overflow-hidden bg-gray-100 dark:bg-gray-800">
+                      <img
+                        src={event.banner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=800&q=80'}
+                        alt={event.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent dark:from-gray-900/80" />
+                      <div className="absolute top-4 left-4">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 ${
+                          event.status === 'REGISTRATION_OPEN' 
+                            ? 'bg-red-600/90 text-white' 
+                            : 'bg-white/90 text-gray-700'
+                        }`}>
+                          {event.status === 'REGISTRATION_OPEN' ? 'Buka' : event.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-6 flex-1 flex flex-col justify-between relative z-10 -mt-8">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3 text-xs font-bold text-gray-500 dark:text-gray-400">
+                          <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-red-500" />{event.location}</span>
+                          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-red-500" />{new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+                        </div>
+                        <h3 className="font-display text-2xl tracking-wider text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+                          {event.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
+                          {event.description}
+                        </p>
+                      </div>
+
+                      <div className="pt-5 mt-5 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                        <span className="text-sm font-bold text-red-600 dark:text-amber-400">
+                          {event.status === 'REGISTRATION_OPEN' ? 'Daftar Sekarang' : 'Lihat Detail'}
+                        </span>
+                        <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center group-hover:bg-red-600 dark:group-hover:bg-amber-500 group-hover:text-white text-gray-400 transition-all">
+                          <ArrowRight className="w-4 h-4 -rotate-45" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ===== BOTTOM CTA ===== */}
+      <section className="py-20 md:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-red-700 via-red-600 to-red-800 -z-10" />
+        <div className="absolute inset-0 hero-grid-pattern -z-10 opacity-10" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-amber-500/20 rounded-full blur-3xl -z-10 animate-pulse-soft" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white" ref={ctaRef}>
+          <h2 className="font-display text-5xl md:text-7xl tracking-wider mb-4 reveal">SIAP?</h2>
+          <p className="text-xl md:text-2xl font-light mb-3 reveal">Jadi bagian dari pengalaman event terbaik.</p>
+          <p className="opacity-80 max-w-2xl mx-auto mb-10 reveal">
+            Daftarkan event kamu atau ikuti event yang tersedia. Slot terbatas — jangan sampai ketinggalan!
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 reveal">
+            <Link
+              to="/events"
+              className="w-full sm:w-auto inline-flex items-center gap-2 px-10 py-5 rounded-full bg-amber-500 text-red-900 font-bold text-lg shadow-xl shadow-amber-500/40 hover:bg-amber-400 hover:scale-105 transition"
+            >
+              <Flag className="w-6 h-6" />
+              Jelajahi Event
+            </Link>
+            <Link
+              to="/host-event"
+              className="w-full sm:w-auto inline-flex items-center gap-2 px-10 py-5 rounded-full bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold text-lg hover:bg-white/20 transition"
+            >
+              <Trophy className="w-6 h-6" />
+              Jadi Penyelenggara
+            </Link>
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-white/80 reveal">
+            <span className="flex items-center gap-2">
+              <Flag className="w-4 h-4 text-amber-400" />
+              Pendaftaran Aman
+            </span>
+            <span className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-amber-400" />
+              Pembayaran Mudah
+            </span>
+            <span className="flex items-center gap-2">
+              <Medal className="w-4 h-4 text-amber-400" />
+              Hasil Real-time
+            </span>
           </div>
         </div>
       </section>

@@ -10,10 +10,7 @@ interface PublicLayoutProps {
 
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   return (
-    <div className="relative flex flex-col min-h-screen font-sans text-slate-800 selection:bg-blue-100 selection:text-blue-900 bg-slate-50/30">
-      {/* Background is clean, let pages manage their own glows */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 bg-white" aria-hidden="true" />
-
+    <div className="relative flex flex-col min-h-screen font-sans text-slate-800 dark:text-gray-200 antialiased bg-white dark:bg-[#0B0F14]">
       <Navbar />
       <main className="flex-1 relative z-0">
         {children}
