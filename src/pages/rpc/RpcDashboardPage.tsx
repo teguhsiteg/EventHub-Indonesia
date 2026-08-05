@@ -178,8 +178,9 @@ export const RpcDashboardPage: React.FC = () => {
     <div className="space-y-6">
       
       {/* Search Bar */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6">
-        <div className="flex-1 space-y-4">
+      <div className="glass-card p-6 flex flex-col md:flex-row gap-6 relative overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-64 h-64 bg-red-500/10 rounded-full blur-3xl -z-10 animate-pulse-soft" />
+        <div className="flex-1 space-y-4 relative z-10">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <QrCode className="w-5 h-5 text-red-600" />
             Scanner Race Pack (RPC)
@@ -192,13 +193,13 @@ export const RpcDashboardPage: React.FC = () => {
                 value={qrInput}
                 onChange={e => setQrInput(e.target.value)}
                 placeholder="Tempel / Scan QR Token (RACEPRO_QR_...)"
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-mono text-sm"
+                className="w-full pl-11 pr-4 py-3 bg-white/50 backdrop-blur-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-mono text-sm shadow-inner"
               />
             </div>
             <button
               type="submit"
               disabled={loading || !qrInput}
-              className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold rounded-xl transition-colors shadow-sm"
+              className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 disabled:opacity-50 text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg shadow-red-500/30"
             >
               Cari
             </button>
@@ -220,7 +221,7 @@ export const RpcDashboardPage: React.FC = () => {
               <span className="font-bold text-sm">Gunakan Kamera</span>
             </button>
           ) : (
-            <div className="relative rounded-2xl overflow-hidden bg-black aspect-square max-w-[250px] mx-auto border-2 border-red-500 shadow-lg">
+            <div className="relative rounded-2xl overflow-hidden bg-black aspect-square max-w-[250px] mx-auto ring-4 ring-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.3)] animate-pulse-soft">
               <div id="qr-reader" className="w-full h-full object-cover"></div>
               <button 
                 onClick={() => setIsCameraActive(false)}
@@ -235,10 +236,10 @@ export const RpcDashboardPage: React.FC = () => {
 
       {/* Result Status */}
       {statusMessage && (
-        <div className={`p-6 rounded-3xl shadow-sm border ${
+        <div className={`p-6 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] backdrop-blur-xl border-l-4 ${
           isSuccess 
-            ? 'bg-emerald-50 border-emerald-100 text-emerald-800' 
-            : 'bg-red-50 border-red-100 text-red-800'
+            ? 'bg-emerald-50/80 border-emerald-500 text-emerald-800' 
+            : 'bg-red-50/80 border-red-500 text-red-800'
         } animate-in fade-in slide-in-from-top-2`}>
           <div className="flex items-start gap-4">
             <div className={`p-3 rounded-2xl shrink-0 ${isSuccess ? 'bg-emerald-100' : 'bg-red-100'}`}>
@@ -260,7 +261,7 @@ export const RpcDashboardPage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => handlePrintReceipt(participant, rpcEventName, rpcCategoryName)}
-                    className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/30"
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg shadow-emerald-500/30"
                   >
                     <Printer className="w-5 h-5" />
                     Cetak Struk
@@ -273,7 +274,7 @@ export const RpcDashboardPage: React.FC = () => {
       )}
 
       {/* History */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+      <div className="glass-card p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <Clock className="w-5 h-5 text-red-600" />
@@ -382,7 +383,7 @@ export const RpcDashboardPage: React.FC = () => {
                 type="button"
                 onClick={executeRPC}
                 disabled={loading}
-                className="flex-1 px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-xl transition-colors shadow-lg shadow-red-500/30"
+                className="flex-1 px-4 py-3 text-sm font-bold text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 disabled:opacity-50 disabled:hover:scale-100 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg shadow-red-500/30"
               >
                 {loading ? 'Memproses...' : 'Konfirmasi RPC'}
               </button>
