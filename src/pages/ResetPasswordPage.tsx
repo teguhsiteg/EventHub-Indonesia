@@ -63,7 +63,7 @@ export const ResetPasswordPage: React.FC = () => {
       <div className="w-full max-w-md bg-white dark:bg-[#020617] rounded-3xl shadow-xl border border-slate-200 dark:border-white/[0.08] p-8 relative z-10">
         <div className="text-center mb-8">
           <div className="inline-flex mb-4">
-            <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-md">
+            <div className="w-14 h-14 rounded-2xl bg-red-600 flex items-center justify-center shadow-md">
               <Trophy className="w-7 h-7 text-white" />
             </div>
           </div>
@@ -79,7 +79,7 @@ export const ResetPasswordPage: React.FC = () => {
 
         {validating ? (
           <div className="flex flex-col items-center justify-center py-8">
-            <div className="w-8 h-8 border-4 border-blue-500/30 border-t-blue-600 rounded-full animate-spin mb-4" />
+            <div className="w-8 h-8 border-4 border-red-500/30 border-t-red-600 rounded-full animate-spin mb-4" />
             <p className="text-sm text-slate-500">Memverifikasi tautan...</p>
           </div>
         ) : error ? (
@@ -106,7 +106,7 @@ export const ResetPasswordPage: React.FC = () => {
             </p>
             <Link
               to="/login"
-              className="inline-flex items-center justify-center w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold shadow-lg shadow-blue-500/20 transition-all"
+              className="inline-flex items-center justify-center w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold shadow-lg shadow-red-500/20 transition-all"
             >
               Masuk Sekarang
             </Link>
@@ -126,7 +126,7 @@ export const ResetPasswordPage: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Minimal 6 karakter"
                   required
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 text-sm focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all"
                 />
                 <button
                   type="button"
@@ -141,7 +141,7 @@ export const ResetPasswordPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading || password.length < 6}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all group"
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all group"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

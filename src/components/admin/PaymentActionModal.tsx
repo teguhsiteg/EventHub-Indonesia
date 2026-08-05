@@ -82,7 +82,7 @@ export const PaymentActionModal: React.FC<PaymentActionModalProps> = ({
         <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-              mode === 'VIEW' ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' : 'bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400'
+              mode === 'VIEW' ? 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400' : 'bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400'
             }`}>
               {mode === 'VIEW' ? <Eye className="w-5 h-5" /> : <Edit3 className="w-5 h-5" />}
             </div>
@@ -160,7 +160,7 @@ export const PaymentActionModal: React.FC<PaymentActionModalProps> = ({
                     href={payment.proofUrl} 
                     target="_blank" 
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-xs font-semibold transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 text-xs font-semibold transition-colors"
                   >
                     <FileText className="w-4 h-4" />
                     Lihat Dokumen
@@ -178,7 +178,7 @@ export const PaymentActionModal: React.FC<PaymentActionModalProps> = ({
                   type="number"
                   value={editAmount}
                   onChange={(e) => setEditAmount(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
                 <p className="text-[10px] text-slate-400 mt-1">Ubah jika terdapat ketidaksesuaian nominal transfer.</p>
               </div>
@@ -190,7 +190,7 @@ export const PaymentActionModal: React.FC<PaymentActionModalProps> = ({
                 <select
                   value={editStatus}
                   onChange={(e) => setEditStatus(e.target.value as PaymentStatus)}
-                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-red-500 appearance-none"
                 >
                   <option value="PENDING">PENDING (Menunggu)</option>
                   <option value="PAID">PAID (Lunas)</option>
@@ -217,7 +217,7 @@ export const PaymentActionModal: React.FC<PaymentActionModalProps> = ({
             <button
               onClick={handleSave}
               disabled={isSubmitting}
-              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               <Save className="w-4 h-4" />
               {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}

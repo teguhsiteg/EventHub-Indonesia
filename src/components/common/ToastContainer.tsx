@@ -10,18 +10,18 @@ export const ToastContainer: React.FC = () => {
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
       {notifications.map(n => {
-        let icon = <Info className="w-5 h-5 text-blue-400" />;
-        let borderClass = 'border-blue-500/30 bg-white dark:bg-blue-950/95';
+        let icon = <Info className="w-5 h-5 text-red-400" />;
+        let borderClass = 'border-red-500/30 bg-white dark:bg-red-950/95';
 
         if (n.type === 'success') {
           icon = <CheckCircle2 className="w-5 h-5 text-emerald-400" />;
-          borderClass = 'border-emerald-500/40 bg-white dark:bg-blue-950/95';
+          borderClass = 'border-emerald-500/40 bg-white dark:bg-red-950/95';
         } else if (n.type === 'error') {
           icon = <XCircle className="w-5 h-5 text-rose-400" />;
-          borderClass = 'border-rose-500/40 bg-white dark:bg-blue-950/95';
+          borderClass = 'border-rose-500/40 bg-white dark:bg-red-950/95';
         } else if (n.type === 'warning') {
           icon = <AlertTriangle className="w-5 h-5 text-yellow-400" />;
-          borderClass = 'border-yellow-500/40 bg-white dark:bg-blue-950/95';
+          borderClass = 'border-yellow-500/40 bg-white dark:bg-red-950/95';
         }
 
         return (

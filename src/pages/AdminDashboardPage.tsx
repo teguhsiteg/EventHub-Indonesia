@@ -449,14 +449,14 @@ export const AdminDashboardPage: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const map: Record<string, string> = {
-      PUBLISHED: "bg-emerald-500/10 text--600  border-emerald-500/30",
+      PUBLISHED: "bg-emerald-500/10 text-red-600  border-emerald-500/30",
       DRAFT: "bg-slate-500/10 text-slate-600   border-slate-500/30",
-      CANCELLED: "bg-red-500/10 text--600  border-red-500/30",
-      PENDING: "bg-yellow-500/10 text--600  border-yellow-500/30",
-      PAID: "bg-emerald-500/10 text--600  border-emerald-500/30",
-      REJECTED: "bg-red-500/10 text--600  border-red-500/30",
-      APPROVED: "bg-blue-500/10 text--600  border-blue-500/30",
-      ACTIVE: "bg-emerald-500/10 text--600  border-emerald-500/30",
+      CANCELLED: "bg-red-500/10 text-red-600  border-red-500/30",
+      PENDING: "bg-yellow-500/10 text-red-600  border-yellow-500/30",
+      PAID: "bg-emerald-500/10 text-red-600  border-emerald-500/30",
+      REJECTED: "bg-red-500/10 text-red-600  border-red-500/30",
+      APPROVED: "bg-red-500/10 text-red-600  border-red-500/30",
+      ACTIVE: "bg-emerald-500/10 text-red-600  border-emerald-500/30",
     };
     return (
       map[status] || "bg-slate-500/10 text-slate-600   border-slate-500/30"
@@ -468,16 +468,16 @@ export const AdminDashboardPage: React.FC = () => {
       label: "Total Event",
       value: events.length,
       icon: Calendar,
-      accent: "border-l-blue-500",
-      iconBg: "bg-blue-500/10 text--600 ",
-      gradient: "from-blue-500/5 to-transparent",
+      accent: "border-l-red-500",
+      iconBg: "bg-red-500/10 text-red-600 ",
+      gradient: "from-red-500/5 to-transparent",
     },
     {
       label: "Total Pendaftaran",
       value: registrations.length,
       icon: Users,
       accent: "border-l-emerald-500",
-      iconBg: "bg-emerald-500/10 text--600 ",
+      iconBg: "bg-emerald-500/10 text-red-600 ",
       gradient: "from-emerald-500/5 to-transparent",
     },
     {
@@ -485,7 +485,7 @@ export const AdminDashboardPage: React.FC = () => {
       value: pendingPaymentsCount,
       icon: Clock,
       accent: "border-l-yellow-500",
-      iconBg: "bg-yellow-500/10 text--600 ",
+      iconBg: "bg-yellow-500/10 text-red-600 ",
       gradient: "from-yellow-500/5 to-transparent",
     },
     {
@@ -493,9 +493,9 @@ export const AdminDashboardPage: React.FC = () => {
       value: formatRupiah(totalRevenue),
       icon: TrendingUp,
       isCurrency: true,
-      accent: "border-l-blue-500",
-      iconBg: "bg-blue-500/10 text--600 ",
-      gradient: "from-blue-500/5 to-transparent",
+      accent: "border-l-red-500",
+      iconBg: "bg-red-500/10 text-red-600 ",
+      gradient: "from-red-500/5 to-transparent",
     },
   ];
   const handleToggleParticipantCheckIn = async (
@@ -601,7 +601,7 @@ export const AdminDashboardPage: React.FC = () => {
           {loading && (
             <div className="flex items-center justify-center py-20">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-10 h-10 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
                 <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
                   Memuat data...
                 </span>
@@ -650,7 +650,7 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={() => setShowEventModal(true)}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-red-500/20 transition-all"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Buat Event Baru</span>
@@ -668,8 +668,8 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="bg-white  backdrop-blur-xl border border-slate-200  rounded-2xl overflow-hidden shadow-xl">
                 <div className="px-6 py-4 border-b border-slate-200  flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                      <Activity className="w-4 h-4 text--600 " />
+                    <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <Activity className="w-4 h-4 text-red-600 " />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900  uppercase tracking-wider">
@@ -707,7 +707,7 @@ export const AdminDashboardPage: React.FC = () => {
                             {log.actorEmail}
                           </td>
                           <td className="py-3 px-6">
-                            <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text--600  text-[10px] font-bold uppercase border border-blue-500/20">
+                            <span className="px-2 py-0.5 rounded-md bg-red-500/10 text-red-600  text-[10px] font-bold uppercase border border-red-500/20">
                               {log.action}
                             </span>
                           </td>
@@ -729,8 +729,8 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="bg-white  backdrop-blur-xl border border-slate-200  rounded-2xl overflow-hidden shadow-xl">
                 <div className="px-6 py-4 border-b border-slate-200  flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                      <Calendar className="w-4 h-4 text--600 " />
+                    <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <Calendar className="w-4 h-4 text-red-600 " />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900  uppercase tracking-wider">
@@ -746,7 +746,7 @@ export const AdminDashboardPage: React.FC = () => {
                       setEditingEvent(null);
                       setShowEventModal(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-blue-500/20"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-red-500/20"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Tambah Event</span>
@@ -760,12 +760,12 @@ export const AdminDashboardPage: React.FC = () => {
                     placeholder="Cari nama event atau lokasi..."
                     value={eventSearch}
                     onChange={(e) => setEventSearch(e.target.value)}
-                    className="flex-1 min-w-[180px] bg-slate-100  border border-slate-200  rounded-xl px-4 py-2 text-xs text-slate-800  focus:border-blue-500/50 outline-none placeholder:text-slate-600"
+                    className="flex-1 min-w-[180px] bg-slate-100  border border-slate-200  rounded-xl px-4 py-2 text-xs text-slate-800  focus:border-red-500/50 outline-none placeholder:text-slate-600"
                   />
                   <select
                     value={eventStatusFilter}
                     onChange={(e) => setEventStatusFilter(e.target.value)}
-                    className="bg-slate-100  border border-slate-200  rounded-xl px-3 py-2 text-xs text-slate-700  focus:border-blue-500/50 outline-none"
+                    className="bg-slate-100  border border-slate-200  rounded-xl px-3 py-2 text-xs text-slate-700  focus:border-red-500/50 outline-none"
                   >
                     <option value="ALL">Semua Status</option>
                     <option value="REGISTRATION_OPEN">Pendaftaran Buka</option>
@@ -843,7 +843,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     setEditingEvent(ev);
                                     setShowEventModal(true);
                                   }}
-                                  className="p-2 rounded-lg text-slate-600   hover:text--600  hover:bg-blue-500/10 transition-all"
+                                  className="p-2 rounded-lg text-slate-600   hover:text-red-600  hover:bg-red-500/10 transition-all"
                                   title="Edit"
                                 >
                                   <Edit className="w-3.5 h-3.5" />
@@ -866,7 +866,7 @@ export const AdminDashboardPage: React.FC = () => {
                                       );
                                     }
                                   }}
-                                  className="p-2 rounded-lg text-slate-600   hover:text--600  hover:bg-red-500/10 transition-all"
+                                  className="p-2 rounded-lg text-slate-600   hover:text-red-600  hover:bg-red-500/10 transition-all"
                                   title="Hapus"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -920,7 +920,7 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="bg-white  backdrop-blur-xl border border-slate-200  rounded-2xl overflow-hidden shadow-xl">
                 <div className="px-6 py-4 border-b border-slate-200  flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                    <ClipboardList className="w-4 h-4 text--600 " />
+                    <ClipboardList className="w-4 h-4 text-red-600 " />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-900  uppercase tracking-wider">
@@ -997,7 +997,7 @@ export const AdminDashboardPage: React.FC = () => {
                                   req.status === "PENDING"
                                     ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
                                     : req.status === "REVIEWED"
-                                      ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                                      ? "bg-red-500/10 text-red-500 border-red-500/20"
                                       : req.status === "APPROVED"
                                         ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                                         : "bg-red-500/10 text-red-500 border-red-500/20"
@@ -1007,7 +1007,7 @@ export const AdminDashboardPage: React.FC = () => {
                               </span>
                             </td>
                             <td className="py-4 px-6 text-right">
-                              <button className="text-[10px] font-bold text-blue-500 hover:text--600  uppercase tracking-wider">
+                              <button className="text-[10px] font-bold text-red-500 hover:text-red-600  uppercase tracking-wider">
                                 Detail
                               </button>
                             </td>
@@ -1113,7 +1113,7 @@ export const AdminDashboardPage: React.FC = () => {
                               })()}
                             </td>
                             <td className="py-4 px-6">
-                              <span className="text-xs font-bold text--600 ">
+                              <span className="text-xs font-bold text-red-600 ">
                                 {formatRupiah(pay.amount)}
                               </span>
                             </td>
@@ -1123,7 +1123,7 @@ export const AdminDashboardPage: React.FC = () => {
                                   href={pay.proofUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="flex items-center gap-1.5 text-xs text--600  hover:text-blue-300 font-semibold transition-colors"
+                                  className="flex items-center gap-1.5 text-xs text-red-600  hover:text-red-300 font-semibold transition-colors"
                                 >
                                   <Eye className="w-3 h-3" />
                                   Lihat Bukti
@@ -1151,7 +1151,7 @@ export const AdminDashboardPage: React.FC = () => {
                                         pay.registrationId,
                                       )
                                     }
-                                    className="px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text--600  font-bold text-[10px] uppercase tracking-wider border border-blue-500/20 transition-all"
+                                    className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600  font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
                                   >
                                     Cek Gateway
                                   </button>
@@ -1165,7 +1165,7 @@ export const AdminDashboardPage: React.FC = () => {
                                           "APPROVE",
                                         )
                                       }
-                                      className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text--600  font-bold text-[10px] uppercase tracking-wider border border-emerald-500/20 transition-all"
+                                      className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-red-600  font-bold text-[10px] uppercase tracking-wider border border-emerald-500/20 transition-all"
                                     >
                                       <CheckCircle2 className="w-3 h-3 inline mr-1" />
                                       Setujui
@@ -1178,7 +1178,7 @@ export const AdminDashboardPage: React.FC = () => {
                                           "REJECT",
                                         )
                                       }
-                                      className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text--600  font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
+                                      className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600  font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
                                     >
                                       <XCircle className="w-3 h-3 inline mr-1" />
                                       Tolak
@@ -1192,7 +1192,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     setPaymentModalMode("VIEW");
                                     setShowPaymentModal(true);
                                   }}
-                                  className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-500/10  :bg-blue-500/20 text-slate-400 hover:text-blue-500 transition-colors"
+                                  className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-red-500/10  :bg-red-500/20 text-slate-400 hover:text-red-500 transition-colors"
                                   title="Detail Pembayaran"
                                 >
                                   <Eye className="w-4 h-4" />
@@ -1240,8 +1240,8 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="bg-white  backdrop-blur-xl border border-slate-200  rounded-2xl overflow-hidden shadow-xl">
                 <div className="px-6 py-4 border-b border-slate-200  flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                      <DollarSign className="w-4 h-4 text--600 " />
+                    <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <DollarSign className="w-4 h-4 text-red-600 " />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900  uppercase tracking-wider">
@@ -1254,7 +1254,7 @@ export const AdminDashboardPage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setShowPayoutForm((v) => !v)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-blue-500/20"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-red-500/20"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Ajukan Pencairan</span>
@@ -1311,7 +1311,7 @@ export const AdminDashboardPage: React.FC = () => {
                           required
                           value={payoutEventId}
                           onChange={(e) => setPayoutEventId(e.target.value)}
-                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs focus:border-blue-500/50 outline-none"
+                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs focus:border-red-500/50 outline-none"
                         >
                           <option value="">-- Pilih Event --</option>
                           {events.map((ev) => (
@@ -1332,7 +1332,7 @@ export const AdminDashboardPage: React.FC = () => {
                           value={payoutAmount}
                           onChange={(e) => setPayoutAmount(e.target.value)}
                           placeholder="1000000"
-                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs focus:border-blue-500/50 outline-none placeholder:text-slate-600"
+                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs focus:border-red-500/50 outline-none placeholder:text-slate-600"
                         />
                       </div>
                       <div>
@@ -1344,7 +1344,7 @@ export const AdminDashboardPage: React.FC = () => {
                           value={payoutBank}
                           onChange={(e) => setPayoutBank(e.target.value)}
                           placeholder="BCA, Mandiri, BNI..."
-                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs focus:border-blue-500/50 outline-none placeholder:text-slate-600"
+                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs focus:border-red-500/50 outline-none placeholder:text-slate-600"
                         />
                       </div>
                       <div>
@@ -1356,7 +1356,7 @@ export const AdminDashboardPage: React.FC = () => {
                           value={payoutAccount}
                           onChange={(e) => setPayoutAccount(e.target.value)}
                           placeholder="1234567890"
-                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs font-mono focus:border-blue-500/50 outline-none placeholder:text-slate-600"
+                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs font-mono focus:border-red-500/50 outline-none placeholder:text-slate-600"
                         />
                       </div>
                       <div className="sm:col-span-2">
@@ -1368,14 +1368,14 @@ export const AdminDashboardPage: React.FC = () => {
                           value={payoutHolder}
                           onChange={(e) => setPayoutHolder(e.target.value)}
                           placeholder="Budi Santoso"
-                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs focus:border-blue-500/50 outline-none placeholder:text-slate-600"
+                          className="w-full bg-white  border border-white/[0.08] rounded-xl p-3 text-slate-800  text-xs focus:border-red-500/50 outline-none placeholder:text-slate-600"
                         />
                       </div>
                       <div className="sm:col-span-2 flex gap-3">
                         <button
                           type="submit"
                           disabled={payoutLoading}
-                          className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 disabled:opacity-50 transition-all"
+                          className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-red-500/20 disabled:opacity-50 transition-all"
                         >
                           {payoutLoading
                             ? "Mengajukan..."
@@ -1434,7 +1434,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 {payout.accountHolderName}
                               </p>
                             </td>
-                            <td className="py-4 px-6 text-xs font-bold text--600 ">
+                            <td className="py-4 px-6 text-xs font-bold text-red-600 ">
                               {formatRupiah(payout.amount)}
                             </td>
                             <td className="py-4 px-6">
@@ -1478,7 +1478,7 @@ export const AdminDashboardPage: React.FC = () => {
                                           }
                                         }
                                       }}
-                                      className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text--600  font-bold text-[10px] uppercase tracking-wider border border-emerald-500/20 transition-all"
+                                      className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-red-600  font-bold text-[10px] uppercase tracking-wider border border-emerald-500/20 transition-all"
                                     >
                                       <CheckCircle2 className="w-3 h-3 inline mr-1" />
                                       Selesai (Paid)
@@ -1512,7 +1512,7 @@ export const AdminDashboardPage: React.FC = () => {
                                           }
                                         }
                                       }}
-                                      className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text--600  font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
+                                      className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600  font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
                                     >
                                       <XCircle className="w-3 h-3 inline mr-1" />
                                       Tolak
@@ -1524,7 +1524,7 @@ export const AdminDashboardPage: React.FC = () => {
                                       href={payout.proofUrl}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="flex items-center gap-1.5 text-xs text--600  hover:text-emerald-300 font-semibold transition-colors"
+                                      className="flex items-center gap-1.5 text-xs text-red-600  hover:text-emerald-300 font-semibold transition-colors"
                                     >
                                       <Eye className="w-3 h-3" />
                                       Bukti Transfer
@@ -1548,8 +1548,8 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="animate-in fade-in duration-300">
               <div className="bg-white  backdrop-blur-xl border border-slate-200  rounded-2xl overflow-hidden shadow-xl max-w-xl mx-auto">
                 <div className="px-6 py-4 border-b border-slate-200  flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                    <Trophy className="w-4 h-4 text--600 " />
+                  <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-red-600 " />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-900  uppercase tracking-wider">
@@ -1572,7 +1572,7 @@ export const AdminDashboardPage: React.FC = () => {
                       <select
                         value={resEventId}
                         onChange={(e) => setResEventId(e.target.value)}
-                        className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all"
+                        className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs focus:border-red-500/50 focus:outline-none focus:ring-1 focus:ring-red-500/30 transition-all"
                       >
                         {events.map((e) => (
                           <option key={e.id} value={e.id}>
@@ -1592,7 +1592,7 @@ export const AdminDashboardPage: React.FC = () => {
                           value={resBib}
                           onChange={(e) => setResBib(e.target.value)}
                           placeholder="TR50-0001"
-                          className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs font-mono focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all placeholder:text-slate-600"
+                          className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs font-mono focus:border-red-500/50 focus:outline-none focus:ring-1 focus:ring-red-500/30 transition-all placeholder:text-slate-600"
                         />
                       </div>
                       <div>
@@ -1605,7 +1605,7 @@ export const AdminDashboardPage: React.FC = () => {
                           value={resName}
                           onChange={(e) => setResName(e.target.value)}
                           placeholder="Budi Santoso"
-                          className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all placeholder:text-slate-600"
+                          className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs focus:border-red-500/50 focus:outline-none focus:ring-1 focus:ring-red-500/30 transition-all placeholder:text-slate-600"
                         />
                       </div>
                     </div>
@@ -1619,7 +1619,7 @@ export const AdminDashboardPage: React.FC = () => {
                           required
                           value={resChipTime}
                           onChange={(e) => setResChipTime(e.target.value)}
-                          className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs font-mono focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all"
+                          className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs font-mono focus:border-red-500/50 focus:outline-none focus:ring-1 focus:ring-red-500/30 transition-all"
                         />
                       </div>
                       <div>
@@ -1631,13 +1631,13 @@ export const AdminDashboardPage: React.FC = () => {
                           required
                           value={resRank}
                           onChange={(e) => setResRank(Number(e.target.value))}
-                          className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 transition-all"
+                          className="w-full bg-slate-100  border border-slate-200  rounded-xl p-3 text-slate-800  text-xs focus:border-red-500/50 focus:outline-none focus:ring-1 focus:ring-red-500/30 transition-all"
                         />
                       </div>
                     </div>
                     <button
                       type="submit"
-                      className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
+                      className="w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-red-500/20 transition-all"
                     >
                       Publikasikan Hasil Finisher
                     </button>
@@ -1694,7 +1694,7 @@ export const AdminDashboardPage: React.FC = () => {
                             <td className="p-4 text-xs text-slate-700  font-medium">
                               {eventName}
                             </td>
-                            <td className="p-4 text-xs font-mono text-blue-600  font-bold">
+                            <td className="p-4 text-xs font-mono text-red-600  font-bold">
                               {r.bibNumber}
                             </td>
                             <td className="p-4 text-xs text-slate-700 ">
@@ -1709,7 +1709,7 @@ export const AdminDashboardPage: React.FC = () => {
                             <td className="p-4 text-right space-x-2">
                               <button
                                 onClick={() => handleEditResult(r)}
-                                className="p-1.5 rounded-lg bg-blue-100  text-blue-600  hover:bg-blue-200 :bg-blue-500/20 transition-colors"
+                                className="p-1.5 rounded-lg bg-red-100  text-red-600  hover:bg-red-200 :bg-red-500/20 transition-colors"
                                 title="Edit"
                               >
                                 <Edit className="w-4 h-4" />
@@ -1746,7 +1746,7 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-elegant">
               <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600">
+                  <div className="p-2.5 rounded-xl bg-red-50 text-red-600">
                     <Users className="w-5 h-5" />
                   </div>
                   <div>
@@ -1760,7 +1760,7 @@ export const AdminDashboardPage: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-                    <Download className="w-4 h-4 text-blue-500" />
+                    <Download className="w-4 h-4 text-red-500" />
                     <span>Export CSV</span>
                   </button>
                 </div>
@@ -1917,7 +1917,7 @@ export const AdminDashboardPage: React.FC = () => {
                               {u.email}
                             </p>
                             {u.banned && (
-                              <span className="text-[9px] text--600  font-bold uppercase tracking-wider">
+                              <span className="text-[9px] text-red-600  font-bold uppercase tracking-wider">
                                 BANNED
                               </span>
                             )}
@@ -1930,7 +1930,7 @@ export const AdminDashboardPage: React.FC = () => {
                                   : u.role === "ADMIN"
                                     ? "bg-rose-500/10 text-rose-600  border-rose-500/20"
                                     : u.role === "ORGANIZER"
-                                      ? "bg-blue-500/10 text-blue-600  border-blue-500/20"
+                                      ? "bg-red-500/10 text-red-600  border-red-500/20"
                                       : "bg-slate-500/10 text-slate-600  border-slate-500/20"
                               }`}
                             >
@@ -1950,7 +1950,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 onClick={() =>
                                   handleRoleChange(u.id, "ORGANIZER")
                                 }
-                                className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600  font-bold text-[10px] uppercase tracking-wider border border-blue-500/20 transition-all"
+                                className="px-2.5 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600  font-bold text-[10px] uppercase tracking-wider border border-red-500/20 transition-all"
                               >
                                 <UserCheck className="w-3 h-3 inline mr-1" />
                                 ORGANIZER
@@ -2059,8 +2059,8 @@ export const AdminDashboardPage: React.FC = () => {
                           onClick={() => setActiveSettingsTab(tab.id as any)}
                           className={`flex items-center gap-3 px-5 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider whitespace-nowrap transition-all text-left ${
                             isActive
-                              ? "bg-blue-500 text-slate-900  shadow-lg shadow-blue-500/20"
-                              : "bg-white  border border-slate-200  text-slate-500   hover:text-slate-900  hover:border-blue-500/50"
+                              ? "bg-red-500 text-slate-900  shadow-lg shadow-red-500/20"
+                              : "bg-white  border border-slate-200  text-slate-500   hover:text-slate-900  hover:border-red-500/50"
                           }`}
                         >
                           <Icon className="w-4 h-4 shrink-0" />
@@ -2077,8 +2077,8 @@ export const AdminDashboardPage: React.FC = () => {
                   {activeSettingsTab === "system" && (
                     <div className="bg-white  backdrop-blur-xl border border-slate-200  rounded-2xl overflow-hidden shadow-xl animate-in fade-in">
                       <div className="px-6 py-5 border-b border-slate-200  flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                          <Settings className="w-5 h-5 text-blue-500" />
+                        <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                          <Settings className="w-5 h-5 text-red-500" />
                         </div>
                         <div>
                           <h3 className="text-base font-black text-slate-900  uppercase tracking-wider">
@@ -2102,9 +2102,9 @@ export const AdminDashboardPage: React.FC = () => {
                           </div>
                           <button
                             onClick={handleToggleMaintenance}
-                            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
+                            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 ${
                               settings.maintenanceMode
-                                ? "bg-blue-500"
+                                ? "bg-red-500"
                                 : "bg-slate-300 "
                             }`}
                           >
@@ -2125,8 +2125,8 @@ export const AdminDashboardPage: React.FC = () => {
                   {activeSettingsTab === "payment" && (
                     <div className="bg-white  backdrop-blur-xl border border-slate-200  rounded-2xl overflow-hidden shadow-xl animate-in fade-in">
                       <div className="px-6 py-5 border-b border-slate-200  flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                          <CreditCard className="w-5 h-5 text-blue-500" />
+                        <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                          <CreditCard className="w-5 h-5 text-red-500" />
                         </div>
                         <div>
                           <h3 className="text-base font-black text-slate-900  uppercase tracking-wider">
@@ -2138,9 +2138,9 @@ export const AdminDashboardPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="p-6 space-y-6">
-                        <div className="bg-blue-50  border border-blue-100  p-4 rounded-xl flex gap-3">
-                          <Info className="w-5 h-5 text-blue-500 shrink-0" />
-                          <p className="text-xs text-blue-800  leading-relaxed">
+                        <div className="bg-red-50  border border-red-100  p-4 rounded-xl flex gap-3">
+                          <Info className="w-5 h-5 text-red-500 shrink-0" />
+                          <p className="text-xs text-red-800  leading-relaxed">
                             Masukkan **Server Key** dari dashboard Midtrans Anda
                             untuk mengaktifkan verifikasi pembayaran otomatis.
                             Kosongkan jika Anda ingin menggunakan sistem
@@ -2158,7 +2158,7 @@ export const AdminDashboardPage: React.FC = () => {
                               defaultValue={
                                 settings.midtransEnvironment || "sandbox"
                               }
-                              className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                              className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                             >
                               <option value="sandbox">Sandbox (Testing)</option>
                               <option value="production">
@@ -2184,7 +2184,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     defaultValue={
                                       settings.midtransSandboxServerKey || ""
                                     }
-                                    className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                    className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                                     placeholder="SB-Mid-server-..."
                                   />
                                 </div>
@@ -2198,7 +2198,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     defaultValue={
                                       settings.midtransSandboxClientKey || ""
                                     }
-                                    className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                    className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                                     placeholder="SB-Mid-client-..."
                                   />
                                 </div>
@@ -2221,7 +2221,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     defaultValue={
                                       settings.midtransProductionServerKey || ""
                                     }
-                                    className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                    className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                                     placeholder="Mid-server-..."
                                   />
                                 </div>
@@ -2235,7 +2235,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     defaultValue={
                                       settings.midtransProductionClientKey || ""
                                     }
-                                    className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                    className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                                     placeholder="Mid-client-..."
                                   />
                                 </div>
@@ -2258,7 +2258,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 type="text"
                                 id="manual-bank-input"
                                 defaultValue={settings.manualPaymentBank || ""}
-                                className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                                 placeholder="Contoh: BCA / Mandiri / BNI"
                               />
                             </div>
@@ -2272,7 +2272,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 defaultValue={
                                   settings.manualPaymentAccount || ""
                                 }
-                                className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                                 placeholder="Nomor rekening"
                               />
                             </div>
@@ -2287,7 +2287,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 type="text"
                                 id="manual-name-input"
                                 defaultValue={settings.manualPaymentName || ""}
-                                className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                                 placeholder="Nama pemilik rekening"
                               />
                             </div>
@@ -2299,7 +2299,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 type="number"
                                 id="admin-fee-input"
                                 defaultValue={settings.adminFee || 0}
-                                className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all shadow-sm"
+                                className="w-full bg-white  border border-slate-200  rounded-xl p-3.5 text-sm text-slate-900  focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 transition-all shadow-sm"
                                 placeholder="Biaya admin (contoh: 5000)"
                               />
                             </div>
@@ -2396,7 +2396,7 @@ export const AdminDashboardPage: React.FC = () => {
                                   setLoading(false);
                                 }
                               }}
-                              className="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-blue-600/20 whitespace-nowrap"
+                              className="px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-red-600/20 whitespace-nowrap"
                             >
                               Simpan Pengaturan
                             </button>

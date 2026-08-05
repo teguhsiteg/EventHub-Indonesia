@@ -114,9 +114,9 @@ export const PrivacyPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-blue-950">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-red-950">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-red-500 animate-spin" />
           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest animate-pulse">Memuat...</span>
         </div>
       </div>
@@ -128,11 +128,11 @@ export const PrivacyPage: React.FC = () => {
       {/* Breadcrumb */}
       <div className="max-w-4xl mx-auto px-4 pt-8 pb-0">
         <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-8">
-          <Link to="/" className="hover:text-blue-400 transition-colors flex items-center gap-1">
+          <Link to="/" className="hover:text-red-400 transition-colors flex items-center gap-1">
             <Home className="w-3.5 h-3.5" /> Beranda
           </Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-blue-400">Kebijakan Privasi</span>
+          <span className="text-red-400">Kebijakan Privasi</span>
         </nav>
       </div>
 
@@ -140,7 +140,7 @@ export const PrivacyPage: React.FC = () => {
       <div className="relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-emerald-600/5 blur-[120px] rounded-full pointer-events-none" />
         <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-blue-950/90 border border-slate-200 dark:border-slate-800 text-emerald-500 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-red-950/90 border border-slate-200 dark:border-slate-800 text-emerald-500 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
             <Lock className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
             <span>EventHub by Guwigo — KEBIJAKAN PRIVASI</span>
           </div>
@@ -158,13 +158,13 @@ export const PrivacyPage: React.FC = () => {
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 pb-24">
-        <div className="bg-white/60 dark:bg-blue-950/50 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-xl prose dark:prose-invert max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-lg prose-h3:mt-8 prose-p:text-slate-600 dark:prose-p:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-a:text-emerald-500 dark:prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:text-emerald-600 dark:hover:prose-a:text-emerald-300 prose-strong:text-slate-900 dark:prose-strong:text-white prose-code:text-emerald-500 dark:prose-code:text-emerald-300 prose-code:bg-slate-100 dark:prose-code:bg-slate-100 dark:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-li:text-slate-600 dark:prose-li:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-hr:border-slate-200 dark:prose-hr:border-slate-300 dark:border-slate-700 prose-blockquote:border-emerald-500 prose-blockquote:text-slate-500 dark:prose-blockquote:text-slate-600 dark:text-slate-500 dark:text-slate-400 prose-blockquote:bg-emerald-50 dark:prose-blockquote:bg-slate-100 dark:bg-slate-800/50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-2xl prose-ol:list-decimal prose-ol:pl-6 prose-ul:list-disc prose-ul:pl-6 prose-li:my-1 backdrop-blur-md">
+        <div className="bg-white/60 dark:bg-red-950/50 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-xl prose dark:prose-invert max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-lg prose-h3:mt-8 prose-p:text-slate-600 dark:prose-p:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-p:leading-relaxed prose-a:text-emerald-500 dark:prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:text-emerald-600 dark:hover:prose-a:text-emerald-300 prose-strong:text-slate-900 dark:prose-strong:text-white prose-code:text-emerald-500 dark:prose-code:text-emerald-300 prose-code:bg-slate-100 dark:prose-code:bg-slate-100 dark:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-li:text-slate-600 dark:prose-li:text-slate-700 dark:text-slate-600 dark:text-slate-300 prose-hr:border-slate-200 dark:prose-hr:border-slate-300 dark:border-slate-700 prose-blockquote:border-emerald-500 prose-blockquote:text-slate-500 dark:prose-blockquote:text-slate-600 dark:text-slate-500 dark:text-slate-400 prose-blockquote:bg-emerald-50 dark:prose-blockquote:bg-slate-100 dark:bg-slate-800/50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-2xl prose-ol:list-decimal prose-ol:pl-6 prose-ul:list-disc prose-ul:pl-6 prose-li:my-1 backdrop-blur-md">
           <ReactMarkdown>{content || DEFAULT_PRIVACY}</ReactMarkdown>
         </div>
 
         {/* Footer CTA */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/80 dark:bg-blue-950 border border-slate-200 dark:border-slate-800 shadow-sm backdrop-blur-sm">
+          <div className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/80 dark:bg-red-950 border border-slate-200 dark:border-slate-800 shadow-sm backdrop-blur-sm">
             <Shield className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
             <span className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400">
               Data Anda aman bersama kami —{' '}

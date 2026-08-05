@@ -79,8 +79,8 @@ export const AutoLogout: React.FC = () => {
   if (!showWarning) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-blue-950/60 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-blue-950 rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-red-500/30 text-center animate-in fade-in zoom-in duration-300">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-red-950/60 backdrop-blur-sm p-4">
+      <div className="bg-white dark:bg-red-950 rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-red-500/30 text-center animate-in fade-in zoom-in duration-300">
         <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -93,7 +93,7 @@ export const AutoLogout: React.FC = () => {
         </p>
         <button
           onClick={resetTimer}
-          className="w-full bg-white dark:bg-blue-950 dark:bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 py-3 rounded-xl font-bold uppercase tracking-wider transition-colors"
+          className="w-full bg-white dark:bg-red-950 dark:bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 py-3 rounded-xl font-bold uppercase tracking-wider transition-colors"
         >
           Tetap Login
         </button>

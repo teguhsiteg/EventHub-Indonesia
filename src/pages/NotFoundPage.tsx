@@ -8,7 +8,7 @@ export const NotFoundPage: React.FC = () => {
       <div className="max-w-md w-full text-center space-y-8">
         <div className="space-y-4">
           <h1 className="text-8xl font-black text-white">404</h1>
-          <div className="h-1 w-24 bg-blue-500 mx-auto rounded-full" />
+          <div className="h-1 w-24 bg-red-500 mx-auto rounded-full" />
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200">
             Halaman Tidak Ditemukan
           </h2>
@@ -20,14 +20,14 @@ export const NotFoundPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
           <button
             onClick={() => window.history.back()}
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white dark:bg-blue-950 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-600 dark:text-slate-300 font-bold text-sm transition-colors border border-slate-200 dark:border-slate-800 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white dark:bg-red-950 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-600 dark:text-slate-300 font-bold text-sm transition-colors border border-slate-200 dark:border-slate-800 flex items-center justify-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Kembali</span>
           </button>
           <Link
             to="/"
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2"
           >
             <Home className="w-4 h-4" />
             <span>Ke Halaman Utama</span>

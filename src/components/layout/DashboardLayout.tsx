@@ -33,10 +33,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   };
 
   return (
-    <div className="relative min-h-screen bg-slate-50/50 dark:bg-[#0a0f1e] font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-500/30 selection:text-blue-200">
+    <div className="relative min-h-screen bg-slate-50/50 dark:bg-[#0a0f1e] font-sans text-slate-900 dark:text-slate-100 selection:bg-red-500/30 selection:text-red-200">
       {/* Background Layers */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full bg-gradient-to-bl from-blue-500/5 via-transparent to-transparent blur-3xl" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full bg-gradient-to-bl from-red-500/5 via-transparent to-transparent blur-3xl" />
         <div className="absolute -bottom-1/2 -left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-orange-500/5 via-transparent to-transparent blur-3xl" />
       </div>
 
@@ -51,11 +51,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-500/20">
                 <Trophy className="w-5 h-5 text-white" />
               </div>
               <span className="text-base font-black text-slate-900 dark:text-white uppercase tracking-widest hidden sm:block">
-                RACE<span className="text-blue-600">PRO</span>
+                RACE<span className="text-red-600">PRO</span>
               </span>
             </Link>
           </div>
@@ -100,11 +100,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                 to={tab.href}
                 className={`flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
                   isActive 
-                    ? 'bg-white dark:bg-[#111827] text-blue-600 dark:text-blue-400 shadow-md shadow-slate-200/50 dark:shadow-none border border-slate-200/80 dark:border-white/10 scale-[1.02]' 
+                    ? 'bg-white dark:bg-[#111827] text-red-600 dark:text-red-400 shadow-md shadow-slate-200/50 dark:shadow-none border border-slate-200/80 dark:border-white/10 scale-[1.02]' 
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/[0.04] border border-transparent'
                 }`}
               >
-                <div className={`p-1.5 rounded-lg ${isActive ? 'bg-blue-50 dark:bg-blue-900/30' : 'bg-transparent'}`}>
+                <div className={`p-1.5 rounded-lg ${isActive ? 'bg-red-50 dark:bg-red-900/30' : 'bg-transparent'}`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <span>{tab.label}</span>
@@ -129,7 +129,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                     onClick={() => setMobileSidebarOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                       isActive 
-                        ? 'bg-gradient-to-r from-blue-500/20 to-yellow-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-lg shadow-blue-500/5' 
+                        ? 'bg-gradient-to-r from-red-500/20 to-yellow-500/10 text-red-600 dark:text-red-400 border border-red-500/20 shadow-lg shadow-red-500/5' 
                         : 'text-slate-600 dark:text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
                     }`}
                   >

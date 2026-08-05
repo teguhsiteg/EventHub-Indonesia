@@ -64,7 +64,7 @@ export const FooterSettings: React.FC<{ addNotification: (type: 'success' | 'err
   };
 
   return (
-    <div className="bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl p-6 shadow-xl animate-in fade-in">
+    <div className="bg-white dark:bg-red-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl p-6 shadow-xl animate-in fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center">

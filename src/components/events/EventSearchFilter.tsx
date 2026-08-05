@@ -79,7 +79,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
   const hasActiveFilters = query.trim() !== '' || location !== 'Semua Lokasi' || category !== 'ALL' || status !== 'ALL';
 
   return (
-    <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl mb-8 space-y-5">
+    <div className="bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl mb-8 space-y-5">
       
       {/* Top Search Inputs Row */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 items-center">
@@ -96,7 +96,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Cari nama event, tantangan, atau deskripsi..."
-              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-9 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-9 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-red-500 transition-colors"
             />
             {query && (
               <button
@@ -116,11 +116,11 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
             Lokasi Event
           </label>
           <div className="relative flex items-center">
-            <MapPin className="w-4 h-4 text-blue-400 absolute left-3.5 pointer-events-none" />
+            <MapPin className="w-4 h-4 text-red-400 absolute left-3.5 pointer-events-none" />
             <select
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-8 py-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-blue-500 appearance-none cursor-pointer transition-colors"
+              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-8 py-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-red-500 appearance-none cursor-pointer transition-colors"
             >
               {POPULAR_LOCATIONS.map((loc) => (
                 <option key={loc} value={loc}>
@@ -141,7 +141,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-8 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 appearance-none cursor-pointer transition-colors"
+              className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-8 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-red-500 appearance-none cursor-pointer transition-colors"
             >
               {STATUS_OPTIONS.map((st) => (
                 <option key={st.id} value={st.id}>
@@ -158,7 +158,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
       <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-2 flex items-center gap-1">
-            <Tag className="w-3 h-3 text-blue-400" />
+            <Tag className="w-3 h-3 text-red-400" />
             <span>Kategori:</span>
           </span>
           {CATEGORY_OPTIONS.map((cat) => {
@@ -170,7 +170,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
                 onClick={() => setCategory(cat.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
                   isSelected
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
                     : ' border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:border-slate-700'
                 }`}
               >
@@ -183,7 +183,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
         {/* Action Controls & Indicators */}
         <div className="flex items-center gap-3 shrink-0">
           {(isDebouncing || isSearching) && (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-800/50 text-blue-400 text-[11px] font-semibold animate-pulse">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/60 border border-red-800/50 text-red-400 text-[11px] font-semibold animate-pulse">
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
               <span>Mencari di Firestore...</span>
             </div>

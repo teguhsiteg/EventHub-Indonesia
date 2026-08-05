@@ -430,7 +430,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
                     payment.status === 'PAID' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800' : 
-                    payment.status === 'VERIFIED' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800' :
+                    payment.status === 'VERIFIED' ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' :
                     'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800'
                   }`}>
                     {payment.status}
@@ -453,13 +453,13 @@ export const ParticipantDashboardPage: React.FC = () => {
                 <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800">
                   {payment.status !== 'PAID' && payment.paymentMethod === 'MIDTRANS' ? (
                     <div className="text-center space-y-4">
-                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-2">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-2">
                         <CreditCard className="w-6 h-6" />
                       </div>
                       <p className="text-sm text-slate-600 dark:text-slate-400">Selesaikan pembayaran Anda melalui layanan Midtrans.</p>
                       <button
                         onClick={() => window.open(`/events/${eventData?.id}`, '_self')}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition-colors"
                       >
                         Lanjutkan Pembayaran
                       </button>
@@ -476,7 +476,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                           value={proofUrl}
                           onChange={(e) => setProofUrl(e.target.value)}
                           placeholder="https://..."
-                          className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
                         />
                       </div>
                       <button
@@ -524,13 +524,13 @@ export const ParticipantDashboardPage: React.FC = () => {
                       rows={4}
                       value={allergies}
                       onChange={(e) => setAllergies(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all resize-none"
                       placeholder="Sebutkan jika ada riwayat asma, jantung, alergi obat tertentu, dsb."
                     />
                   </div>
 
                   <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex gap-3 items-start">
-                    <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+                    <ShieldCheck className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       Saya menyatakan bahwa data kesehatan yang diisi adalah benar, serta menyetujui standar keselamatan dan pertolongan medis dari penyelenggara acara. Penyelenggara dibebaskan dari tuntutan apabila terjadi hal di luar kendali medis akibat informasi yang tidak jujur.
                     </p>
@@ -566,7 +566,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                       </div>
                       <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-5 text-left">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Chip Time</p>
-                        <p className="text-xl font-mono font-bold text-blue-600 dark:text-blue-400">{result.chipTime}</p>
+                        <p className="text-xl font-mono font-bold text-red-600 dark:text-red-400">{result.chipTime}</p>
                       </div>
                     </div>
 

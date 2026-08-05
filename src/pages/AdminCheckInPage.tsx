@@ -137,12 +137,12 @@ export const AdminCheckInPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 space-y-8">
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <Link to="/admin" className="inline-flex items-center gap-2 text-xs font-bold text-blue-400 hover:underline uppercase">
+          <Link to="/admin" className="inline-flex items-center gap-2 text-xs font-bold text-red-400 hover:underline uppercase">
             <ArrowLeft className="w-4 h-4" />
             <span>Kembali ke Dashboard Admin</span>
           </Link>
           
-          <div className="flex items-center gap-2 bg-blue-500/10 text-blue-400 px-4 py-2 rounded-xl text-xs font-bold uppercase border border-blue-500/20">
+          <div className="flex items-center gap-2 bg-red-500/10 text-red-400 px-4 py-2 rounded-xl text-xs font-bold uppercase border border-red-500/20">
             <Activity className="w-4 h-4" />
             <span>Live Check-In Monitor</span>
           </div>
@@ -151,8 +151,8 @@ export const AdminCheckInPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* LEFT COLUMN: SCANNER */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 lg:p-8 shadow-2xl text-center space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center mx-auto">
+            <div className="bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 lg:p-8 shadow-2xl text-center space-y-6">
+              <div className="w-16 h-16 rounded-2xl bg-red-600/20 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto">
                 <QrCode className="w-8 h-8" />
               </div>
 
@@ -171,7 +171,7 @@ export const AdminCheckInPage: React.FC = () => {
             </button>
           ) : (
             <div className="space-y-4">
-              <div className="overflow-hidden rounded-2xl border-2 border-blue-500/30 bg-black">
+              <div className="overflow-hidden rounded-2xl border-2 border-red-500/30 bg-black">
                 <div id="qr-reader" className="w-full"></div>
               </div>
               <button
@@ -199,13 +199,13 @@ export const AdminCheckInPage: React.FC = () => {
                 value={qrInput}
                 onChange={(e) => setQrInput(e.target.value)}
                 placeholder="Tempel / Scan QR Token (RACEPRO_QR_...)"
-                className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white font-mono text-xs focus:border-blue-500"
+                className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-900 dark:text-white font-mono text-xs focus:border-red-500"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider shadow-lg shadow-blue-600/20"
+              className="w-full py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-wider shadow-lg shadow-red-600/20"
             >
               {loading ? 'Memverifikasi...' : 'VERIFIKASI & CHECK-IN'}
             </button>
@@ -252,7 +252,7 @@ export const AdminCheckInPage: React.FC = () => {
 
       {/* RIGHT COLUMN: HISTORY */}
       <div className="lg:col-span-2 space-y-6">
-        <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 lg:p-8 shadow-2xl">
+        <div className="bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 lg:p-8 shadow-2xl">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 text-indigo-400">

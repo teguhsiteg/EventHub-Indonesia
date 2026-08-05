@@ -2,10 +2,10 @@ import React from 'react';
 
 export const EventCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col animate-pulse shadow-lg">
+    <div className="bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col animate-pulse shadow-lg">
       {/* Banner Skeleton */}
       <div className="relative h-48  flex items-center justify-center">
-        <div className="w-12 h-12 rounded-full bg-white dark:bg-blue-950/80 border border-slate-200 dark:border-slate-800/60" />
+        <div className="w-12 h-12 rounded-full bg-white dark:bg-red-950/80 border border-slate-200 dark:border-slate-800/60" />
         <div className="absolute top-3 left-3 w-16 h-5 rounded bg-slate-100 dark:bg-slate-800/90" />
         <div className="absolute top-3 right-3 w-20 h-5 rounded bg-slate-100 dark:bg-slate-800/90" />
       </div>

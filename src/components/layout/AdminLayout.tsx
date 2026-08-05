@@ -39,7 +39,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="relative min-h-screen font-sans text-slate-800 bg-slate-50/50 selection:bg-blue-100 selection:text-blue-900">
+    <div className="relative min-h-screen font-sans text-slate-800 bg-slate-50/50 selection:bg-red-100 selection:text-red-900">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 bg-white" aria-hidden="true" />
 
@@ -54,13 +54,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <Link to="/admin" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center">
                 <ShieldAlert className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm font-black text-slate-900 uppercase tracking-wider">
-                Event<span className="text-blue-600">Hub</span>
+                Event<span className="text-red-600">Hub</span>
               </span>
-              <span className="hidden sm:inline text-[10px] font-black text-blue-400 uppercase tracking-widest bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded ml-2">
+              <span className="hidden sm:inline text-[10px] font-black text-red-400 uppercase tracking-widest bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded ml-2">
                 ADMIN
               </span>
             </Link>
@@ -69,7 +69,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-3">
             <Link
               to="/admin/check-in"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold uppercase tracking-wider hover:bg-blue-100 transition-all shadow-sm"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 border border-red-100 text-red-600 text-[10px] font-bold uppercase tracking-wider hover:bg-red-100 transition-all shadow-sm"
             >
               <QrCode className="w-3.5 h-3.5" />
               <span>QR Check-In</span>
@@ -100,11 +100,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 to={tab.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300 ${
                   isActive
-                    ? 'bg-blue-50 text-blue-600 shadow-sm border border-blue-100'
+                    ? 'bg-red-50 text-red-600 shadow-sm border border-red-100'
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-blue-500' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-red-500' : 'text-slate-400'}`} />
                 <span>{tab.label}</span>
               </Link>
             );
@@ -125,7 +125,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {mobileSidebarOpen && (
           <div className="fixed inset-0 z-40 xl:hidden">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileSidebarOpen(false)} />
-            <aside className="absolute top-16 left-0 bottom-0 w-64 bg-slate-50 dark:bg-blue-950 border-r border-slate-200 dark:border-white/[0.06] p-3 flex flex-col gap-1 animate-in slide-in-from-left">
+            <aside className="absolute top-16 left-0 bottom-0 w-64 bg-slate-50 dark:bg-red-950 border-r border-slate-200 dark:border-white/[0.06] p-3 flex flex-col gap-1 animate-in slide-in-from-left">
               {(isSuperAdmin ? adminTabs : adminTabs.filter(tab => !['requests', 'users', 'settings'].includes(tab.id))).map(tab => {
                 const Icon = tab.icon;
                 const tabParam = new URLSearchParams(tab.href.includes('?') ? tab.href.split('?')[1] : '').get('tab');
@@ -140,7 +140,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     onClick={() => setMobileSidebarOpen(false)}
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                       isActive
-                        ? 'bg-gradient-to-r from-blue-500/20 to-yellow-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-lg shadow-blue-500/5'
+                        ? 'bg-gradient-to-r from-red-500/20 to-yellow-500/10 text-red-600 dark:text-red-400 border border-red-500/20 shadow-lg shadow-red-500/5'
                         : 'text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/[0.04]'
                     }`}
                   >
@@ -153,7 +153,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 <Link
                   to="/admin/check-in"
                   onClick={() => setMobileSidebarOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-blue-400 hover:bg-blue-500/10 transition-all"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/10 transition-all"
                 >
                   <QrCode className="w-4 h-4" />
                   <span>QR Check-In</span>

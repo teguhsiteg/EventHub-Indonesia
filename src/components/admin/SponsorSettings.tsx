@@ -86,17 +86,17 @@ export const SponsorSettings: React.FC<SponsorSettingsProps> = ({ addNotificatio
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white dark:bg-blue-950/60 p-6 rounded-2xl border border-slate-300 dark:border-slate-800">
+      <div className="flex justify-between items-center bg-white dark:bg-red-950/60 p-6 rounded-2xl border border-slate-300 dark:border-slate-800">
         <div>
           <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-blue-500" />
+            <Trophy className="w-5 h-5 text-red-500" />
             Mitra & Sponsor
           </h2>
           <p className="text-xs text-slate-500 mt-1">Kelola daftar sponsor yang tampil di halaman utama</p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-blue-500/25"
+          className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-red-500/25"
         >
           <Plus className="w-4 h-4" />
           Tambah Sponsor
@@ -105,10 +105,10 @@ export const SponsorSettings: React.FC<SponsorSettingsProps> = ({ addNotificatio
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-red-500 animate-spin" />
         </div>
       ) : (
-        <div className="bg-white dark:bg-blue-950/60 rounded-2xl border border-slate-300 dark:border-slate-800 overflow-hidden">
+        <div className="bg-white dark:bg-red-950/60 rounded-2xl border border-slate-300 dark:border-slate-800 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-100 dark:bg-slate-900/50 text-slate-500 font-bold uppercase tracking-wider">
@@ -140,7 +140,7 @@ export const SponsorSettings: React.FC<SponsorSettingsProps> = ({ addNotificatio
                       </td>
                       <td className="px-6 py-4">{sp.order}</td>
                       <td className="px-6 py-4 text-right">
-                        <button onClick={() => handleOpenModal(sp)} className="p-2 text-blue-500 hover:bg-blue-500/10 rounded-lg transition-colors">
+                        <button onClick={() => handleOpenModal(sp)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
                           <Edit3 className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleDelete(sp.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors ml-2">
@@ -170,20 +170,20 @@ export const SponsorSettings: React.FC<SponsorSettingsProps> = ({ addNotificatio
             <form onSubmit={handleSave} className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Sponsor *</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none" />
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-red-500 outline-none" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">URL Logo (Opsional)</label>
-                <input type="text" value={formData.logoUrl} onChange={e => setFormData({...formData, logoUrl: e.target.value})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none" />
+                <input type="text" value={formData.logoUrl} onChange={e => setFormData({...formData, logoUrl: e.target.value})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-red-500 outline-none" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">URL Website (Opsional)</label>
-                <input type="text" value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none" />
+                <input type="text" value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-red-500 outline-none" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tier</label>
-                  <select value={formData.tier} onChange={e => setFormData({...formData, tier: e.target.value as any})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none">
+                  <select value={formData.tier} onChange={e => setFormData({...formData, tier: e.target.value as any})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-red-500 outline-none">
                     <option value="PLATINUM">Platinum</option>
                     <option value="GOLD">Gold</option>
                     <option value="SILVER">Silver</option>
@@ -192,12 +192,12 @@ export const SponsorSettings: React.FC<SponsorSettingsProps> = ({ addNotificatio
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Urutan</label>
-                  <input type="number" required min={1} value={formData.order} onChange={e => setFormData({...formData, order: parseInt(e.target.value)})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none" />
+                  <input type="number" required min={1} value={formData.order} onChange={e => setFormData({...formData, order: parseInt(e.target.value)})} className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-sm text-slate-900 dark:text-white focus:border-red-500 outline-none" />
                 </div>
               </div>
               <div className="pt-4 flex justify-end gap-3">
                 <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 rounded-xl font-bold text-xs uppercase text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">Batal</button>
-                <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-blue-600 hover:bg-blue-500 text-white flex items-center gap-2">
+                <button type="submit" disabled={saving} className="px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-red-600 hover:bg-red-500 text-white flex items-center gap-2">
                   {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                   Simpan
                 </button>

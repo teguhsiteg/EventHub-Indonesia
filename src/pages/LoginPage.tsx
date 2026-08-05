@@ -81,7 +81,7 @@ export const LoginPage: React.FC = () => {
         <div className="relative z-10 max-w-md text-center">
           {/* Logo */}
           <div className="inline-flex mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 rounded-2xl bg-red-600 flex items-center justify-center shadow-lg">
               <Trophy className="w-8 h-8 text-white" />
             </div>
           </div>
@@ -104,8 +104,8 @@ export const LoginPage: React.FC = () => {
                 key={i}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-left"
               >
-                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
-                  <item.icon className="w-4 h-4 text-blue-400" />
+                <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0">
+                  <item.icon className="w-4 h-4 text-red-400" />
                 </div>
                 <span className="text-sm text-slate-300">{item.text}</span>
               </div>
@@ -126,7 +126,7 @@ export const LoginPage: React.FC = () => {
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-2">
             <div className="inline-flex mb-3">
-              <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-md">
+              <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center shadow-md">
                 <Trophy className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -165,7 +165,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all duration-300"
                 />
               </div>
             </div>
@@ -182,7 +182,7 @@ export const LoginPage: React.FC = () => {
                     setResetEmail(email);
                     setShowResetModal(true);
                   }}
-                  className="text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                  className="text-xs text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors"
                 >
                   Lupa kata sandi?
                 </button>
@@ -197,7 +197,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -213,7 +213,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -258,7 +258,7 @@ export const LoginPage: React.FC = () => {
           {/* Register link */}
           <p className="text-center text-sm text-slate-600 dark:text-slate-400">
             Belum punya akun?{' '}
-            <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-semibold transition-colors">
+            <Link to="/register" className="text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 font-semibold transition-colors">
               Daftar Sekarang
             </Link>
           </p>
@@ -299,7 +299,7 @@ export const LoginPage: React.FC = () => {
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
                       placeholder="nama@email.com"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder:text-slate-600 text-sm focus:outline-none focus:border-red-500/50 transition-all"
                     />
                   </div>
                   <div className="flex gap-2.5">
@@ -312,7 +312,7 @@ export const LoginPage: React.FC = () => {
                     <button
                       onClick={handleResetPassword}
                       disabled={!resetEmail || resetLoading}
-                      className="flex-1 flex justify-center items-center py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold disabled:opacity-50 transition-all"
+                      className="flex-1 flex justify-center items-center py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold disabled:opacity-50 transition-all"
                     >
                       {resetLoading ? (
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -20,7 +20,7 @@ export const ETicketTemplate: React.FC<ETicketTemplateProps> = ({ participant, e
         height: 180,
         data: participant.qrToken,
         dotsOptions: {
-          color: "#3b82f6", // blue-500
+          color: "#DC2626", // red-600
           type: "rounded"
         },
         backgroundOptions: {
@@ -31,7 +31,7 @@ export const ETicketTemplate: React.FC<ETicketTemplateProps> = ({ participant, e
           type: "extra-rounded"
         },
         cornersDotOptions: {
-          color: "#3b82f6", // blue-500
+          color: "#DC2626", // red-600
           type: "dot"
         },
         imageOptions: {
@@ -63,7 +63,7 @@ export const ETicketTemplate: React.FC<ETicketTemplateProps> = ({ participant, e
   return (
     <div className="w-[400px] bg-white rounded-3xl overflow-hidden shadow-2xl relative font-sans text-slate-900 border border-slate-200" id="eticket-content">
       {/* Top Banner */}
-      <div className="h-32 bg-gradient-to-r from-blue-600 to-blue-800 relative">
+      <div className="h-32 bg-gradient-to-r from-red-600 to-red-800 relative">
         {event.banner && (
           <img 
             src={event.banner} 
@@ -74,7 +74,7 @@ export const ETicketTemplate: React.FC<ETicketTemplateProps> = ({ participant, e
         )}
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-          <span className="text-blue-200 text-[10px] font-black tracking-[0.2em] uppercase mb-1 drop-shadow-md">OFFICIAL E-TICKET</span>
+          <span className="text-red-200 text-[10px] font-black tracking-[0.2em] uppercase mb-1 drop-shadow-md">OFFICIAL E-TICKET</span>
           <h1 className="text-white text-xl font-black uppercase tracking-tight drop-shadow-lg leading-tight line-clamp-2">{event.name}</h1>
         </div>
       </div>
@@ -145,7 +145,7 @@ export const ETicketTemplate: React.FC<ETicketTemplateProps> = ({ participant, e
               
               {/* Logo Overlay */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="rounded-full bg-gradient-to-br from-blue-500 to-yellow-400 shadow-lg flex items-center justify-center border-[3px] border-white w-10 h-10">
+                <div className="rounded-full bg-gradient-to-br from-red-500 to-yellow-400 shadow-lg flex items-center justify-center border-[3px] border-white w-10 h-10">
                   <span className="text-white font-black leading-none text-lg">G</span>
                 </div>
               </div>
@@ -160,7 +160,7 @@ export const ETicketTemplate: React.FC<ETicketTemplateProps> = ({ participant, e
       </div>
 
       {/* Footer Pattern */}
-      <div className="h-4 bg-gradient-to-r from-blue-600 via-yellow-400 to-blue-600 w-full" />
+      <div className="h-4 bg-gradient-to-r from-red-600 via-yellow-400 to-red-600 w-full" />
     </div>
   );
 };

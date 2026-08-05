@@ -4,7 +4,7 @@ import { ShieldAlert, Clock, RefreshCw } from 'lucide-react';
 export const MaintenancePage: React.FC = () => {
   return (
     <div className="min-h-screen  flex flex-col items-center justify-center p-4 text-center">
-      <div className="max-w-md w-full bg-white dark:bg-blue-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl p-8 shadow-2xl space-y-6">
+      <div className="max-w-md w-full bg-white dark:bg-red-950/80 backdrop-blur-xl border border-slate-200 dark:border-white/[0.06] rounded-2xl p-8 shadow-2xl space-y-6">
         <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 flex items-center justify-center mx-auto">
           <ShieldAlert className="w-8 h-8" />
         </div>

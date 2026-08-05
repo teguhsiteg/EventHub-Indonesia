@@ -15,11 +15,11 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-blue-950/80 backdrop-blur-md overflow-y-auto">
-      <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full shadow-2xl overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-red-950/80 backdrop-blur-md overflow-y-auto">
+      <div className="bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full shadow-2xl overflow-hidden my-8">
         
         {/* Header */}
-        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-blue-950/50">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-red-950/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400">
               <Award className="w-6 h-6" />
@@ -77,7 +77,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             </div>
 
             {/* Metrics */}
-            <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto my-2 bg-white dark:bg-blue-950/80 border border-yellow-500/20 p-4 rounded-xl">
+            <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto my-2 bg-white dark:bg-red-950/80 border border-yellow-500/20 p-4 rounded-xl">
               <div>
                 <span className="block text-[10px] font-bold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">WAKTU FINISH</span>
                 <span className="block text-xl font-black text-slate-900 dark:text-white font-mono mt-0.5">{certificate.finishTime}</span>
@@ -112,7 +112,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
         </div>
 
         {/* Modal Controls */}
-        <div className="p-6 bg-slate-50 dark:bg-blue-950/80 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div className="p-6 bg-slate-50 dark:bg-red-950/80 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <p className="text-xs text-slate-500 dark:text-slate-500 dark:text-slate-400">
             Sertifikat ini resmi dan dapat diverifikasi melalui database EventHub by Guwigo.
           </p>
@@ -126,7 +126,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-red-500/20 transition-all"
             >
               <Download className="w-4 h-4" />
               <span>Unduh Sertifikat</span>

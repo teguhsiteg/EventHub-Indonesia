@@ -346,8 +346,8 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-blue-950/80 backdrop-blur-md overflow-y-auto">
-      <div className="bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-50 dark:bg-red-950/80 backdrop-blur-md overflow-y-auto">
+      <div className="bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative my-auto">
         
         <button
           onClick={onClose}
@@ -357,7 +357,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         </button>
 
         <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase mb-6 flex items-center gap-3">
-          <span className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-500 flex items-center justify-center">
+          <span className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-500 flex items-center justify-center">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
           </span>
           {initialData ? 'Edit Event Lomba' : 'Buat Event Lomba Baru'}
@@ -367,7 +367,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
           {[1, 2, 3, 4, 5, 6].map(i => (
             <React.Fragment key={i}>
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-blue-500 text-white' : step > i ? 'bg-blue-200 text-blue-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-500 dark:text-slate-400'}`}>
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs shrink-0 ${step === i ? 'bg-red-500 text-white' : step > i ? 'bg-red-200 text-red-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-500 dark:text-slate-400'}`}>
                 {step > i ? '✓' : i}
               </div>
               <span className={`text-xs font-bold uppercase tracking-wider whitespace-nowrap ${step === i ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-500 dark:text-slate-400'}`}>
@@ -393,7 +393,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       value={eventName}
                       onChange={(e) => setEventName(e.target.value)}
                       placeholder="Contoh: Rinjani Ultra Trail 2026"
-                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                     />
                   </div>
                   <div>
@@ -402,7 +402,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       required
                       value={eventCategory}
                       onChange={(e) => setEventCategory(e.target.value)}
-                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none appearance-none"
+                      className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none appearance-none"
                     >
                       <option value="">Pilih Jenis Event...</option>
                       {EVENT_CATEGORIES.map(cat => (
@@ -421,7 +421,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={eventStartDate}
                   onChange={(e) => setEventStartDate(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                 />
               </div>
               <div>
@@ -432,7 +432,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   value={eventLocation}
                   onChange={(e) => setEventLocation(e.target.value)}
                   placeholder="Nama Tempat / Kota"
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                 />
               </div>
 
@@ -443,7 +443,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={eventRegStart}
                   onChange={(e) => setEventRegStart(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                 />
               </div>
               <div>
@@ -453,7 +453,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={eventRegEnd}
                   onChange={(e) => setEventRegEnd(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                 />
               </div>
 
@@ -465,7 +465,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={eventBanner}
                     onChange={(e) => setEventBanner(e.target.value)}
                     placeholder="https://..."
-                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                   />
                 </div>
                 <div>
@@ -476,7 +476,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={eventDesc}
                     onChange={(e) => setEventDesc(e.target.value)}
                     placeholder="Jelaskan detail event lomba ini..."
-                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                    className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                   />
                 </div>
 
@@ -490,7 +490,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                         value={organizerName}
                         onChange={(e) => setOrganizerName(e.target.value)}
                         placeholder="Contoh: RunID, LariYuk"
-                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                       />
                     </div>
                     <div>
@@ -500,7 +500,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                         value={organizerWebsite}
                         onChange={(e) => setOrganizerWebsite(e.target.value)}
                         placeholder="https://..."
-                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                       />
                     </div>
                     <div>
@@ -510,7 +510,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                         value={organizerSocialMedia}
                         onChange={(e) => setOrganizerSocialMedia(e.target.value)}
                         placeholder="https://instagram.com/..."
-                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                        className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                       />
                     </div>
                   </div>
@@ -529,7 +529,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={facilities}
                   onChange={(e) => setFacilities(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                 />
               </div>
               
@@ -540,7 +540,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   required
                   value={rules}
                   onChange={(e) => setRules(e.target.value)}
-                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none"
+                  className="w-full  border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none"
                 />
               </div>
 
@@ -552,7 +552,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={jerseySizeChartUrl}
                     onChange={(e) => setJerseySizeChartUrl(e.target.value)}
                     placeholder="https://..."
-                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none text-sm"
+                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none text-sm"
                   />
                 </div>
                 <div>
@@ -562,7 +562,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={jacketSizeChartUrl}
                     onChange={(e) => setJacketSizeChartUrl(e.target.value)}
                     placeholder="https://..."
-                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none text-sm"
+                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none text-sm"
                   />
                 </div>
                 <div>
@@ -572,7 +572,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={medalImageUrl}
                     onChange={(e) => setMedalImageUrl(e.target.value)}
                     placeholder="https://..."
-                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-blue-500 outline-none text-sm"
+                    className="w-full border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 text-slate-900 dark:text-white font-medium focus:border-red-500 outline-none text-sm"
                   />
                 </div>
               </div>
@@ -580,7 +580,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <div className=" border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
                 <label className="block text-slate-900 dark:text-white font-black uppercase mb-4">Susunan Acara (Opsional)</label>
                 {schedules.map((s, i) => (
-                  <div key={i} className="mb-3 p-3 bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl flex justify-between items-start">
+                  <div key={i} className="mb-3 p-3 bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl flex justify-between items-start">
                     <div>
                       <p className="font-bold text-slate-900 dark:text-white text-xs mb-1">{s.time} - {s.title}</p>
                       <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-[10px]">{s.description}</p>
@@ -594,14 +594,14 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={scheduleTime}
                     onChange={(e) => setScheduleTime(e.target.value)}
                     placeholder="Waktu (Cth: 05:00 WIB)"
-                    className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
+                    className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
                   />
                   <input
                     type="text"
                     value={scheduleTitle}
                     onChange={(e) => setScheduleTitle(e.target.value)}
                     placeholder="Judul (Cth: Flag-off)"
-                    className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
+                    className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
                   />
                   <div className="flex gap-2">
                     <input
@@ -609,9 +609,9 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       value={scheduleDesc}
                       onChange={(e) => setScheduleDesc(e.target.value)}
                       placeholder="Deskripsi"
-                      className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
+                      className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none text-xs"
                     />
-                    <button type="button" onClick={handleAddSchedule} className="px-4 bg-blue-100 text-blue-600 rounded-xl font-bold hover:bg-blue-200 shrink-0 text-xs">
+                    <button type="button" onClick={handleAddSchedule} className="px-4 bg-red-100 text-red-600 rounded-xl font-bold hover:bg-red-200 shrink-0 text-xs">
                       Tambah
                     </button>
                   </div>
@@ -621,7 +621,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <div className=" border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
                 <label className="block text-slate-900 dark:text-white font-black uppercase mb-4">FAQ (Pertanyaan Umum)</label>
                 {faqs.map((f, i) => (
-                  <div key={i} className="mb-3 p-3 bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl flex justify-between items-start">
+                  <div key={i} className="mb-3 p-3 bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl flex justify-between items-start">
                     <div>
                       <p className="font-bold text-slate-900 dark:text-white text-xs mb-1">Q: {f.question}</p>
                       <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-xs">A: {f.answer}</p>
@@ -635,7 +635,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     value={faqQ}
                     onChange={(e) => setFaqQ(e.target.value)}
                     placeholder="Pertanyaan (Cth: Ada Water Station?)"
-                    className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
+                    className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
                   />
                   <div className="flex gap-2">
                     <input
@@ -643,9 +643,9 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       value={faqA}
                       onChange={(e) => setFaqA(e.target.value)}
                       placeholder="Jawaban"
-                      className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
+                      className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-900 dark:text-white outline-none"
                     />
-                    <button type="button" onClick={handleAddFaq} className="px-4 bg-blue-100 text-blue-600 rounded-xl font-bold hover:bg-blue-200 shrink-0">
+                    <button type="button" onClick={handleAddFaq} className="px-4 bg-red-100 text-red-600 rounded-xl font-bold hover:bg-red-200 shrink-0">
                       Tambah
                     </button>
                   </div>
@@ -658,14 +658,14 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               
-              <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 rounded-2xl p-5 mb-6">
+              <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 rounded-2xl p-5 mb-6">
                 <h4 className="font-black text-slate-900 dark:text-white uppercase mb-4 text-xs">Kategori Tersimpan ({categories.length})</h4>
                 {categories.length === 0 ? (
                   <p className="text-slate-500 dark:text-slate-500 dark:text-slate-400 text-xs text-center py-4">Belum ada kategori. Tambahkan di bawah.</p>
                 ) : (
                   <div className="space-y-2">
                     {categories.map((c, i) => (
-                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-red-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div>
                           <span className="font-bold text-slate-900 dark:text-white block">{c.name} ({c.distance})</span>
                           <span className="text-xs text-slate-500">
@@ -674,7 +674,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button type="button" onClick={() => handleEditCategory(i)} className="text-blue-500 text-xs font-bold bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg hover:bg-blue-100">
+                          <button type="button" onClick={() => handleEditCategory(i)} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
                             Edit
                           </button>
                           <button type="button" onClick={() => setCategories(categories.filter((_, idx) => idx !== i))} className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100">
@@ -694,38 +694,38 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Kategori</label>
-                    <input type="text" value={catName} onChange={e => setCatName(e.target.value)} placeholder="Cth: 10K Open" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                    <input type="text" value={catName} onChange={e => setCatName(e.target.value)} placeholder="Cth: 10K Open" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Jarak</label>
-                    <input type="text" value={catDistance} onChange={e => setCatDistance(e.target.value)} placeholder="Cth: 10 KM" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                    <input type="text" value={catDistance} onChange={e => setCatDistance(e.target.value)} placeholder="Cth: 10 KM" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga (Rp)</label>
-                    <input type="number" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="Cth: 250000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                    <input type="number" value={catPrice} onChange={e => setCatPrice(e.target.value)} placeholder="Cth: 250000" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kuota Maksimal</label>
-                    <input type="number" value={catQuota} onChange={e => setCatQuota(e.target.value)} placeholder="Cth: 500" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                    <input type="number" value={catQuota} onChange={e => setCatQuota(e.target.value)} placeholder="Cth: 500" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Waktu (Cut-Off Time)</label>
-                    <input type="text" value={catCutoff} onChange={e => setCatCutoff(e.target.value)} placeholder="Cth: 3 Jam" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                    <input type="text" value={catCutoff} onChange={e => setCatCutoff(e.target.value)} placeholder="Cth: 3 Jam" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga Early Bird (Opsional)</label>
-                    <input type="number" value={catEarlyBirdPrice} onChange={e => setCatEarlyBirdPrice(e.target.value)} placeholder="Cth: 200000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                    <input type="number" value={catEarlyBirdPrice} onChange={e => setCatEarlyBirdPrice(e.target.value)} placeholder="Cth: 200000" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Waktu Early Bird (Opsional)</label>
-                    <input type="datetime-local" value={catEarlyBirdEndDate} onChange={e => setCatEarlyBirdEndDate(e.target.value)} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white [color-scheme:dark]" />
+                    <input type="datetime-local" value={catEarlyBirdEndDate} onChange={e => setCatEarlyBirdEndDate(e.target.value)} className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white [color-scheme:dark]" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Batas Kuota Early Bird (Opsional)</label>
-                    <input type="number" value={catEarlyBirdQuota} onChange={e => setCatEarlyBirdQuota(e.target.value)} placeholder="Cth: 50" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                    <input type="number" value={catEarlyBirdQuota} onChange={e => setCatEarlyBirdQuota(e.target.value)} placeholder="Cth: 50" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                   </div>
                   <div className="flex items-end gap-2 sm:col-span-2">
-                    <button type="button" onClick={handleAddCategory} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-wider rounded-xl p-3 transition-colors shadow-lg shadow-blue-500/25">
+                    <button type="button" onClick={handleAddCategory} className="w-full bg-red-600 hover:bg-red-500 text-white font-bold uppercase tracking-wider rounded-xl p-3 transition-colors shadow-lg shadow-red-500/25">
                       {editingCategoryIndex !== null ? 'Simpan Perubahan' : 'Simpan Kategori'}
                     </button>
                     {editingCategoryIndex !== null && (
@@ -759,13 +759,13 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <div className="space-y-4">
                 <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Daftar Merchandise / Add-Ons</h4>
                 {addons.length === 0 ? (
-                  <div className="text-center p-8 bg-slate-50 dark:bg-blue-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                  <div className="text-center p-8 bg-slate-50 dark:bg-red-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-slate-500 font-medium">Belum ada Add-Ons. (Misal: Jersey Tambahan, Topi Finisher)</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {addons.map((addon, i) => (
-                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-red-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div>
                           <span className="font-bold text-slate-900 dark:text-white block">{addon.name}</span>
                           <span className="text-xs text-slate-500">Rp {addon.price.toLocaleString('id-ID')} | {addon.description}</span>
@@ -784,18 +784,18 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Item</label>
-                    <input type="text" value={addonName} onChange={e => setAddonName(e.target.value)} placeholder="Cth: Topi Eksklusif Event" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={addonName} onChange={e => setAddonName(e.target.value)} placeholder="Cth: Topi Eksklusif Event" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga (Rp)</label>
-                    <input type="number" value={addonPrice} onChange={e => setAddonPrice(e.target.value)} placeholder="Cth: 150000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="number" value={addonPrice} onChange={e => setAddonPrice(e.target.value)} placeholder="Cth: 150000" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Deskripsi Singkat</label>
-                    <input type="text" value={addonDesc} onChange={e => setAddonDesc(e.target.value)} placeholder="Opsional" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                    <input type="text" value={addonDesc} onChange={e => setAddonDesc(e.target.value)} placeholder="Opsional" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                   </div>
                   <div className="md:col-span-2 flex justify-end mt-2">
-                    <button type="button" onClick={handleAddAddon} className="w-full md:w-auto bg-white dark:bg-blue-950 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-100 dark:bg-slate-800 transition-colors">
+                    <button type="button" onClick={handleAddAddon} className="w-full md:w-auto bg-white dark:bg-red-950 dark:bg-slate-700 text-white font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-100 dark:bg-slate-800 transition-colors">
                       Simpan Add-On
                     </button>
                   </div>
@@ -812,18 +812,18 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                 <div className="flex items-center justify-between">
                   <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Kode Voucher (Buka Kategori Sold Out)</h4>
                   <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-400">
-                    <input type="checkbox" checked={enableVoucherCode} onChange={(e) => setEnableVoucherCode(e.target.checked)} className="rounded text-blue-500" />
+                    <input type="checkbox" checked={enableVoucherCode} onChange={(e) => setEnableVoucherCode(e.target.checked)} className="rounded text-red-500" />
                     Tampilkan Selalu (Bypass Sold Out)
                   </label>
                 </div>
                 {specialVouchers.length === 0 ? (
-                  <div className="text-center p-6 bg-slate-50 dark:bg-blue-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                  <div className="text-center p-6 bg-slate-50 dark:bg-red-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-slate-500 font-medium text-xs">Belum ada kode voucher khusus ditambahkan.</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {specialVouchers.map((v, i) => (
-                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-red-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div>
                           <span className="font-bold text-slate-900 dark:text-white block">{v.code}</span>
                           <span className="text-xs text-slate-500">Membuka Kategori ID: {v.categoryId}</span>
@@ -841,11 +841,11 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Voucher</label>
-                      <input type="text" value={voucherCode} onChange={e => setVoucherCode(e.target.value)} placeholder="Cth: VIP-10K" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none uppercase" />
+                      <input type="text" value={voucherCode} onChange={e => setVoucherCode(e.target.value)} placeholder="Cth: VIP-10K" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none uppercase" />
                     </div>
                     <div>
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Untuk Kategori</label>
-                      <select value={voucherCatId} onChange={e => setVoucherCatId(e.target.value)} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
+                      <select value={voucherCatId} onChange={e => setVoucherCatId(e.target.value)} className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
                         <option value="">Pilih Kategori...</option>
                         {categories.map((c, i) => (
                           <option key={i} value={c.id || c.slug}>{c.name}</option>
@@ -865,13 +865,13 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <div className="space-y-4">
                 <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Kode Promo (Diskon)</h4>
                 {promoCodes.length === 0 ? (
-                  <div className="text-center p-6 bg-slate-50 dark:bg-blue-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                  <div className="text-center p-6 bg-slate-50 dark:bg-red-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-slate-500 font-medium text-xs">Belum ada kode promo ditambahkan.</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {promoCodes.map((p, i) => (
-                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-red-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div>
                           <span className="font-bold text-slate-900 dark:text-white block">{p.code}</span>
                           <span className="text-xs text-slate-500">Diskon {p.discountType === 'PERCENTAGE' ? `${p.discountValue}%` : `Rp ${p.discountValue.toLocaleString('id-ID')}`}</span>
@@ -889,18 +889,18 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kode Promo</label>
-                      <input type="text" value={promoCode} onChange={e => setPromoCode(e.target.value)} placeholder="Cth: MERDEKA20" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none uppercase" />
+                      <input type="text" value={promoCode} onChange={e => setPromoCode(e.target.value)} placeholder="Cth: MERDEKA20" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none uppercase" />
                     </div>
                     <div>
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Tipe Diskon</label>
-                      <select value={promoType} onChange={e => setPromoType(e.target.value as 'PERCENTAGE'|'FIXED')} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
+                      <select value={promoType} onChange={e => setPromoType(e.target.value as 'PERCENTAGE'|'FIXED')} className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
                         <option value="PERCENTAGE">Persentase (%)</option>
                         <option value="FIXED">Nominal Tetap (Rp)</option>
                       </select>
                     </div>
                     <div>
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nilai Diskon</label>
-                      <input type="number" value={promoValue} onChange={e => setPromoValue(e.target.value)} placeholder="Cth: 20 atau 50000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                      <input type="number" value={promoValue} onChange={e => setPromoValue(e.target.value)} placeholder="Cth: 20 atau 50000" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                     </div>
                     <div className="md:col-span-3 flex justify-end mt-2">
                       <button type="button" onClick={handleAddPromo} className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-300 transition-colors">
@@ -921,7 +921,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
                   <div>
                     <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Metode Pembayaran</label>
-                    <select value={paymentType} onChange={e => setPaymentType(e.target.value as 'DIRECT_EO' | 'WEB')} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
+                    <select value={paymentType} onChange={e => setPaymentType(e.target.value as 'DIRECT_EO' | 'WEB')} className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none">
                       <option value="WEB">Via Web (Sistem)</option>
                       <option value="DIRECT_EO">Langsung ke EO (Transfer Manual)</option>
                     </select>
@@ -930,14 +930,14 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                     <>
                       <div>
                         <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Biaya Layanan Web Ditanggung Oleh</label>
-                        <select value={webFeeBearer} onChange={e => setWebFeeBearer(e.target.value as 'BUYER' | 'EO')} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white">
+                        <select value={webFeeBearer} onChange={e => setWebFeeBearer(e.target.value as 'BUYER' | 'EO')} className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white">
                           <option value="BUYER">Pembeli (Peserta)</option>
                           <option value="EO">Penyelenggara (EO)</option>
                         </select>
                       </div>
                       <div>
                         <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nominal Biaya Layanan (Rp)</label>
-                        <input type="number" value={webFeeAmount} onChange={e => setWebFeeAmount(Number(e.target.value))} className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
+                        <input type="number" value={webFeeAmount} onChange={e => setWebFeeAmount(Number(e.target.value))} className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" />
                       </div>
                     </>
                   ) : (
@@ -947,23 +947,23 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                       </div>
                       <div>
                         <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Bank *</label>
-                        <input type="text" value={eoBankName} onChange={e => setEoBankName(e.target.value)} placeholder="Cth: BCA" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                        <input type="text" value={eoBankName} onChange={e => setEoBankName(e.target.value)} placeholder="Cth: BCA" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
                       </div>
                       <div>
                         <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nomor Rekening *</label>
-                        <input type="text" value={eoBankAccountNumber} onChange={e => setEoBankAccountNumber(e.target.value)} placeholder="Cth: 1234567890" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                        <input type="text" value={eoBankAccountNumber} onChange={e => setEoBankAccountNumber(e.target.value)} placeholder="Cth: 1234567890" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
                       </div>
                       <div>
                         <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Pemilik Rekening *</label>
-                        <input type="text" value={eoBankAccountName} onChange={e => setEoBankAccountName(e.target.value)} placeholder="Cth: PT Event Organizer" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                        <input type="text" value={eoBankAccountName} onChange={e => setEoBankAccountName(e.target.value)} placeholder="Cth: PT Event Organizer" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
                       </div>
                       <div>
                         <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">NPWP *</label>
-                        <input type="text" value={eoNpwp} onChange={e => setEoNpwp(e.target.value)} placeholder="Cth: 12.345.678.9-012.000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                        <input type="text" value={eoNpwp} onChange={e => setEoNpwp(e.target.value)} placeholder="Cth: 12.345.678.9-012.000" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
                       </div>
                       <div className="md:col-span-2">
                         <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Fee untuk Web (Dipotong dari EO) Rp *</label>
-                        <input type="number" value={webFeeAmount} onChange={e => setWebFeeAmount(Number(e.target.value))} placeholder="Cth: 5000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
+                        <input type="number" value={webFeeAmount} onChange={e => setWebFeeAmount(Number(e.target.value))} placeholder="Cth: 5000" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none text-slate-900 dark:text-white" required={paymentType === 'DIRECT_EO'} />
                       </div>
                     </>
                   )}
@@ -973,13 +973,13 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               <div className="space-y-4">
                 <h4 className="font-bold text-slate-900 dark:text-white uppercase text-sm">Bundling Hotel (Opsional)</h4>
                 {hotelBundles.length === 0 ? (
-                  <div className="text-center p-6 bg-slate-50 dark:bg-blue-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                  <div className="text-center p-6 bg-slate-50 dark:bg-red-950/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-slate-500 font-medium text-xs">Belum ada paket hotel ditambahkan.</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {hotelBundles.map((hotel, i) => (
-                      <div key={i} className="flex items-center justify-between bg-white dark:bg-blue-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <div key={i} className="flex items-center justify-between bg-white dark:bg-red-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div>
                           <span className="font-bold text-slate-900 dark:text-white block">{hotel.name}</span>
                           <span className="text-xs text-slate-500">Rp {hotel.price.toLocaleString('id-ID')} | Kuota: {hotel.quota} kamar</span>
@@ -997,19 +997,19 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Nama Hotel / Paket</label>
-                      <input type="text" value={hotelName} onChange={e => setHotelName(e.target.value)} placeholder="Cth: Hotel Aston - 1 Malam" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                      <input type="text" value={hotelName} onChange={e => setHotelName(e.target.value)} placeholder="Cth: Hotel Aston - 1 Malam" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                     </div>
                     <div>
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Harga (Rp)</label>
-                      <input type="number" value={hotelPrice} onChange={e => setHotelPrice(e.target.value)} placeholder="Cth: 500000" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                      <input type="number" value={hotelPrice} onChange={e => setHotelPrice(e.target.value)} placeholder="Cth: 500000" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                     </div>
                     <div>
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Kuota Kamar</label>
-                      <input type="number" value={hotelQuota} onChange={e => setHotelQuota(e.target.value)} placeholder="Cth: 20" className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                      <input type="number" value={hotelQuota} onChange={e => setHotelQuota(e.target.value)} placeholder="Cth: 20" className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                     </div>
                     <div className="md:col-span-2">
                       <label className="block text-slate-500 font-bold uppercase mb-1 text-[10px]">Deskripsi (Opsional)</label>
-                      <input type="text" value={hotelDesc} onChange={e => setHotelDesc(e.target.value)} placeholder="Fasilitas kamar, jarak ke venue, dll." className="w-full bg-white dark:bg-blue-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
+                      <input type="text" value={hotelDesc} onChange={e => setHotelDesc(e.target.value)} placeholder="Fasilitas kamar, jarak ke venue, dll." className="w-full bg-white dark:bg-red-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none" />
                     </div>
                     <div className="md:col-span-2 flex justify-end">
                       <button type="button" onClick={handleAddHotel} className="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider rounded-xl p-3 hover:bg-slate-300 transition-colors">
@@ -1046,7 +1046,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({ user, initia
               type="submit"
               disabled={loading}
               className={`px-8 py-3 rounded-xl font-black uppercase text-xs tracking-wider shadow-lg transition-all ${
-                loading ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/30'
+                loading ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-red-600 hover:bg-red-500 text-white shadow-red-600/30'
               }`}
             >
               {loading ? 'Memproses...' : ((initialData && step === 2) || step === 6) ? (initialData ? 'Simpan Perubahan' : 'Terbitkan Event') : 'Selanjutnya'}

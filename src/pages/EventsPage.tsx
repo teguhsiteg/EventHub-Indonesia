@@ -35,12 +35,12 @@ export const EventsPage: React.FC = () => {
         {/* HEADER */}
         <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold uppercase tracking-wider mb-4">
-              <Star className="w-3.5 h-3.5 text-blue-500" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] font-bold uppercase tracking-wider mb-4">
+              <Star className="w-3.5 h-3.5 text-red-500" />
               <span>EventHub by Guwigo Search</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
-              Explore <span className="text-blue-600">Events</span>
+              Explore <span className="text-red-600">Events</span>
             </h1>
             <p className="text-slate-500 text-sm mt-3 max-w-xl">
               Filter and search for running events, trail runs, marathons, or cycling directly from the EventHub by Guwigo database.
@@ -102,7 +102,7 @@ export const EventsPage: React.FC = () => {
                     <div className="absolute top-4 left-4">
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 ${
                         event.status === 'REGISTRATION_OPEN'
-                          ? 'bg-blue-600/90 text-white'
+                          ? 'bg-red-600/90 text-white'
                           : 'bg-white/90 text-slate-700'
                       }`}>
                         {event.status === 'REGISTRATION_OPEN' ? 'Open' : event.status}
@@ -112,7 +112,7 @@ export const EventsPage: React.FC = () => {
                     {/* Category badge */}
                     {event.category && (
                       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md border border-slate-100 text-slate-600 text-[10px] font-bold uppercase px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
-                        <Tag className="w-3 h-3 text-blue-500" />
+                        <Tag className="w-3 h-3 text-red-500" />
                         <span>{event.category}</span>
                       </div>
                     )}
@@ -122,10 +122,10 @@ export const EventsPage: React.FC = () => {
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-3">
-                        <MapPin className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                        <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
                         <span className="truncate">{event.location}</span>
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors line-clamp-2 leading-tight">
                         {event.name}
                       </h3>
                       <p className="text-sm text-slate-500 mt-2 line-clamp-2 leading-relaxed">
@@ -153,13 +153,13 @@ export const EventsPage: React.FC = () => {
                       <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tanggal Event</span>
                         <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
-                          <Calendar className="w-4 h-4 text-blue-500" />
+                          <Calendar className="w-4 h-4 text-red-500" />
                           {new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </div>
                       </div>
                       <Link
                         to={`/events/${event.slug}`}
-                        className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white text-slate-400 transition-all shadow-sm"
+                        className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white text-slate-400 transition-all shadow-sm"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </Link>
