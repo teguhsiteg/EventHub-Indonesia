@@ -22,6 +22,7 @@ import { HostEventPage } from './pages/HostEventPage';
 import { TermsPage } from './pages/TermsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { ContactPage } from './pages/ContactPage';
+import { NewsPage } from './pages/NewsPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ParticipantDashboardPage } from './pages/ParticipantDashboardPage';
@@ -75,6 +76,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
       <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+      <Route path="/news" element={<PublicLayout><NewsPage /></PublicLayout>} />
 
       {/* ===== AUTH PAGES — Minimal, centered ===== */}
       <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />

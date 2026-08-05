@@ -58,6 +58,8 @@ import { PaymentActionModal } from "../components/admin/PaymentActionModal";
 import { FooterSettings } from "../components/admin/FooterSettings";
 import { PageSettings } from "../components/admin/PageSettings";
 import { SponsorSettings } from "../components/admin/SponsorSettings";
+import { GalleryManager } from "../components/admin/GalleryManager";
+import { AnnouncementManager } from "../components/admin/AnnouncementManager";
 import { ConfirmDialog } from "../components/common/ConfirmDialog";
 import {
   ShieldAlert,
@@ -107,6 +109,8 @@ export const AdminDashboardPage: React.FC = () => {
       | "results"
       | "participants"
       | "users"
+      | "galleries"
+      | "announcements"
       | "settings") || "stats";
   // Data States
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -2422,6 +2426,20 @@ export const AdminDashboardPage: React.FC = () => {
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* TAB: GALLERIES */}
+          {activeTab === "galleries" && !loading && (
+            <div className="animate-in fade-in duration-300">
+              <GalleryManager />
+            </div>
+          )}
+
+          {/* TAB: ANNOUNCEMENTS */}
+          {activeTab === "announcements" && !loading && (
+            <div className="animate-in fade-in duration-300">
+              <AnnouncementManager />
             </div>
           )}
         </div>

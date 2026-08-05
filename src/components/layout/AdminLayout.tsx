@@ -22,6 +22,8 @@ const adminTabs = [
   { id: 'payouts', label: 'Pencairan Dana', icon: DollarSign, href: '/admin?tab=payouts' },
   { id: 'participants', label: 'Data Peserta', icon: Users, href: '/admin?tab=participants' },
   { id: 'results', label: 'Hasil Lomba', icon: FileText, href: '/admin?tab=results' },
+  { id: 'galleries', label: 'Galeri', icon: FileText, href: '/admin?tab=galleries' },
+  { id: 'announcements', label: 'Berita', icon: FileText, href: '/admin?tab=announcements' },
   { id: 'users', label: 'Pengguna', icon: Users, href: '/admin?tab=users' },
   { id: 'settings', label: 'Pengaturan', icon: Settings, href: '/admin?tab=settings' },
 ];
