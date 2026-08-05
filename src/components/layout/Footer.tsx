@@ -57,10 +57,12 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="lg:col-span-1 space-y-4">
             <Link to="/" className="flex items-center gap-2.5">
-              <span className="font-display text-2xl tracking-wider text-white">
-                GUWIGO<span className="text-amber-400">EVENTS</span>
-              </span>
-            </Link>
+                <img 
+                  src="/logo.png" 
+                  alt="Guwigo Events" 
+                  className="h-10 w-auto object-contain"
+                />
+              </Link>
             <p className="text-sm leading-relaxed opacity-70 max-w-xs">
               {footerData.about}
             </p>

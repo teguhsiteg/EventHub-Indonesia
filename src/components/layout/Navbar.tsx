@@ -75,17 +75,12 @@ export const Navbar: React.FC = () => {
 
           {/* Brand */}
           <Link to="/" className="flex items-center gap-2 group shrink-0">
-            <div className="w-auto h-10 flex items-center group-hover:scale-105 transition-transform">
-              <span className="font-display text-2xl tracking-wider text-white dark:text-white"
-                style={{ textShadow: scrolled ? 'none' : '0 2px 8px rgba(0,0,0,0.3)' }}>
-                <span className={scrolled ? 'text-red-600 dark:text-amber-400' : 'text-white'}>
-                  GUWIGO
-                </span>
-                <span className={scrolled ? 'text-gray-800 dark:text-white' : 'text-white/90'}>
-                  EVENTS
-                </span>
-              </span>
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Guwigo Events" 
+              className="h-10 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform"
+              style={scrolled ? {} : { filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))' }}
+            />
           </Link>
 
           {/* Desktop Navigation Pills */}
