@@ -220,7 +220,7 @@ export const ParticipantDashboardPage: React.FC = () => {
       {/* Sleek Profile Header */}
       <div className="glass-card p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 dark:bg-amber-500/10 rounded-full blur-3xl -z-10 animate-pulse-soft" />
-        <div className="flex items-center gap-5 relative z-10">
+        <div className="flex items-center gap-5">
           {/* Minimal Avatar */}
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-amber-500 text-white shadow-lg flex items-center justify-center shrink-0 border-2 border-white dark:border-slate-800">
             <User className="w-8 h-8" />
@@ -243,7 +243,7 @@ export const ParticipantDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto relative z-10">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {participant && payment?.status === 'PAID' && (
             <>
               <button
@@ -398,18 +398,18 @@ export const ParticipantDashboardPage: React.FC = () => {
               <div className="md:col-span-1">
                 <div className="glass-card p-6 h-full flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-red-200 dark:hover:border-amber-500/30">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 dark:bg-amber-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                  <div className="mb-4 relative z-10">
+                  <div className="mb-4">
                     <QrCode className="w-8 h-8 text-slate-400 mx-auto" />
                   </div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1 relative z-10">Identitas Peserta</h3>
-                  <p className="text-xs text-slate-500 mb-6 relative z-10">Gunakan QR Code ini saat pengambilan Race Pack.</p>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">Identitas Peserta</h3>
+                  <p className="text-xs text-slate-500 mb-6">Gunakan QR Code ini saat pengambilan Race Pack.</p>
                   
                   {participant ? (
-                    <div className="p-3 bg-white border border-slate-200 rounded-xl relative z-10">
+                    <div className="p-3 bg-white border border-slate-200 rounded-xl">
                       <QRCodeViewer value={participant.qrToken} label="" />
                     </div>
                   ) : (
-                    <div className="w-48 h-48 bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center relative z-10">
+                    <div className="w-48 h-48 bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center">
                       <p className="text-xs text-slate-400">QR Belum Tersedia</p>
                     </div>
                   )}
@@ -554,7 +554,7 @@ export const ParticipantDashboardPage: React.FC = () => {
             <div className="max-w-2xl mx-auto">
               <div className="glass-card p-8 text-center relative overflow-hidden">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -z-10 animate-pulse-soft" />
-                <div className="w-16 h-16 mx-auto rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center mb-6 relative z-10">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center mb-6">
                   <Award className="w-8 h-8 text-amber-500" />
                 </div>
                 
