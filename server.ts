@@ -165,6 +165,10 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       }
     );
     const data = await response.json();
+    if (data.error) {
+      console.error('Gemini API error:', data.error);
+      return res.status(429).json({ reply: 'Maaf, asisten AI sedang sibuk. Silakan coba lagi sebentar lagi ya! 🙏' });
+    }
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Maaf, saya tidak bisa menjawab saat ini.';
     res.json({ reply });
   } catch (e: any) {
