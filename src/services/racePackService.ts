@@ -72,7 +72,7 @@ export async function checkInParticipantByQr(
     if (eventSnap.exists()) {
       eventName = eventSnap.data().name;
     }
-    const catSnap = await getDoc(doc(db, 'events', partData.eventId, 'categories', partData.categoryId));
+    const catSnap = await getDoc(doc(db, 'event_categories', partData.categoryId));
     if (catSnap.exists()) {
       categoryName = catSnap.data().name;
     }

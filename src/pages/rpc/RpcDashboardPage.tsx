@@ -62,7 +62,7 @@ export const RpcDashboardPage: React.FC = () => {
             <title>Struk RPC - ${part.fullName}</title>
             <script src="https://cdn.tailwindcss.com"></script>
           </head>
-          <body onload="window.print();window.close()">
+          <body onload="setTimeout(function(){ window.print(); window.close(); }, 500)">
             ${receiptHtml}
           </body>
         </html>

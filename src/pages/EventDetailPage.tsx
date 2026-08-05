@@ -48,6 +48,7 @@ export const EventDetailPage: React.FC = () => {
   const [promoCode, setPromoCode] = useState('');
   const [timeLeft, setTimeLeft] = useState<number>(15 * 60);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+  const [snapEmbedded, setSnapEmbedded] = useState(false);
 
   const [tempUserId, setTempUserId] = useState<string | null>(null);
 
@@ -314,7 +315,14 @@ export const EventDetailPage: React.FC = () => {
           const snapData = await response.json();
           
           if (snapData.token && (window as any).snap) {
-            (window as any).snap.pay(snapData.token, {
+            setSnapEmbedded(true);
+            // Scroll to embed container after a short delay
+            setTimeout(() => {
+              document.getElementById('snap-embed-container')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+            
+            (window as any).snap.embed(snapData.token, {
+              embedId: 'snap-embed-container',
               onSuccess: async function(midtransResult: any) {
                 try {
                   const verifyRes = await fetch('/api/payment/auto-verify', {
@@ -336,24 +344,26 @@ export const EventDetailPage: React.FC = () => {
                   console.error('Auto verify error', e);
                   addNotification('warning', 'Pembayaran Berhasil', `Pembayaran berhasil. Menunggu sinkronisasi admin.`);
                 }
+                setSnapEmbedded(false);
                 navigate('/dashboard');
               },
               onPending: function(midtransResult: any) {
                 addNotification('warning', 'Pembayaran Tertunda', 'Silakan selesaikan pembayaran Anda.');
+                setSnapEmbedded(false);
                 navigate('/dashboard');
               },
               onError: function(midtransResult: any) {
                 addNotification('error', 'Pembayaran Gagal', 'Terjadi kesalahan saat memproses pembayaran.');
-                navigate('/dashboard');
+                setSnapEmbedded(false);
               },
               onClose: function() {
-                addNotification('warning', 'Pembayaran Belum Selesai', 'Anda menutup popup pembayaran sebelum menyelesaikannya.');
-                navigate('/dashboard');
+                // Embedded mode — user can try again without leaving
+                setSnapEmbedded(false);
+                addNotification('warning', 'Pembayaran Dibatalkan', 'Anda dapat mencoba kembali kapan saja.');
               }
             });
           } else {
              addNotification('error', 'Gagal Memuat Pembayaran', snapData.error || 'Snap token tidak ditemukan atau script belum dimuat.');
-             navigate('/dashboard');
           }
         } catch (midtransError: any) {
            addNotification('error', 'Sistem Pembayaran Error', midtransError.message);
@@ -1395,14 +1405,21 @@ export const EventDetailPage: React.FC = () => {
                     </button>
                   )}
                   {checkoutStep === 4 && (
-                    <button
-                      onClick={handleSubmitRegistration}
-                      disabled={submitting}
-                      className="w-full mt-2 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
-                    >
-                      {submitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>}
-                      {submitting ? 'Memproses...' : 'Bayar Sekarang'}
-                    </button>
+                    <>
+                      <button
+                        onClick={handleSubmitRegistration}
+                        disabled={submitting || snapEmbedded}
+                        className="w-full mt-2 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                      >
+                        {submitting && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>}
+                        {submitting ? 'Memproses...' : snapEmbedded ? 'Pembayaran Aktif' : 'Bayar Sekarang'}
+                      </button>
+                      {/* Midtrans Snap Embed Container — iframe pembayaran nempel di halaman */}
+                      <div 
+                        id="snap-embed-container" 
+                        className={`mt-4 w-full min-h-[400px] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transition-all ${snapEmbedded ? 'opacity-100' : 'opacity-0 hidden'}`}
+                      />
+                    </>
                   )}
                 </div>
               )}
