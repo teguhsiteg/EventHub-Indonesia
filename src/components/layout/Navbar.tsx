@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const roleLabel = isAdmin ? 'Admin' : isOrganizer ? 'Penyelenggara' : 'Peserta';
-  const roleGradient = isAdmin ? 'from-amber-400 to-red-500' : isOrganizer ? 'from-red-400 to-amber-500' : 'from-gray-400 to-gray-500';
+  const roleGradient = isAdmin ? 'from-amber-400 to-blue-500' : isOrganizer ? 'from-blue-400 to-amber-500' : 'from-gray-400 to-gray-500';
 
   const navLinks = [
     { path: '/', label: 'Beranda' },
@@ -64,10 +64,10 @@ export const Navbar: React.FC = () => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/85 dark:bg-[#0B0F14]/85 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm' 
-          : 'bg-transparent border-b border-transparent'
+          ? 'bg-white/80 dark:bg-[#0B0F14]/80 backdrop-blur-lg border-gray-200/50 dark:border-gray-800/50 shadow-sm' 
+          : 'bg-white dark:bg-[#0B0F14] border-transparent shadow-none'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,20 +79,19 @@ export const Navbar: React.FC = () => {
               src="/logo.png" 
               alt="Guwigo Events" 
               className="h-10 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform"
-              style={scrolled ? {} : { filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))' }}
             />
           </Link>
 
           {/* Desktop Navigation Pills */}
-          <nav className="hidden md:flex items-center gap-1 bg-white/10 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-white/20 dark:border-white/10">
+          <nav className="hidden md:flex items-center gap-2">
             {navLinks.map(link => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+                className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                   isActive(link.path) 
-                    ? 'text-red-600 dark:text-amber-400 bg-white dark:bg-gray-800 shadow-sm' 
-                    : 'text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-amber-400'
+                    ? 'text-blue-600 dark:text-amber-400 bg-blue-50 dark:bg-gray-800' 
+                    : 'text-slate-600 dark:text-gray-300 hover:text-blue-600 hover:bg-slate-50 dark:hover:bg-gray-800'
                 }`}
               >
                 <span className="relative z-10">{link.label}</span>
@@ -120,7 +119,7 @@ export const Navbar: React.FC = () => {
                 {(isAdmin || isOrganizer) && (
                   <Link
                     to="/admin"
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-amber-400 text-xs font-bold hover:bg-red-100 dark:hover:bg-red-900/40 transition"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-amber-400 text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition"
                   >
                     <ShieldAlert className="w-4 h-4" />
                     <span>Admin</span>
@@ -130,7 +129,7 @@ export const Navbar: React.FC = () => {
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-amber-500/30 shadow-sm transition-all group"
+                    className="flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-amber-500/30 shadow-sm transition-all group"
                   >
                     <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${roleGradient} flex items-center justify-center text-xs font-bold text-white shadow-sm`}>
                       {user.displayName?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
@@ -161,7 +160,7 @@ export const Navbar: React.FC = () => {
                         ) : (
                           <Link to="/dashboard" onClick={() => setUserMenuOpen(false)}
                             className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors">
-                            <Medal className="w-4 h-4 text-red-400" />
+                            <Medal className="w-4 h-4 text-blue-400" />
                             Dashboard Saya
                           </Link>
                         )}
@@ -169,7 +168,7 @@ export const Navbar: React.FC = () => {
 
                       <div className="border-t border-gray-100 dark:border-gray-800 py-1">
                         <button onClick={handleLogout}
-                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400 transition-colors">
+                          className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
                           <LogOut className="w-4 h-4" />
                           Keluar
                         </button>
@@ -185,7 +184,7 @@ export const Navbar: React.FC = () => {
                   Masuk
                 </Link>
                 <Link to="/register"
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-semibold shadow-lg shadow-red-500/30 hover:shadow-red-500/50 hover:scale-105 transition">
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition">
                   <span>Daftar</span>
                 </Link>
               </div>
@@ -214,7 +213,7 @@ export const Navbar: React.FC = () => {
               <Link key={link.path} to={link.path} onClick={() => setMobileMenuOpen(false)}
                 className={`block py-2.5 px-4 rounded-xl text-sm font-medium transition ${
                   isActive(link.path)
-                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-amber-400'
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-amber-400'
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}>
                 {link.label}
@@ -235,18 +234,18 @@ export const Navbar: React.FC = () => {
                   </div>
                   {(isAdmin || isOrganizer) && (
                     <Link to="/admin" onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-amber-400 bg-red-50 dark:bg-red-900/20">
+                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-blue-600 dark:text-amber-400 bg-blue-50 dark:bg-blue-900/20">
                       <ShieldAlert className="w-4 h-4" /> Panel Admin
                     </Link>
                   )}
                   {isParticipant && !isAdmin && !isOrganizer && (
                     <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-amber-400 bg-red-50 dark:bg-red-900/20">
+                      className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium text-blue-600 dark:text-amber-400 bg-blue-50 dark:bg-blue-900/20">
                       <Medal className="w-4 h-4" /> Dashboard Saya
                     </Link>
                   )}
                   <button onClick={handleLogout}
-                    className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition">
                     <LogOut className="w-4 h-4" /> Keluar
                   </button>
                 </>
@@ -257,7 +256,7 @@ export const Navbar: React.FC = () => {
                     Masuk
                   </Link>
                   <Link to="/register" onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-red-700 shadow-lg shadow-red-500/30">
+                    className="block w-full text-center py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg shadow-blue-500/30">
                     Daftar Akun
                   </Link>
                 </>

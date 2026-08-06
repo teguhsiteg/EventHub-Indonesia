@@ -120,6 +120,32 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* Payment Support */}
+        <div className="py-8 border-t border-gray-800 flex flex-col items-center mt-4">
+          <h4 className="text-white font-semibold mb-6 text-sm uppercase tracking-wider">Payment Support</h4>
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 items-center opacity-90">
+            {[
+              { src: '/asset/logo-bca.svg', alt: 'BCA' },
+              { src: '/asset/logo-mandiri.webp', alt: 'Mandiri' },
+              { src: '/asset/logo-bni.webp', alt: 'BNI' },
+              { src: '/asset/logo-bri.webp', alt: 'BRI' },
+              { src: '/asset/logo-bsi.webp', alt: 'BSI' },
+              { src: '/asset/logo-gopay.svg', alt: 'GoPay' },
+              { src: '/asset/logo-ovo.svg', alt: 'OVO' },
+              { src: '/asset/logo-dana.svg', alt: 'DANA' },
+              { src: '/asset/logo-shopeepay.svg', alt: 'ShopeePay' },
+              { src: '/asset/logo-qris.webp', alt: 'QRIS' },
+            ].map(method => (
+              <img 
+                key={method.alt}
+                src={method.src} 
+                alt={method.alt} 
+                className="h-8 w-auto object-contain bg-white px-3 py-1.5 rounded-lg hover:scale-110 hover:shadow-lg transition-all duration-300 hover:ring-2 hover:ring-amber-400" 
+              />
+            ))}
+          </div>
+        </div>
+
         {/* Bottom bar */}
         <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs opacity-60">
           <p>{footerData.copyright}</p>

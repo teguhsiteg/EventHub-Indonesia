@@ -77,7 +77,7 @@ Mohon untuk ditinjau. Terima kasih!`;
   if (isSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white dark:bg-red-950/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center shadow-xl">
+        <div className="max-w-md w-full bg-white dark:bg-gray-900/60 border border-slate-200 dark:border-gray-800 rounded-2xl p-8 text-center shadow-xl">
           <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-8 h-8 text-emerald-500" />
           </div>
@@ -96,21 +96,21 @@ Mohon untuk ditinjau. Terima kasih!`;
   return (
     <div className="min-h-screen py-12 px-4">
       <div className="max-w-3xl mx-auto">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-600 mb-8 transition-colors group">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 dark:text-amber-400 dark:hover:text-amber-300 mb-8 transition-colors group">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Kembali
         </Link>
         
         <div className="mb-10 text-center">
           <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-4">
-            Selenggarakan <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-400">Event</span>
+            Selenggarakan <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-amber-400">Event</span>
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-sm max-w-xl mx-auto">
             Jadikan event olahraga Anda lebih profesional dengan manajemen registrasi, pembayaran, dan timing terintegrasi dari EventHub by Guwigo.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-red-950/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl space-y-8">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-900/60 border border-slate-200 dark:border-gray-800 rounded-2xl p-6 md:p-8 shadow-xl space-y-8">
           
           {error && (
             <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 rounded-xl flex gap-3 text-red-600 dark:text-red-400 text-sm">
@@ -125,19 +125,19 @@ Mohon untuk ditinjau. Terima kasih!`;
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Organizer / Komunitas *</label>
-                <input type="text" name="eoName" required value={formData.eoName} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" placeholder="Contoh: Trail Runners Indo" />
+                <input type="text" name="eoName" required value={formData.eoName} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" placeholder="Contoh: Trail Runners Indo" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Penanggung Jawab (PIC) *</label>
-                <input type="text" name="picName" required value={formData.picName} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" placeholder="Nama Lengkap" />
+                <input type="text" name="picName" required value={formData.picName} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" placeholder="Nama Lengkap" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Nomor WhatsApp PIC *</label>
-                <input type="tel" name="picPhone" required value={formData.picPhone} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" placeholder="0812xxxxxx" />
+                <input type="tel" name="picPhone" required value={formData.picPhone} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" placeholder="0812xxxxxx" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Email PIC *</label>
-                <input type="email" name="picEmail" required value={formData.picEmail} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" placeholder="email@contoh.com" />
+                <input type="email" name="picEmail" required value={formData.picEmail} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" placeholder="email@contoh.com" />
               </div>
             </div>
           </div>
@@ -148,11 +148,11 @@ Mohon untuk ditinjau. Terima kasih!`;
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Event *</label>
-                <input type="text" name="eventName" required value={formData.eventName} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" placeholder="Contoh: Merapi Trail Run 2026" />
+                <input type="text" name="eventName" required value={formData.eventName} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" placeholder="Contoh: Merapi Trail Run 2026" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Jenis Event *</label>
-                <select name="eventType" required value={formData.eventType} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500 appearance-none">
+                <select name="eventType" required value={formData.eventType} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500 appearance-none">
                   <option value="">Pilih Jenis Event...</option>
                   {EVENT_CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -161,19 +161,19 @@ Mohon untuk ditinjau. Terima kasih!`;
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Rencana Tanggal Pelaksanaan *</label>
-                <input type="date" name="plannedDate" required value={formData.plannedDate} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" />
+                <input type="date" name="plannedDate" required value={formData.plannedDate} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Lokasi Event (Kota/Kabupaten) *</label>
-                <input type="text" name="location" required value={formData.location} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" placeholder="Contoh: Yogyakarta" />
+                <input type="text" name="location" required value={formData.location} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" placeholder="Contoh: Yogyakarta" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Estimasi Jumlah Peserta *</label>
-                <input type="number" name="estimatedParticipants" required min="1" value={formData.estimatedParticipants} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" placeholder="Contoh: 1000" />
+                <input type="number" name="estimatedParticipants" required min="1" value={formData.estimatedParticipants} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" placeholder="Contoh: 1000" />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Catatan Tambahan (Opsional)</label>
-                <textarea name="additionalNotes" value={formData.additionalNotes} onChange={handleChange} rows={4} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-red-500" placeholder="Tuliskan kebutuhan khusus atau pertanyaan Anda di sini..."></textarea>
+                <textarea name="additionalNotes" value={formData.additionalNotes} onChange={handleChange} rows={4} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500" placeholder="Tuliskan kebutuhan khusus atau pertanyaan Anda di sini..."></textarea>
               </div>
             </div>
           </div>
@@ -181,7 +181,7 @@ Mohon untuk ditinjau. Terima kasih!`;
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-xl shadow-red-500/20 transition-all flex justify-center items-center gap-2 disabled:opacity-50"
+            className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-xl shadow-blue-500/20 transition-all flex justify-center items-center gap-2 disabled:opacity-50"
           >
             {isSubmitting ? (
               'Mengirim Permohonan...'

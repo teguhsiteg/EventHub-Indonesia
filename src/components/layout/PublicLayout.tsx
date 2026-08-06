@@ -11,7 +11,7 @@ interface PublicLayoutProps {
 
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   return (
-    <div className="relative flex flex-col min-h-screen font-sans text-slate-800 dark:text-gray-200 antialiased bg-white dark:bg-[#0B0F14]">
+    <div className="relative flex flex-col min-h-screen font-sans text-slate-800 dark:text-gray-200 antialiased dark:bg-[#0B0F14]">
       <Navbar />
       <main className="flex-1 relative z-0">
         {children}

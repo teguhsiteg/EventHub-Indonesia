@@ -66,8 +66,8 @@ export const RegisterPage: React.FC = () => {
     <div className="h-[100dvh] lg:min-h-screen w-full flex overflow-hidden bg-slate-50 dark:bg-[#0a0f1e]">
       {/* Animated background blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute top-0 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-red-600/10 via-yellow-500/5 to-transparent blur-3xl" />
-        <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-red-500/8 to-transparent blur-3xl" />
+        <div className="absolute top-0 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-blue-600/10 via-amber-500/5 to-transparent blur-3xl" />
+        <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-blue-500/8 to-transparent blur-3xl" />
       </div>
 
       {/* Left: Brand Section */}
@@ -75,7 +75,7 @@ export const RegisterPage: React.FC = () => {
         <div className="relative z-10 max-w-md text-center">
           {/* Logo */}
           <div className="inline-flex mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-red-600 flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
               <Trophy className="w-8 h-8 text-white" />
             </div>
           </div>
@@ -98,8 +98,8 @@ export const RegisterPage: React.FC = () => {
                 key={i}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-left"
               >
-                <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0">
-                  <item.icon className="w-4 h-4 text-red-400" />
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                  <item.icon className="w-4 h-4 text-blue-400" />
                 </div>
                 <span className="text-sm text-slate-300">{item.text}</span>
               </div>
@@ -120,7 +120,7 @@ export const RegisterPage: React.FC = () => {
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-2">
             <div className="inline-flex mb-3">
-              <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center shadow-md">
+              <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-md">
                 <Trophy className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -159,7 +159,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="Nama lengkap Anda"
                   required
                   autoComplete="name"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 shadow-sm dark:shadow-none transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 shadow-sm dark:shadow-none transition-all duration-300"
                 />
               </div>
             </div>
@@ -179,7 +179,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="+62 812-XXXX-XXXX"
                   required
                   autoComplete="tel"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
               </div>
             </div>
@@ -199,7 +199,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
               </div>
             </div>
@@ -219,7 +219,7 @@ export const RegisterPage: React.FC = () => {
                   placeholder="Minimal 6 karakter"
                   required
                   autoComplete="new-password"
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all duration-300"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.08] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -235,7 +235,7 @@ export const RegisterPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 mt-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
+              className="w-full flex items-center justify-center gap-2 py-2.5 mt-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -275,7 +275,7 @@ export const RegisterPage: React.FC = () => {
           {/* Login link */}
           <p className="text-center text-sm text-slate-600 dark:text-slate-400">
             Sudah memiliki akun?{' '}
-            <Link to="/login" className="text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 font-semibold transition-colors">
+            <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-semibold transition-colors">
               Masuk Di Sini
             </Link>
           </p>

@@ -70,12 +70,13 @@ export const HomePage: React.FC = () => {
   const upcomingEvents = events.filter(e => e.status === 'REGISTRATION_OPEN').slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0B0F14] text-slate-800 dark:text-gray-200 flex flex-col font-sans antialiased">
+    <div className="min-h-screen text-slate-800 dark:text-gray-200 flex flex-col font-sans antialiased">
 
       {/* ===== HERO SECTION ===== */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-16">
-        {/* Background image */}
-        <div className="absolute inset-0 -z-30">
+      <section className="pt-24 pb-8 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto w-full">
+        <div className="relative min-h-[75vh] flex items-center overflow-hidden rounded-[32px] shadow-sm">
+          {/* Background image */}
+          <div className="absolute inset-0">
           <img 
             src="https://images.unsplash.com/photo-1552674605-15c82513bb15?auto=format&fit=crop&w=1920&q=80" 
             alt="Guwigo Events" 
@@ -84,14 +85,14 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-red-900/35 to-black/60 -z-20" />
-        <div className="absolute inset-0 hero-grid-pattern -z-10 opacity-10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-blue-900/35 to-black/60" />
+        <div className="absolute inset-0 hero-grid-pattern opacity-10" />
 
         {/* Glow orbs */}
-        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl animate-pulse-soft -z-10" />
-        <div className="absolute bottom-1/4 -left-32 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-float -z-10" />
+        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl animate-pulse-soft pointer-events-none" />
+        <div className="absolute bottom-1/4 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20" ref={heroRef}>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20" ref={heroRef}>
           <div className="text-center text-white">
             {/* Pill badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 reveal">
@@ -117,7 +118,7 @@ export const HomePage: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 reveal">
               <Link
                 to="/events"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-amber-500 text-red-900 font-bold text-base shadow-xl shadow-amber-500/30 hover:bg-amber-400 hover:scale-105 transition"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-amber-500 text-blue-900 font-bold text-base shadow-xl shadow-amber-500/30 hover:bg-amber-400 hover:scale-105 transition"
               >
                 <Flag className="w-5 h-5" />
                 Jelajahi Event
@@ -149,17 +150,12 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0 -z-0">
-          <svg viewBox="0 0 1440 120" className="w-full h-auto fill-white dark:fill-[#0B0F14] transition-colors duration-300">
-            <path d="M0,64L60,69.3C120,75,240,85,360,80C480,75,600,53,720,48C840,43,960,53,1080,64C1200,75,1320,85,1380,90.7L1440,96L1440,120L0,120Z" />
-          </svg>
         </div>
       </section>
 
       {/* ===== SPONSORS BAR ===== */}
       {sponsors.length > 0 && (
-        <section className="py-10 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#0B0F14]">
+        <section className="py-10 border-b border-gray-100 dark:border-gray-800">
           <div className="max-w-7xl mx-auto px-4">
             <p className="text-center text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-6">
               Dipercaya Oleh
@@ -184,7 +180,7 @@ export const HomePage: React.FC = () => {
         <section className="py-20 md:py-28 bg-gray-50 dark:bg-gray-900/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={eventsRef}>
             <div className="text-center mb-14 reveal">
-              <p className="text-sm font-semibold tracking-widest uppercase text-red-600 dark:text-amber-400 mb-2">
+              <p className="text-sm font-semibold tracking-widest uppercase text-blue-600 dark:text-amber-400 mb-2">
                 Segera Hadir
               </p>
               <h2 className="font-display text-4xl md:text-5xl tracking-wider mb-3">
@@ -210,7 +206,7 @@ export const HomePage: React.FC = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent dark:from-gray-900/80" />
                     <div className="absolute top-4 left-4">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 bg-red-600/90 text-white">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 bg-blue-600/90 text-white">
                         Buka Pendaftaran
                       </span>
                     </div>
@@ -219,10 +215,10 @@ export const HomePage: React.FC = () => {
                   <div className="p-6 flex-1 flex flex-col justify-between relative z-10 -mt-8">
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-xs font-bold text-gray-500 dark:text-gray-400">
-                        <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-red-500" />{event.location}</span>
-                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-red-500" />{new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                        <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-blue-500" />{event.location}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-blue-500" />{new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                       </div>
-                      <h3 className="font-display text-2xl tracking-wider text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+                      <h3 className="font-display text-2xl tracking-wider text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
                         {event.name}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
@@ -231,8 +227,8 @@ export const HomePage: React.FC = () => {
                     </div>
 
                     <div className="pt-5 mt-5 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                      <span className="text-sm font-bold text-red-600 dark:text-amber-400">Daftar Sekarang</span>
-                      <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center group-hover:bg-red-600 dark:group-hover:bg-amber-500 group-hover:text-white text-gray-400 transition-all">
+                      <span className="text-sm font-bold text-blue-600 dark:text-amber-400">Daftar Sekarang</span>
+                      <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center group-hover:bg-blue-600 dark:group-hover:bg-amber-500 group-hover:text-white text-gray-400 transition-all">
                         <ArrowRight className="w-4 h-4 -rotate-45" />
                       </div>
                     </div>
@@ -244,7 +240,7 @@ export const HomePage: React.FC = () => {
             <div className="text-center mt-12 reveal">
               <Link
                 to="/events"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg shadow-red-500/30 transition"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition"
               >
                 Lihat Semua Event
                 <ChevronRight className="w-4 h-4" />
@@ -255,10 +251,10 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* ===== FEATURES SECTION ===== */}
-      <section className="py-20 md:py-28 bg-white dark:bg-[#0B0F14]">
+      <section className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={featuresRef}>
           <div className="text-center mb-14 reveal">
-            <p className="text-sm font-semibold tracking-widest uppercase text-red-600 dark:text-amber-400 mb-2">
+            <p className="text-sm font-semibold tracking-widest uppercase text-blue-600 dark:text-amber-400 mb-2">
               Kenapa Guwigo?
             </p>
             <h2 className="font-display text-4xl md:text-5xl tracking-wider mb-3">
@@ -279,16 +275,16 @@ export const HomePage: React.FC = () => {
               { icon: '📸', title: 'Foto Event', desc: 'Galeri foto event yang bisa diakses semua peserta.' },
               { icon: '🛡️', title: 'Asuransi', desc: 'Perlindungan asuransi selama mengikuti event.' },
               { icon: '🎽', title: 'Race Pack', desc: 'Perlengkapan race pack eksklusif dengan jersey & BIB.' },
-            ].map((feat, idx) => (
+            ].map((feature, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-2xl bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 hover:border-red-500 dark:hover:border-amber-500/30 hover:shadow-lg transition reveal group"
+                className="p-8 rounded-3xl bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 hover:border-blue-500 dark:hover:border-amber-500/30 hover:shadow-lg transition reveal group"
               >
-                <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition">
-                  {feat.icon}
+                <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6 text-3xl group-hover:scale-110 transition shadow-sm">
+                  {feature.icon}
                 </div>
-                <h3 className="font-semibold mb-1 text-gray-900 dark:text-white">{feat.title}</h3>
-                <p className="text-sm opacity-70">{feat.desc}</p>
+                <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-white">{feature.title}</h3>
+                <p className="text-slate-600 dark:text-gray-300 leading-relaxed text-sm">{feature.desc}</p>
               </div>
             ))}
           </div>
@@ -301,7 +297,7 @@ export const HomePage: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4 reveal">
               <div>
-                <p className="text-sm font-semibold tracking-widest uppercase text-red-600 dark:text-amber-400 mb-2">
+                <p className="text-sm font-semibold tracking-widest uppercase text-blue-600 dark:text-amber-400 mb-2">
                   Katalog Event
                 </p>
                 <h2 className="font-display text-4xl md:text-5xl tracking-wider">
@@ -310,7 +306,7 @@ export const HomePage: React.FC = () => {
               </div>
               <Link
                 to="/events"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-amber-400 font-bold text-sm hover:bg-red-100 dark:hover:bg-red-900/40 transition"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-amber-400 font-bold text-sm hover:bg-blue-100 dark:hover:bg-blue-900/40 transition"
               >
                 Lihat Semua
                 <ChevronRight className="w-4 h-4" />
@@ -341,7 +337,7 @@ export const HomePage: React.FC = () => {
                       <div className="absolute top-4 left-4">
                         <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 ${
                           event.status === 'REGISTRATION_OPEN' 
-                            ? 'bg-red-600/90 text-white' 
+                            ? 'bg-blue-600/90 text-white' 
                             : 'bg-white/90 text-gray-700'
                         }`}>
                           {event.status === 'REGISTRATION_OPEN' ? 'Buka' : event.status}
@@ -352,10 +348,10 @@ export const HomePage: React.FC = () => {
                     <div className="p-6 flex-1 flex flex-col justify-between relative z-10 -mt-8">
                       <div className="space-y-3">
                         <div className="flex items-center gap-3 text-xs font-bold text-gray-500 dark:text-gray-400">
-                          <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-red-500" />{event.location}</span>
-                          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-red-500" />{new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+                          <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-blue-500" />{event.location}</span>
+                          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-blue-500" />{new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
                         </div>
-                        <h3 className="font-display text-2xl tracking-wider text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+                        <h3 className="font-display text-2xl tracking-wider text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
                           {event.name}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
@@ -364,10 +360,10 @@ export const HomePage: React.FC = () => {
                       </div>
 
                       <div className="pt-5 mt-5 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                        <span className="text-sm font-bold text-red-600 dark:text-amber-400">
+                        <span className="text-sm font-bold text-blue-600 dark:text-amber-400">
                           {event.status === 'REGISTRATION_OPEN' ? 'Daftar Sekarang' : 'Lihat Detail'}
                         </span>
-                        <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center group-hover:bg-red-600 dark:group-hover:bg-amber-500 group-hover:text-white text-gray-400 transition-all">
+                        <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center group-hover:bg-blue-600 dark:group-hover:bg-amber-500 group-hover:text-white text-gray-400 transition-all">
                           <ArrowRight className="w-4 h-4 -rotate-45" />
                         </div>
                       </div>
@@ -381,12 +377,13 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* ===== BOTTOM CTA ===== */}
-      <section className="py-20 md:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-700 via-red-600 to-red-800 -z-10" />
+      <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="relative overflow-hidden rounded-[32px] shadow-sm py-20 px-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800" />
         <div className="absolute inset-0 hero-grid-pattern -z-10 opacity-10" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-amber-500/20 rounded-full blur-3xl -z-10 animate-pulse-soft" />
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white" ref={ctaRef}>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white" ref={ctaRef}>
           <h2 className="font-display text-5xl md:text-7xl tracking-wider mb-4 reveal">SIAP?</h2>
           <p className="text-xl md:text-2xl font-light mb-3 reveal">Jadi bagian dari pengalaman event terbaik.</p>
           <p className="opacity-80 max-w-2xl mx-auto mb-10 reveal">
@@ -396,7 +393,7 @@ export const HomePage: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 reveal">
             <Link
               to="/events"
-              className="w-full sm:w-auto inline-flex items-center gap-2 px-10 py-5 rounded-full bg-amber-500 text-red-900 font-bold text-lg shadow-xl shadow-amber-500/40 hover:bg-amber-400 hover:scale-105 transition"
+              className="w-full sm:w-auto inline-flex items-center gap-2 px-10 py-5 rounded-full bg-amber-500 text-blue-900 font-bold text-lg shadow-xl shadow-amber-500/40 hover:bg-amber-400 hover:scale-105 transition"
             >
               <Flag className="w-6 h-6" />
               Jelajahi Event
@@ -424,6 +421,7 @@ export const HomePage: React.FC = () => {
               Hasil Real-time
             </span>
           </div>
+        </div>
         </div>
       </section>
     </div>

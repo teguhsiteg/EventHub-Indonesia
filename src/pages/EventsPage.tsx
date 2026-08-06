@@ -29,20 +29,20 @@ export const EventsPage: React.FC = () => {
   }, [handleSearch]);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 text-slate-900 py-12">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-[#0B0F14] text-slate-900 dark:text-gray-200 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* HEADER */}
         <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] font-bold uppercase tracking-wider mb-4">
-              <Star className="w-3.5 h-3.5 text-red-500" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider mb-4">
+              <Star className="w-3.5 h-3.5 text-blue-500 dark:text-amber-400" />
               <span>EventHub by Guwigo Search</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
-              Explore <span className="text-red-600">Events</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Explore <span className="text-blue-600 dark:text-amber-400">Events</span>
             </h1>
-            <p className="text-slate-500 text-sm mt-3 max-w-xl">
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-3 max-w-xl">
               Filter and search for running events, trail runs, marathons, or cycling directly from the EventHub by Guwigo database.
             </p>
           </div>
@@ -59,7 +59,7 @@ export const EventsPage: React.FC = () => {
         {loading || isSearching ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="bg-white border border-slate-100 rounded-3xl overflow-hidden animate-pulse shadow-sm">
+              <div key={i} className="bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-3xl overflow-hidden animate-pulse shadow-sm">
                 <div className="flex flex-col md:flex-row">
                   <div className="w-full md:w-56 h-48 md:h-auto bg-slate-100 shrink-0" />
                   <div className="p-6 flex-1 space-y-4">
@@ -73,7 +73,7 @@ export const EventsPage: React.FC = () => {
             ))}
           </div>
         ) : events.length === 0 ? (
-          <div className="p-16 text-center bg-white border border-slate-100 rounded-3xl max-w-lg mx-auto shadow-sm">
+          <div className="p-16 text-center bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-3xl max-w-lg mx-auto shadow-sm">
             <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto mb-6">
               <Search className="w-8 h-8 text-slate-400" />
             </div>
@@ -87,7 +87,7 @@ export const EventsPage: React.FC = () => {
             {events.map(event => (
               <div
                 key={event.id}
-                className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-elegant hover:shadow-xl transition-all duration-300"
+                className="group bg-white dark:bg-gray-900 rounded-3xl overflow-hidden border border-slate-100 dark:border-gray-800 shadow-elegant hover:shadow-xl transition-all duration-300"
               >
                 <div className="flex flex-col md:flex-row h-full">
                   {/* Image */}
@@ -102,7 +102,7 @@ export const EventsPage: React.FC = () => {
                     <div className="absolute top-4 left-4">
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/50 ${
                         event.status === 'REGISTRATION_OPEN'
-                          ? 'bg-red-600/90 text-white'
+                          ? 'bg-blue-600/90 text-white'
                           : 'bg-white/90 text-slate-700'
                       }`}>
                         {event.status === 'REGISTRATION_OPEN' ? 'Open' : event.status}
@@ -112,7 +112,7 @@ export const EventsPage: React.FC = () => {
                     {/* Category badge */}
                     {event.category && (
                       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md border border-slate-100 text-slate-600 text-[10px] font-bold uppercase px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
-                        <Tag className="w-3 h-3 text-red-500" />
+                        <Tag className="w-3 h-3 text-blue-500" />
                         <span>{event.category}</span>
                       </div>
                     )}
@@ -121,14 +121,14 @@ export const EventsPage: React.FC = () => {
                   {/* Content */}
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-3">
-                        <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 mb-3">
+                        <MapPin className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                         <span className="truncate">{event.location}</span>
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors line-clamp-2 leading-tight">
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2 leading-tight">
                         {event.name}
                       </h3>
-                      <p className="text-sm text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
                         {event.description}
                       </p>
 
@@ -149,17 +149,17 @@ export const EventsPage: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+                    <div className="pt-6 mt-6 border-t border-slate-100 dark:border-gray-700 flex items-center justify-between">
                       <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tanggal Event</span>
                         <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
-                          <Calendar className="w-4 h-4 text-red-500" />
+                          <Calendar className="w-4 h-4 text-blue-500" />
                           {new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </div>
                       </div>
                       <Link
                         to={`/events/${event.slug}`}
-                        className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white text-slate-400 transition-all shadow-sm"
+                        className="w-10 h-10 rounded-full bg-slate-50 dark:bg-gray-800 border border-slate-100 dark:border-gray-700 flex items-center justify-center group-hover:bg-blue-600 dark:group-hover:bg-amber-500 group-hover:text-white text-slate-400 transition-all shadow-sm"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </Link>

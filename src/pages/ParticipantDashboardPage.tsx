@@ -219,10 +219,10 @@ export const ParticipantDashboardPage: React.FC = () => {
       
       {/* Sleek Profile Header */}
       <div className="glass-card p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 dark:bg-amber-500/10 rounded-full blur-3xl -z-10 animate-pulse-soft" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 dark:bg-amber-500/10 rounded-full blur-3xl -z-10 animate-pulse-soft" />
         <div className="flex items-center gap-5">
           {/* Minimal Avatar */}
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-amber-500 text-white shadow-lg flex items-center justify-center shrink-0 border-2 border-white dark:border-slate-800">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-amber-500 text-white shadow-lg flex items-center justify-center shrink-0 border-2 border-white dark:border-slate-800">
             <User className="w-8 h-8" />
           </div>
           
@@ -362,7 +362,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                   <div className="grid grid-cols-3 gap-4">
                     <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">No. BIB</p>
-                      <p className="text-2xl font-display tracking-widest text-red-600 dark:text-amber-500">{participant?.bibNumber || '-'}</p>
+                      <p className="text-2xl font-display tracking-widest text-blue-600 dark:text-amber-500">{participant?.bibNumber || '-'}</p>
                     </div>
                     <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Jersey</p>
@@ -381,7 +381,7 @@ export const ParticipantDashboardPage: React.FC = () => {
 
                 {/* Event Summary Card */}
                 {eventData && (
-                  <div className="glass-card p-4 flex items-center gap-4 group hover:border-red-200 dark:hover:border-amber-500/30 transition-colors">
+                  <div className="glass-card p-4 flex items-center gap-4 group hover:border-blue-200 dark:hover:border-amber-500/30 transition-colors">
                     <img src={eventData.banner} alt={eventData.name} className="w-20 h-20 rounded-xl object-cover shrink-0 border border-slate-100 dark:border-slate-800" />
                     <div>
                       <h4 className="text-base font-bold text-slate-900 dark:text-white">{eventData.name}</h4>
@@ -396,8 +396,8 @@ export const ParticipantDashboardPage: React.FC = () => {
 
               {/* Right Sidebar: QR Code */}
               <div className="md:col-span-1">
-                <div className="glass-card p-6 h-full flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-red-200 dark:hover:border-amber-500/30">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 dark:bg-amber-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                <div className="glass-card p-6 h-full flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-blue-200 dark:hover:border-amber-500/30">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 dark:bg-amber-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                   <div className="mb-4">
                     <QrCode className="w-8 h-8 text-slate-400 mx-auto" />
                   </div>
@@ -432,7 +432,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
                     payment.status === 'PAID' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800' : 
-                    payment.status === 'VERIFIED' ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' :
+                    payment.status === 'VERIFIED' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800' :
                     'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800'
                   }`}>
                     {payment.status}
@@ -455,13 +455,13 @@ export const ParticipantDashboardPage: React.FC = () => {
                 <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800">
                   {payment.status !== 'PAID' && payment.paymentMethod === 'MIDTRANS' ? (
                     <div className="text-center space-y-4">
-                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-2">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-2">
                         <CreditCard className="w-6 h-6" />
                       </div>
                       <p className="text-sm text-slate-600 dark:text-slate-400">Selesaikan pembayaran Anda melalui layanan Midtrans.</p>
                       <button
                         onClick={() => window.open(`/events/${eventData?.id}`, '_self')}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg shadow-red-500/20"
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-500/20"
                       >
                         Lanjutkan Pembayaran
                       </button>
@@ -478,7 +478,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                           value={proofUrl}
                           onChange={(e) => setProofUrl(e.target.value)}
                           placeholder="https://..."
-                          className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         />
                       </div>
                       <button
@@ -508,8 +508,8 @@ export const ParticipantDashboardPage: React.FC = () => {
             <div className="max-w-2xl mx-auto">
               <div className="glass-card p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
-                  <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center shrink-0">
-                    <Activity className="w-5 h-5 text-red-500" />
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center shrink-0">
+                    <Activity className="w-5 h-5 text-blue-500" />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">Asesmen Medis</h3>
@@ -526,13 +526,13 @@ export const ParticipantDashboardPage: React.FC = () => {
                       rows={4}
                       value={allergies}
                       onChange={(e) => setAllergies(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all resize-none"
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                       placeholder="Sebutkan jika ada riwayat asma, jantung, alergi obat tertentu, dsb."
                     />
                   </div>
 
                   <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex gap-3 items-start">
-                    <ShieldCheck className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                    <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       Saya menyatakan bahwa data kesehatan yang diisi adalah benar, serta menyetujui standar keselamatan dan pertolongan medis dari penyelenggara acara. Penyelenggara dibebaskan dari tuntutan apabila terjadi hal di luar kendali medis akibat informasi yang tidak jujur.
                     </p>
@@ -569,7 +569,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                       </div>
                       <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-5 text-left">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Chip Time</p>
-                        <p className="text-3xl font-display tracking-widest text-red-600 dark:text-amber-500">{result.chipTime}</p>
+                        <p className="text-3xl font-display tracking-widest text-blue-600 dark:text-amber-500">{result.chipTime}</p>
                       </div>
                     </div>
 
