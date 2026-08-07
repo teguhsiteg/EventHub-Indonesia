@@ -293,7 +293,8 @@ export const EventDetailPage: React.FC = () => {
         }
 
         try {
-          const response = await fetch('/api/payment/midtrans-token', {
+          const API_URL = import.meta.env.VITE_API_URL || '';
+          const response = await fetch(`${API_URL}/api/payment/midtrans-token`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1108,14 +1109,10 @@ export const EventDetailPage: React.FC = () => {
                           </button>
                         ))}
                       </div>
-                    ) : (
-                      <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-slate-300 dark:border-slate-700/50 text-center">
-                        <p className="text-xs text-slate-500">Payment gateway belum dikonfigurasi oleh admin.</p>
-                      </div>
                     )}
 
                     {/* Transfer Manual — hanya muncul jika admin mengisi data bank */}
-                    {settings?.manualPaymentBank && settings?.manualPaymentAccount ? (
+                    {settings?.manualPaymentBank && settings?.manualPaymentAccount && (
                       <button
                         type="button"
                         onClick={() => setSelectedPaymentMethod('MANUAL_TRANSFER')}
@@ -1145,9 +1142,11 @@ export const EventDetailPage: React.FC = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
                         </svg>
                       </button>
-                    ) : (
+                    )}
+
+                    {!settings?.paymentGatewayConfigured && (!settings?.manualPaymentBank || !settings?.manualPaymentAccount) && (
                       <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-slate-300 dark:border-slate-700/50 text-center">
-                        <p className="text-xs text-slate-500">Metode transfer manual belum dikonfigurasi oleh admin.</p>
+                        <p className="text-xs text-slate-500">Belum ada metode pembayaran yang dikonfigurasi oleh admin.</p>
                       </div>
                     )}
                   </div>
