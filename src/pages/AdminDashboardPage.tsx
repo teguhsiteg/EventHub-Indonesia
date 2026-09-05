@@ -454,7 +454,7 @@ export const AdminDashboardPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     const map: Record<string, string> = {
       PUBLISHED: "bg-emerald-500/10 text-red-600  border-emerald-500/30",
-      DRAFT: "bg-slate-500/10 text-slate-600   border-slate-500/30",
+      DRAFT: "bg-[var(--bg-main)]0/10 text-slate-600   border-slate-500/30",
       CANCELLED: "bg-red-500/10 text-red-600  border-red-500/30",
       PENDING: "bg-yellow-500/10 text-red-600  border-yellow-500/30",
       PAID: "bg-emerald-500/10 text-red-600  border-emerald-500/30",
@@ -463,7 +463,7 @@ export const AdminDashboardPage: React.FC = () => {
       ACTIVE: "bg-emerald-500/10 text-red-600  border-emerald-500/30",
     };
     return (
-      map[status] || "bg-slate-500/10 text-slate-600   border-slate-500/30"
+      map[status] || "bg-[var(--bg-main)]0/10 text-slate-600   border-slate-500/30"
     );
   };
 
@@ -1664,7 +1664,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-slate-50  border-b border-slate-200 ">
+                      <tr className="bg-[var(--bg-main)]  border-b border-slate-200 ">
                         <th className="p-4 text-[10px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">
                           Event
                         </th>
@@ -1693,7 +1693,7 @@ export const AdminDashboardPage: React.FC = () => {
                         return (
                           <tr
                             key={r.id}
-                            className="hover:bg-slate-50 :bg-white/[0.02] transition-colors"
+                            className="hover:bg-[var(--bg-main)] :bg-white/[0.02] transition-colors"
                           >
                             <td className="p-4 text-xs text-slate-700  font-medium">
                               {eventName}
@@ -1748,7 +1748,7 @@ export const AdminDashboardPage: React.FC = () => {
           {/* TAB: DATA PESERTA */}
           {activeTab === "participants" && !loading && (
             <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-elegant">
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-[var(--bg-main)]/50">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-red-50 text-red-600">
                     <Users className="w-5 h-5" />
@@ -1763,7 +1763,7 @@ export const AdminDashboardPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
+                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-[var(--bg-main)] transition-colors shadow-sm">
                     <Download className="w-4 h-4 text-red-500" />
                     <span>Export CSV</span>
                   </button>
@@ -1772,7 +1772,7 @@ export const AdminDashboardPage: React.FC = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-y border-slate-100">
+                    <tr className="bg-[var(--bg-main)] border-y border-slate-100">
                       <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">
                         Nama Peserta & BIB
                       </th>
@@ -1799,7 +1799,7 @@ export const AdminDashboardPage: React.FC = () => {
                       return (
                         <tr
                           key={part.id}
-                          className="hover:bg-slate-50/50 transition-colors"
+                          className="hover:bg-[var(--bg-main)]/50 transition-colors"
                         >
                           <td className="py-4 px-6">
                             <p className="text-sm font-bold text-slate-900">
@@ -1841,7 +1841,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 )}
                               </div>
                             ) : (
-                              <span className="px-3 py-1 rounded-full bg-slate-50 text-slate-500 border border-slate-200 text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                              <span className="px-3 py-1 rounded-full bg-[var(--bg-main)] text-slate-500 border border-slate-200 text-[10px] font-bold uppercase tracking-wider shadow-sm">
                                 Belum Diambil
                               </span>
                             )}
@@ -1935,7 +1935,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     ? "bg-rose-500/10 text-rose-600  border-rose-500/20"
                                     : u.role === "ORGANIZER"
                                       ? "bg-red-500/10 text-red-600  border-red-500/20"
-                                      : "bg-slate-500/10 text-slate-600  border-slate-500/20"
+                                      : "bg-[var(--bg-main)]0/10 text-slate-600  border-slate-500/20"
                               }`}
                             >
                               {u.role}
@@ -1963,7 +1963,7 @@ export const AdminDashboardPage: React.FC = () => {
                                 onClick={() =>
                                   handleRoleChange(u.id, "PARTICIPANT")
                                 }
-                                className="px-2.5 py-1.5 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 text-slate-600  font-bold text-[10px] uppercase tracking-wider border border-slate-500/20 transition-all"
+                                className="px-2.5 py-1.5 rounded-lg bg-[var(--bg-main)]0/10 hover:bg-[var(--bg-main)]0/20 text-slate-600  font-bold text-[10px] uppercase tracking-wider border border-slate-500/20 transition-all"
                               >
                                 PARTICIPANT
                               </button>
@@ -2094,7 +2094,7 @@ export const AdminDashboardPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="p-6">
-                        <div className="flex items-center justify-between p-4 bg-slate-50  rounded-xl border border-slate-200 ">
+                        <div className="flex items-center justify-between p-4 bg-[var(--bg-main)]  rounded-xl border border-slate-200 ">
                           <div>
                             <span className="text-sm font-bold text-slate-900  block mb-1">
                               Maintenance Mode
@@ -2172,7 +2172,7 @@ export const AdminDashboardPage: React.FC = () => {
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="p-4 border border-slate-200  rounded-xl bg-slate-50 ">
+                            <div className="p-4 border border-slate-200  rounded-xl bg-[var(--bg-main)] ">
                               <h4 className="text-sm font-bold text-slate-900  mb-4 flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
                                 Sandbox Keys
@@ -2209,7 +2209,7 @@ export const AdminDashboardPage: React.FC = () => {
                               </div>
                             </div>
 
-                            <div className="p-4 border border-slate-200  rounded-xl bg-slate-50 ">
+                            <div className="p-4 border border-slate-200  rounded-xl bg-[var(--bg-main)] ">
                               <h4 className="text-sm font-bold text-slate-900  mb-4 flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
                                 Production Keys

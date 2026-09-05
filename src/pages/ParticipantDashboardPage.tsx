@@ -219,10 +219,10 @@ export const ParticipantDashboardPage: React.FC = () => {
       
       {/* Sleek Profile Header */}
       <div className="glass-card p-6 sm:p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 dark:bg-amber-500/10 rounded-full blur-3xl -z-10 animate-pulse-soft" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 dark:bg-amber-500/10 rounded-full blur-3xl -z-10 animate-pulse-soft" />
         <div className="flex items-center gap-5">
           {/* Minimal Avatar */}
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-amber-500 text-white shadow-lg flex items-center justify-center shrink-0 border-2 border-white dark:border-slate-800">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-amber-500 text-white shadow-lg flex items-center justify-center shrink-0 border-2 border-white dark:border-slate-800">
             <User className="w-8 h-8" />
           </div>
           
@@ -256,7 +256,7 @@ export const ParticipantDashboardPage: React.FC = () => {
               <button
                 onClick={handleDownloadTicket}
                 disabled={isDownloading || !eventData}
-                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:hover:scale-100 shadow-sm"
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-[var(--bg-main)] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:hover:scale-100 shadow-sm"
               >
                 <Download className="w-4 h-4" />
                 <span>{isDownloading ? 'Memproses...' : 'Unduh Tiket'}</span>
@@ -321,7 +321,7 @@ export const ParticipantDashboardPage: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 h-64 rounded-2xl animate-pulse border border-slate-200 dark:border-slate-800" />
       ) : registrations.length === 0 ? (
         <div className="p-12 sm:p-20 text-center glass-card">
-          <div className="w-16 h-16 mb-4 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 mb-4 rounded-full bg-[var(--bg-main)] dark:bg-slate-800 flex items-center justify-center mx-auto">
             <FileText className="w-6 h-6 text-slate-400" />
           </div>
           <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Belum Ada Pendaftaran</h3>
@@ -352,7 +352,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         selectedReg.status === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20' :
                         selectedReg.status === 'WAITING_PAYMENT' ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-500/20' :
-                        'bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+                        'bg-[var(--bg-main)] text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                       }`}>
                         {selectedReg.status.replace('_', ' ')}
                       </span>
@@ -360,15 +360,15 @@ export const ParticipantDashboardPage: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
+                    <div className="bg-[var(--bg-main)] dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">No. BIB</p>
-                      <p className="text-2xl font-display tracking-widest text-blue-600 dark:text-amber-500">{participant?.bibNumber || '-'}</p>
+                      <p className="text-2xl font-display tracking-widest text-amber-600 dark:text-amber-500">{participant?.bibNumber || '-'}</p>
                     </div>
-                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
+                    <div className="bg-[var(--bg-main)] dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 text-center">
                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Jersey</p>
                       <p className="text-lg font-mono font-bold text-slate-900 dark:text-white">{participant?.jerseySize || '-'}</p>
                     </div>
-                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 text-center flex flex-col items-center justify-center">
+                    <div className="bg-[var(--bg-main)] dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 text-center flex flex-col items-center justify-center">
                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Race Pack</p>
                       {participant?.checkInStatus ? (
                         <CheckCircle2 className="w-5 h-5 text-emerald-500 mt-0.5" />
@@ -397,7 +397,7 @@ export const ParticipantDashboardPage: React.FC = () => {
               {/* Right Sidebar: QR Code */}
               <div className="md:col-span-1">
                 <div className="glass-card p-6 h-full flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-blue-200 dark:hover:border-amber-500/30">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 dark:bg-amber-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 dark:bg-amber-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                   <div className="mb-4">
                     <QrCode className="w-8 h-8 text-slate-400 mx-auto" />
                   </div>
@@ -409,7 +409,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                       <QRCodeViewer value={participant.qrToken} label="" />
                     </div>
                   ) : (
-                    <div className="w-48 h-48 bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                    <div className="w-48 h-48 bg-[var(--bg-main)] dark:bg-slate-800 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center">
                       <p className="text-xs text-slate-400">QR Belum Tersedia</p>
                     </div>
                   )}
@@ -425,14 +425,14 @@ export const ParticipantDashboardPage: React.FC = () => {
               <div className="glass-card overflow-hidden">
                 
                 {/* Receipt Header */}
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div className="bg-[var(--bg-main)] dark:bg-slate-800/50 p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">Rincian Pembayaran</h3>
                     <p className="text-xs text-slate-500 font-mono mt-1">INV: {payment.invoiceId}</p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
                     payment.status === 'PAID' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800' : 
-                    payment.status === 'VERIFIED' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800' :
+                    payment.status === 'VERIFIED' ? 'bg-amber-50 text-amber-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800' :
                     'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800'
                   }`}>
                     {payment.status}
@@ -452,16 +452,16 @@ export const ParticipantDashboardPage: React.FC = () => {
                 </div>
 
                 {/* Action Area */}
-                <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800">
+                <div className="p-6 bg-[var(--bg-main)] dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800">
                   {payment.status !== 'PAID' && payment.paymentMethod === 'MIDTRANS' ? (
                     <div className="text-center space-y-4">
-                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-2">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 dark:bg-blue-900/30 text-amber-600 dark:text-blue-400 mb-2">
                         <CreditCard className="w-6 h-6" />
                       </div>
                       <p className="text-sm text-slate-600 dark:text-slate-400">Selesaikan pembayaran Anda melalui layanan Midtrans.</p>
                       <button
                         onClick={() => window.open(`/events/${eventData?.id}`, '_self')}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-500/20"
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg shadow-amber-500/20"
                       >
                         Lanjutkan Pembayaran
                       </button>
@@ -478,7 +478,7 @@ export const ParticipantDashboardPage: React.FC = () => {
                           value={proofUrl}
                           onChange={(e) => setProofUrl(e.target.value)}
                           placeholder="https://..."
-                          className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all"
                         />
                       </div>
                       <button
@@ -508,8 +508,8 @@ export const ParticipantDashboardPage: React.FC = () => {
             <div className="max-w-2xl mx-auto">
               <div className="glass-card p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center shrink-0">
-                    <Activity className="w-5 h-5 text-blue-500" />
+                  <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <Activity className="w-5 h-5 text-amber-500" />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">Asesmen Medis</h3>
@@ -526,13 +526,13 @@ export const ParticipantDashboardPage: React.FC = () => {
                       rows={4}
                       value={allergies}
                       onChange={(e) => setAllergies(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                      className="w-full bg-[var(--bg-main)] dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all resize-none"
                       placeholder="Sebutkan jika ada riwayat asma, jantung, alergi obat tertentu, dsb."
                     />
                   </div>
 
-                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex gap-3 items-start">
-                    <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+                  <div className="p-4 rounded-xl bg-[var(--bg-main)] dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex gap-3 items-start">
+                    <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                     <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       Saya menyatakan bahwa data kesehatan yang diisi adalah benar, serta menyetujui standar keselamatan dan pertolongan medis dari penyelenggara acara. Penyelenggara dibebaskan dari tuntutan apabila terjadi hal di luar kendali medis akibat informasi yang tidak jujur.
                     </p>
@@ -563,13 +563,13 @@ export const ParticipantDashboardPage: React.FC = () => {
                     <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase">{result.participantName}</h3>
                     
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-5 text-left">
+                      <div className="bg-[var(--bg-main)] dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-5 text-left">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Gun Time</p>
                         <p className="text-3xl font-display tracking-widest text-slate-900 dark:text-white">{result.gunTime}</p>
                       </div>
-                      <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-5 text-left">
+                      <div className="bg-[var(--bg-main)] dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-5 text-left">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Chip Time</p>
-                        <p className="text-3xl font-display tracking-widest text-blue-600 dark:text-amber-500">{result.chipTime}</p>
+                        <p className="text-3xl font-display tracking-widest text-amber-600 dark:text-amber-500">{result.chipTime}</p>
                       </div>
                     </div>
 
