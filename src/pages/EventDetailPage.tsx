@@ -1075,7 +1075,7 @@ export const EventDetailPage: React.FC = () => {
                   {/* Metode Pembayaran — dinamis berdasarkan konfigurasi admin */}
                   <div className="space-y-4 mb-8">
                     {/* Payment Gateway (Midtrans) — hanya muncul jika admin mengaktifkan */}
-                    {settings?.paymentGatewayConfigured ? (
+                    {settings?.paymentGatewayConfigured && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {[
                           { id: 'qris', label: 'QRIS / E-Wallet', icon: '/asset/logo-qris.webp' },
