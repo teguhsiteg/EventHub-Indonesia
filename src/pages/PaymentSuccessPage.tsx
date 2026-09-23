@@ -80,8 +80,23 @@ export const PaymentSuccessPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/70 dark:bg-[#090d16] text-[var(--text-primary)] pt-32 pb-20 px-4">
+    <div className="min-h-screen bg-slate-50/70 dark:bg-[#090d16] text-[var(--text-primary)] pt-8 pb-20 px-4">
       <div className="max-w-3xl mx-auto space-y-6">
+
+        {/* Top Brand Header Bar */}
+        <div className="flex items-center justify-between pb-6 border-b border-slate-200/60 dark:border-slate-800">
+          <Link to="/" className="flex items-center gap-2">
+            <img src="/logo.png" alt="Guwigo Events" className="h-9 w-auto object-contain" />
+          </Link>
+          <div className="flex items-center gap-3">
+            <Link 
+              to="/events" 
+              className="btn-brand-primary !py-2 !px-4 text-xs font-bold"
+            >
+              Eksplor Event
+            </Link>
+          </div>
+        </div>
 
         {/* Top Success Banner (DOKU Style Enterprise Card) */}
         <div className="enterprise-card p-8 sm:p-10 text-center bg-white dark:bg-[#0f172a] shadow-xl">

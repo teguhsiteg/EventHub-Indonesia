@@ -114,9 +114,30 @@ export const CheckTicketPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/70 dark:bg-[#090d16] text-[var(--text-primary)] pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/70 dark:bg-[#090d16] text-[var(--text-primary)] pt-8 pb-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
         
+        {/* Top Brand Header Bar */}
+        <div className="flex items-center justify-between pb-6 mb-2 border-b border-slate-200/60 dark:border-slate-800">
+          <Link to="/" className="flex items-center gap-2">
+            <img src="/logo.png" alt="Guwigo Events" className="h-9 w-auto object-contain" />
+          </Link>
+          <div className="flex items-center gap-3">
+            <Link 
+              to="/events" 
+              className="btn-brand-primary !py-2 !px-4 text-xs font-bold"
+            >
+              Eksplor Event
+            </Link>
+            <Link 
+              to="/" 
+              className="btn-brand-secondary !py-2 !px-4 text-xs font-bold"
+            >
+              Beranda
+            </Link>
+          </div>
+        </div>
+
         {/* Header Section */}
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-50 dark:bg-red-950/40 border border-red-200/80 dark:border-red-800/60 text-[#e50a38] text-xs font-bold uppercase tracking-wider">

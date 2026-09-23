@@ -1,25 +1,23 @@
 import React from 'react';
-import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { ToastContainer } from '../common/ToastContainer';
 import { ChatWidget } from '../common/ChatWidget';
 import { AutoLogout } from '../auth/AutoLogout';
 
 interface PublicLayoutProps {
- children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
- return (
- <div className="relative flex flex-col min-h-screen font-sans text-[var(--text-primary)] dark:text-gray-200 antialiased dark:bg-[#0B0F14]">
- <Navbar />
- <main className="flex-1 relative z-0">
- {children}
- </main>
- <Footer />
- <ToastContainer />
- <ChatWidget />
- <AutoLogout />
- </div>
- );
+  return (
+    <div className="relative flex flex-col min-h-screen font-sans text-[var(--text-primary)] dark:text-gray-200 antialiased dark:bg-[#0B0F14]">
+      <main className="flex-1 relative z-0">
+        {children}
+      </main>
+      <Footer />
+      <ToastContainer />
+      <ChatWidget />
+      <AutoLogout />
+    </div>
+  );
 };

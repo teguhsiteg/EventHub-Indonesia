@@ -71,15 +71,36 @@ export const HomePage: React.FC = () => {
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans antialiased">
 
       {/* ========================================================
-          HERO SECTION — Enterprise Split Layout (Style DOKU)
+          HERO SECTION — Enterprise Split Layout (Style DOKU, No Navbar)
           ======================================================== */}
-      <section className="relative pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden bg-gradient-to-b from-slate-50/70 via-white to-white dark:from-[#0b0f19] dark:via-[#090d16] dark:to-[#090d16] border-b border-slate-100 dark:border-slate-800">
+      <section className="relative pt-12 pb-20 md:pt-16 md:pb-28 overflow-hidden bg-gradient-to-b from-slate-50/70 via-white to-white dark:from-[#0b0f19] dark:via-[#090d16] dark:to-[#090d16] border-b border-slate-100 dark:border-slate-800">
         <div className="absolute inset-0 doku-grid-bg opacity-70 pointer-events-none" />
         
         {/* Soft radial ambient glow */}
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-red-500/10 dark:bg-red-600/10 blur-[130px] rounded-full pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Top Brand Header Bar */}
+          <div className="flex items-center justify-between pb-8 mb-8 border-b border-slate-200/60 dark:border-slate-800">
+            <Link to="/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="Guwigo Events" className="h-10 w-auto object-contain" />
+            </Link>
+            <div className="flex items-center gap-3">
+              <Link 
+                to="/check-ticket" 
+                className="btn-brand-primary !py-2 !px-4 text-xs font-bold"
+              >
+                Cek E-Tiket Saya
+              </Link>
+              <Link 
+                to="/events" 
+                className="btn-brand-secondary !py-2 !px-4 text-xs font-bold"
+              >
+                Eksplor Event
+              </Link>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             
             {/* Left Column: Value Proposition & Search */}
