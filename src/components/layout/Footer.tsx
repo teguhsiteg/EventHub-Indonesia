@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, MapPin, Mail, Phone, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
+import { MapPin, Mail, Phone, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 
@@ -135,25 +135,46 @@ export const Footer: React.FC = () => {
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             <span className="text-xs uppercase font-bold tracking-widest text-slate-400">Metode Pembayaran Resmi & Terverifikasi</span>
           </div>
-          <div className="flex flex-wrap justify-center gap-4 md:gap-8 items-center bg-slate-800/40 border border-slate-800 px-6 py-4 rounded-2xl">
+          
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 items-center max-w-4xl px-4">
+            {/* Real verified webp/png assets in /asset/ */}
             {[
-              { src: '/asset/logo-bca.svg', alt: 'BCA' },
+              { src: '/asset/logo-qris.webp', alt: 'QRIS' },
               { src: '/asset/logo-mandiri.webp', alt: 'Mandiri' },
               { src: '/asset/logo-bni.webp', alt: 'BNI' },
               { src: '/asset/logo-bri.webp', alt: 'BRI' },
               { src: '/asset/logo-bsi.webp', alt: 'BSI' },
-              { src: '/asset/logo-gopay.svg', alt: 'GoPay' },
-              { src: '/asset/logo-ovo.svg', alt: 'OVO' },
-              { src: '/asset/logo-dana.svg', alt: 'DANA' },
-              { src: '/asset/logo-shopeepay.svg', alt: 'ShopeePay' },
-              { src: '/asset/logo-qris.webp', alt: 'QRIS' },
+              { src: '/asset/logo-shopeepay.png', alt: 'ShopeePay' },
+              { src: '/asset/indomaret.png', alt: 'Indomaret' },
+              { src: '/asset/Alfamart.png', alt: 'Alfamart' },
             ].map(method => (
-              <img 
-                key={method.alt}
-                src={method.src} 
-                alt={method.alt} 
-                className="h-6 w-auto object-contain brightness-90 hover:brightness-100 hover:scale-105 transition-all" 
-              />
+              <div 
+                key={method.alt} 
+                className="bg-white/95 rounded-xl px-3 py-2 flex items-center justify-center shadow-xs border border-slate-700/50 hover:scale-105 transition-transform h-10"
+              >
+                <img 
+                  src={method.src} 
+                  alt={method.alt} 
+                  className="max-h-6 max-w-[70px] w-auto object-contain" 
+                />
+              </div>
+            ))}
+
+            {/* Clean SVG Pills for E-Wallets & Card Networks without broken images */}
+            {[
+              { name: 'BCA Virtual Account', color: 'bg-blue-900 text-white' },
+              { name: 'GoPay', color: 'bg-emerald-600 text-white' },
+              { name: 'OVO', color: 'bg-purple-700 text-white' },
+              { name: 'DANA', color: 'bg-sky-500 text-white' },
+              { name: 'Visa / Mastercard', color: 'bg-slate-700 text-white' },
+            ].map(pill => (
+              <div 
+                key={pill.name}
+                className="px-3.5 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] font-bold text-slate-300 flex items-center gap-1.5 shadow-xs"
+              >
+                <span className={`w-2 h-2 rounded-full ${pill.color}`} />
+                <span>{pill.name}</span>
+              </div>
             ))}
           </div>
         </div>
