@@ -12,7 +12,7 @@ export const CERTIFICATE_PREFIX = 'CERT-' as const;
 export const DEFAULT_SITE_NAME = 'EventHub by Guwigo Indonesia' as const;
 export const DEFAULT_SITE_DESCRIPTION =
   'Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia' as const;
-export const DEFAULT_CONTACT_EMAIL = 'support@racepro.id' as const;
+export const DEFAULT_CONTACT_EMAIL = 'parthner@guwigo.com' as const;
 
 // ============================================================
 
@@ -349,7 +349,7 @@ export interface SystemSettings {
   siteName: string;          // Default: "EventHub by Guwigo Indonesia"
   siteDescription: string;   // Default: "Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia"
   logoUrl: string;
-  contactEmail: string;      // Default: "support@racepro.id"
+  contactEmail: string;      // Default: "parthner@guwigo.com"
   contactPhone: string;
   maintenanceMode: boolean;
   paymentGatewayConfigured: boolean;

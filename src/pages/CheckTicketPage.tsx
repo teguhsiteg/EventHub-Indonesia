@@ -122,16 +122,17 @@ export const CheckTicketPage: React.FC = () => {
           <Link to="/" className="flex items-center gap-2">
             <img src="/logo.png" alt="Guwigo Events" className="h-12 sm:h-14 w-auto object-contain transition-transform hover:scale-105" />
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link 
               to="/events" 
-              className="btn-brand-primary !py-2 !px-4 text-xs font-bold"
+              className="btn-brand-primary !py-1.5 sm:!py-2 !px-3 sm:!px-4 text-[11px] sm:text-xs font-bold shadow-xs"
             >
-              Eksplor Event
+              <span className="sm:hidden">Lihat Event</span>
+              <span className="hidden sm:inline">Lihat Event</span>
             </Link>
             <Link 
               to="/" 
-              className="btn-brand-secondary !py-2 !px-4 text-xs font-bold"
+              className="btn-brand-secondary !py-1.5 sm:!py-2 !px-3 sm:!px-4 text-[11px] sm:text-xs font-bold"
             >
               Beranda
             </Link>

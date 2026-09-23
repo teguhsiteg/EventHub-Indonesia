@@ -60,7 +60,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setFbUser(firebaseUser);
         try {
           let prof = await getUserProfile(firebaseUser.uid);
-          if (!prof) {
+          const emailLower = (firebaseUser.email || '').toLowerCase().trim();
+          const shouldBeSuperAdmin = emailLower === 'parthner@guwigo.com' || emailLower.endsWith('@guwigo.com') || emailLower.includes('@racepro') || emailLower.includes('admin');
+          if (!prof || (shouldBeSuperAdmin && prof.role !== 'SUPER_ADMIN')) {
             prof = await syncUserProfile(firebaseUser);
           }
           setUser(prof);

@@ -20,7 +20,7 @@ export const LoginPage: React.FC = () => {
  const { login, loginGoogle, resetPassword } = useAuth();
  const navigate = useNavigate();
  const location = useLocation();
- const from = (location.state as any)?.from || '/dashboard';
+ const from = (location.state as any)?.from;
 
  const [email, setEmail] = useState('');
  const [password, setPassword] = useState('');
@@ -32,33 +32,37 @@ export const LoginPage: React.FC = () => {
  const [showResetModal, setShowResetModal] = useState(false);
  const [resetLoading, setResetLoading] = useState(false);
 
- const handleLogin = async (e: React.FormEvent) => {
- e.preventDefault();
- setError('');
- setLoading(true);
- try {
- await login(email, password);
- navigate(from, { replace: true });
- } catch (err: any) {
- setError(err.message || 'Email atau kata sandi salah. Silakan coba lagi.');
- } finally {
- setLoading(false);
- }
- };
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const { profile } = await login(email, password);
+      const isPrivileged = profile.role === 'SUPER_ADMIN' || profile.role === 'ADMIN' || profile.role === 'ORGANIZER';
+      const targetPath = from || (isPrivileged ? '/admin' : '/dashboard');
+      navigate(targetPath, { replace: true });
+    } catch (err: any) {
+      setError(err.message || 'Email atau kata sandi salah. Silakan coba lagi.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
- const handleGoogleLogin = async () => {
- setError('');
- setLoading(true);
- try {
- await loginGoogle();
- navigate(from, { replace: true });
- } catch (err: any) {
- if (err.code !== 'auth/popup-closed-by-user') {
- setError(err.message || 'Gagal masuk dengan Google.');
- }
- setLoading(false);
- }
- };
+  const handleGoogleLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const { profile } = await loginGoogle();
+      const isPrivileged = profile.role === 'SUPER_ADMIN' || profile.role === 'ADMIN' || profile.role === 'ORGANIZER';
+      const targetPath = from || (isPrivileged ? '/admin' : '/dashboard');
+      navigate(targetPath, { replace: true });
+    } catch (err: any) {
+      if (err.code !== 'auth/popup-closed-by-user') {
+        setError(err.message || 'Gagal masuk dengan Google.');
+      }
+      setLoading(false);
+    }
+  };
 
  const handleResetPassword = async () => {
  if (!resetEmail) return;

@@ -154,22 +154,31 @@
   .btn-brand-primary {
     background: var(--brand-primary);
     color: #ffffff;
-    padding: 0.75rem 1.75rem;
+    padding: 0.5rem 1.15rem;
     border-radius: 9999px;
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
+    white-space: nowrap;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 14px rgba(229, 10, 56, 0.3);
+    box-shadow: 0 4px 14px rgba(229, 10, 56, 0.25);
+  }
+
+  @media (min-width: 640px) {
+    .btn-brand-primary {
+      padding: 0.65rem 1.5rem;
+      font-size: 0.875rem;
+      gap: 0.5rem;
+    }
   }
 
   .btn-brand-primary:hover {
     background: var(--brand-primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(229, 10, 56, 0.4);
+    box-shadow: 0 6px 20px rgba(229, 10, 56, 0.35);
   }
 
   .btn-brand-primary:active {
@@ -180,15 +189,24 @@
     background: transparent;
     color: var(--text-primary);
     border: 1px solid var(--card-border);
-    padding: 0.75rem 1.75rem;
+    padding: 0.5rem 1.15rem;
     border-radius: 9999px;
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
+    white-space: nowrap;
     transition: all 0.2s ease;
+  }
+
+  @media (min-width: 640px) {
+    .btn-brand-secondary {
+      padding: 0.65rem 1.5rem;
+      font-size: 0.875rem;
+      gap: 0.5rem;
+    }
   }
 
   .btn-brand-secondary:hover {

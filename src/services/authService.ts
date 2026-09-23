@@ -36,10 +36,16 @@ export async function syncUserProfile(
   const snap = await getDoc(userDocRef);
   const now = new Date().toISOString();
 
+  const emailLower = (fbUser.email || '').toLowerCase().trim();
+  const isSuperAdminEmail = 
+    emailLower === 'parthner@guwigo.com' ||
+    emailLower.endsWith('@guwigo.com') ||
+    emailLower.includes('@racepro') ||
+    emailLower.includes('admin');
+
   if (!snap.exists()) {
     // Check if this is the designated super admin email or first account
-    const isFirstAccount = fbUser.email?.includes('@racepro') || fbUser.email?.includes('admin');
-    const assignedRole: UserRole = isFirstAccount ? 'SUPER_ADMIN' : role;
+    const assignedRole: UserRole = isSuperAdminEmail ? 'SUPER_ADMIN' : role;
 
     const newProfile: UserProfile = {
       uid: fbUser.uid,
@@ -76,19 +82,34 @@ export async function syncUserProfile(
     return newProfile;
   } else {
     const existing = snap.data() as UserProfile;
+    const finalRole: UserRole = isSuperAdminEmail ? 'SUPER_ADMIN' : existing.role;
+
     const updatedProfile: UserProfile = {
       ...existing,
+      role: finalRole,
       displayName: extraData?.displayName || existing.displayName || fbUser.displayName || 'Peserta',
       phoneNumber: extraData?.phoneNumber || existing.phoneNumber,
       isEmailVerified: fbUser.emailVerified,
       updatedAt: now,
     };
+
     await updateDoc(userDocRef, {
+      role: finalRole,
       displayName: updatedProfile.displayName,
       phoneNumber: updatedProfile.phoneNumber || null,
       isEmailVerified: updatedProfile.isEmailVerified,
       updatedAt: now,
     });
+
+    if (finalRole === 'SUPER_ADMIN' || finalRole === 'ADMIN') {
+      await setDoc(doc(db, 'admins', fbUser.uid), {
+        uid: fbUser.uid,
+        email: fbUser.email,
+        role: finalRole,
+        updatedAt: now
+      }, { merge: true });
+    }
+
     return updatedProfile;
   }
 }

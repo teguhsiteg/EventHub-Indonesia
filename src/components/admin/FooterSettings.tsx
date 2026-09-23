@@ -7,7 +7,7 @@ export const FooterSettings: React.FC<{ addNotification: (type: 'success' | 'err
  const [about, setAbout] = useState('');
  const [copyright, setCopyright] = useState('');
  const [contactAddress, setContactAddress] = useState('Jakarta, Indonesia');
- const [contactEmail, setContactEmail] = useState('support@racepro.id');
+ const [contactEmail, setContactEmail] = useState('parthner@guwigo.com');
  const [contactPhone, setContactPhone] = useState('+62 812-XXXX-XXXX');
  const [navLinksText, setNavLinksText] = useState("Jelajahi Event : /events\\nHasil & Klasemen : /results\\nTentang Kami : /about\\nBantuan : /contact");
  const [legalLinksText, setLegalLinksText] = useState("Syarat & Ketentuan : /terms\\nKebijakan Privasi : /privacy\\nLaporkan Masalah : /contact");

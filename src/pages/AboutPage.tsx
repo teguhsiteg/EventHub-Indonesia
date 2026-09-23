@@ -151,8 +151,8 @@ export const AboutPage: React.FC = () => {
  <Info className="w-5 h-5 text-[var(--accent)] dark:text-amber-400" />
  <span className="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">
  Ada pertanyaan? Hubungi kami di{' '}
- <a href="mailto:support@racepro.id" className="text-[var(--accent)] dark:text-amber-400 font-bold hover:text-blue-700 dark:hover:text-amber-300">
- support@racepro.id
+ <a href="mailto:parthner@guwigo.com" className="text-[var(--accent)] dark:text-amber-400 font-bold hover:text-blue-700 dark:hover:text-amber-300">
+ parthner@guwigo.com
  </a>
  </span>
  </div>

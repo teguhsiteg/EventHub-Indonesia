@@ -72,7 +72,7 @@ Sebagai pengguna, Anda memiliki hak:
 - **Hapus** — Meminta penghapusan akun dan data Anda
 - **Batasan** — Membatasi pemrosesan data tertentu
 
-Untuk menggunakan hak-hak di atas, hubungi **support@racepro.id**.
+Untuk menggunakan hak-hak di atas, hubungi **parthner@guwigo.com**.
 
 ## 5. Cookie & Tracking
 
@@ -84,7 +84,7 @@ Kami akan memberitahukan perubahan signifikan pada kebijakan privasi ini melalui
 
 ---
 
-> *Dengan menggunakan platform EventHub by Guwigo, Anda menyetujui praktik yang dijelaskan dalam kebijakan privasi ini. Jika Anda memiliki pertanyaan, hubungi **support@racepro.id**.*`;
+> *Dengan menggunakan platform EventHub by Guwigo, Anda menyetujui praktik yang dijelaskan dalam kebijakan privasi ini. Jika Anda memiliki pertanyaan, hubungi **parthner@guwigo.com**.*`;
 
 export const PrivacyPage: React.FC = () => {
  const [content, setContent] = useState('');
@@ -168,8 +168,8 @@ export const PrivacyPage: React.FC = () => {
  <Shield className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
  <span className="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">
  Data Anda aman bersama kami —{' '}
- <a href="mailto:dpo@racepro.id" className="text-emerald-500 dark:text-emerald-400 font-bold hover:text-emerald-600 dark:hover:text-emerald-300">
- dpo@racepro.id
+ <a href="mailto:parthner@guwigo.com" className="text-emerald-500 dark:text-emerald-400 font-bold hover:text-emerald-600 dark:hover:text-emerald-300">
+ parthner@guwigo.com
  </a>
  </span>
  </div>

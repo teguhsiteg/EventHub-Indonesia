@@ -8,7 +8,7 @@ export const DEFAULT_SYSTEM_SETTINGS: SystemSettings = {
   siteName: 'EventHub by Guwigo Indonesia',
   siteDescription: 'Platform Manajemen Event & Kompetisi Olahraga Terdepan di Indonesia',
   logoUrl: '/logo.svg',
-  contactEmail: 'support@racepro.id',
+  contactEmail: 'parthner@guwigo.com',
   contactPhone: '+62 812 3456 7890',
   maintenanceMode: false,
   paymentGatewayConfigured: false,
