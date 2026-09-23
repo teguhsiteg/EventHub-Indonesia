@@ -55,109 +55,109 @@ Dibangun dengan teknologi modern untuk performa maksimal:
 > *"Website dan ekosistem ini dibangun secara menyeluruh oleh tim **EventHub by Guwigo**."*
 
 <div align="center" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #334155;">
-  <p style="color: #94a3b8; font-size: 0.8rem;">
-    © {new Date().getFullYear()} EventHub by Guwigo — Platform Management Event Olahraga Profesional
-  </p>
+ <p style="color: #94a3b8; font-size: 0.8rem;">
+ © {new Date().getFullYear()} EventHub by Guwigo — Platform Management Event Olahraga Profesional
+ </p>
 </div>`;
 
 export const AboutPage: React.FC = () => {
-  const [content, setContent] = useState('');
-  const [loading, setLoading] = useState(true);
+ const [content, setContent] = useState('');
+ const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        const db = getFirestore(app);
-        const docRef = doc(db, 'system_settings', 'pages_config');
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists() && docSnap.data().about) {
-          setContent(docSnap.data().about);
-        } else if (docSnap.exists() && !docSnap.data().about) {
-          // Seed default jika field kosong
-          await setDoc(docRef, { about: DEFAULT_ABOUT }, { merge: true });
-          setContent(DEFAULT_ABOUT);
-        } else {
-          // Seed full default jika dokumen tidak ada
-          const defaults = {
-            about: DEFAULT_ABOUT,
-            terms: `# Syarat dan Ketentuan\n\n...`,
-            privacy: `# Kebijakan Privasi\n\n...`
-          };
-          await setDoc(docRef, defaults);
-          setContent(DEFAULT_ABOUT);
-        }
-      } catch (error) {
-        console.error("Error fetching about page:", error);
-        setContent(DEFAULT_ABOUT);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchContent();
-  }, []);
+ useEffect(() => {
+ const fetchContent = async () => {
+ try {
+ const db = getFirestore(app);
+ const docRef = doc(db, 'system_settings', 'pages_config');
+ const docSnap = await getDoc(docRef);
+ if (docSnap.exists() && docSnap.data().about) {
+ setContent(docSnap.data().about);
+ } else if (docSnap.exists() && !docSnap.data().about) {
+ // Seed default jika field kosong
+ await setDoc(docRef, { about: DEFAULT_ABOUT }, { merge: true });
+ setContent(DEFAULT_ABOUT);
+ } else {
+ // Seed full default jika dokumen tidak ada
+ const defaults = {
+ about: DEFAULT_ABOUT,
+ terms: `# Syarat dan Ketentuan\n\n...`,
+ privacy: `# Kebijakan Privasi\n\n...`
+ };
+ await setDoc(docRef, defaults);
+ setContent(DEFAULT_ABOUT);
+ }
+ } catch (error) {
+ console.error("Error fetching about page:", error);
+ setContent(DEFAULT_ABOUT);
+ } finally {
+ setLoading(false);
+ }
+ };
+ fetchContent();
+ }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#0B0F14]">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-      </div>
-    );
-  }
+ if (loading) {
+ return (
+ <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#0B0F14]">
+ <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin" />
+ </div>
+ );
+ }
 
-  return (
-    <div className="min-h-screen  text-slate-900 dark:text-slate-100 pb-16">
-      {/* Breadcrumb */}
-      <div className="max-w-4xl mx-auto px-4 pt-8 pb-0">
-        <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-8">
-          <Link to="/" className="hover:text-blue-600 dark:hover:text-amber-400 transition-colors flex items-center gap-1">
-            <Home className="w-3.5 h-3.5" /> Beranda
-          </Link>
-          <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-blue-600 dark:text-amber-400">Tentang Kami</span>
-        </nav>
-      </div>
+ return (
+ <div className="min-h-screen text-[var(--text-primary)] dark:text-slate-100 pb-16">
+ {/* Breadcrumb */}
+ <div className="max-w-4xl mx-auto px-4 pt-8 pb-0">
+ <nav className="flex items-center gap-2 text-xs font-semibold text-[var(--text-secondary)] mb-8">
+ <Link to="/" className="hover:text-[var(--accent)] dark:hover:text-amber-400 transition-colors flex items-center gap-1">
+ <Home className="w-3.5 h-3.5" /> Beranda
+ </Link>
+ <ChevronRight className="w-3.5 h-3.5" />
+ <span className="text-[var(--accent)] dark:text-amber-400">Tentang Kami</span>
+ </nav>
+ </div>
 
-      {/* Hero Header */}
-      <div className="relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
-        
-        <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-900/90 border border-slate-200 dark:border-gray-800 text-blue-600 dark:text-amber-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
-            <Star className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-            <span>EventHub by Guwigo — TENTANG KAMI</span>
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 dark:text-slate-900 dark:text-white uppercase tracking-tight leading-[1.05]">
-            Tentang <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-400 to-amber-400">
-              EventHub by Guwigo
-            </span>
-          </h1>
-          <p className="text-slate-600 dark:text-slate-500 dark:text-slate-400 text-base mt-4 max-w-2xl leading-relaxed">
-            **EventHub by Guwigo** didirikan pada tahun 2026 dengan visi tunggal: *Mendigitalisasi dan menyatukan ekosistem olahraga di seluruh Indonesia*.
-          </p>
-        </div>
-      </div>
+ {/* Hero Header */}
+ <div className="relative overflow-hidden">
+ <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[var(--accent)]/5 blur-[120px] rounded-full pointer-events-none" />
+ <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
+ 
+ <div className="max-w-4xl mx-auto px-4 relative z-10 pb-12">
+ <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-gray-900/90 border border-[var(--glass-border)] dark:border-gray-800 text-[var(--accent)] dark:text-amber-400 text-xs font-bold uppercase tracking-wider shadow-xl mb-6">
+ <Star className="w-4 h-4 text-[var(--accent)] dark:text-amber-400" />
+ <span>EventHub by Guwigo — TENTANG KAMI</span>
+ </div>
+ <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-[var(--text-primary)] dark:text-[var(--text-primary)] uppercase tracking-tight leading-[1.05]">
+ Tentang <br />
+ <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent)] via-blue-400 to-amber-400">
+ EventHub by Guwigo
+ </span>
+ </h1>
+ <p className="text-slate-600 dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] text-base mt-4 max-w-2xl leading-relaxed">
+ **EventHub by Guwigo** didirikan pada tahun 2026 dengan visi tunggal: *Mendigitalisasi dan menyatukan ekosistem olahraga di seluruh Indonesia*.
+ </p>
+ </div>
+ </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 pb-24">
-        <div className="bg-white/60 dark:bg-gray-900/50 border border-slate-200 dark:border-gray-800 rounded-3xl p-8 md:p-12 shadow-xl prose dark:prose-invert max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-lg prose-h3:mt-8 prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-relaxed prose-a:text-blue-600 dark:prose-a:text-amber-400 prose-a:no-underline hover:prose-a:text-blue-700 dark:hover:prose-a:text-amber-300 prose-strong:text-slate-900 dark:prose-strong:text-white prose-code:text-blue-600 dark:prose-code:text-amber-400 prose-code:bg-slate-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-li:text-slate-600 dark:prose-li:text-slate-300 prose-hr:border-slate-200 dark:prose-hr:border-gray-700 prose-blockquote:border-blue-500 prose-blockquote:text-slate-500 dark:prose-blockquote:text-slate-400 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-gray-800/50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-2xl backdrop-blur-md">
-          <ReactMarkdown>{content || DEFAULT_ABOUT}</ReactMarkdown>
-        </div>
+ {/* Content */}
+ <div className="max-w-4xl mx-auto px-4 pb-24">
+ <div className="bg-white/60 dark:bg-gray-900/50 border border-[var(--glass-border)] dark:border-gray-800 rounded-3xl p-8 md:p-12 shadow-xl prose dark:prose-invert max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:text-[var(--text-primary)] dark:prose-headings:text-white prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h3:text-lg prose-h3:mt-8 prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-relaxed prose-a:text-[var(--accent)] dark:prose-a:text-amber-400 prose-a:no-underline hover:prose-a:text-blue-700 dark:hover:prose-a:text-amber-300 prose-strong:text-[var(--text-primary)] dark:prose-strong:text-white prose-code:text-[var(--accent)] dark:prose-code:text-amber-400 prose-code:bg-[var(--bg-secondary)] dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-li:text-slate-600 dark:prose-li:text-slate-300 prose-hr:border-[var(--glass-border)] dark:prose-hr:border-gray-700 prose-blockquote:border-blue-500 prose-blockquote:text-[var(--text-secondary)] dark:prose-blockquote:text-[var(--text-secondary)] prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-gray-800/50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-2xl backdrop-blur-md">
+ <ReactMarkdown>{content || DEFAULT_ABOUT}</ReactMarkdown>
+ </div>
 
-        {/* Footer CTA */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/80 dark:bg-gray-900 border border-slate-200 dark:border-gray-800 shadow-sm backdrop-blur-sm">
-            <Info className="w-5 h-5 text-blue-500 dark:text-amber-400" />
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-              Ada pertanyaan? Hubungi kami di{' '}
-              <a href="mailto:support@racepro.id" className="text-blue-600 dark:text-amber-400 font-bold hover:text-blue-700 dark:hover:text-amber-300">
-                support@racepro.id
-              </a>
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+ {/* Footer CTA */}
+ <div className="mt-12 text-center">
+ <div className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-white/80 dark:bg-gray-900 border border-[var(--glass-border)] dark:border-gray-800 shadow-sm backdrop-blur-sm">
+ <Info className="w-5 h-5 text-[var(--accent)] dark:text-amber-400" />
+ <span className="text-xs text-[var(--text-secondary)] dark:text-[var(--text-secondary)]">
+ Ada pertanyaan? Hubungi kami di{' '}
+ <a href="mailto:support@racepro.id" className="text-[var(--accent)] dark:text-amber-400 font-bold hover:text-blue-700 dark:hover:text-amber-300">
+ support@racepro.id
+ </a>
+ </span>
+ </div>
+ </div>
+ </div>
+ </div>
+ );
 };

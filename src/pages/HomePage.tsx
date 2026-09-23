@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getPublicEvents } from '../services/eventService';
 import { getSponsors } from '../services/settingsService';
 import { EventItem, Sponsor } from '../types';
@@ -7,42 +7,26 @@ import {
   Calendar, 
   MapPin, 
   ChevronRight, 
-  ArrowRight,
-  Flag,
-  Sparkles
+  ArrowRight, 
+  Sparkles,
+  Search,
+  Trophy,
+  Users,
+  ShieldCheck,
+  Zap,
+  Activity,
+  CheckCircle2,
+  Clock,
+  ArrowUpRight
 } from 'lucide-react';
 
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
-    el.querySelectorAll('.reveal:not(.in-view)').forEach(c => observer.observe(c));
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
-
 export const HomePage: React.FC = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  const heroRef = useScrollReveal();
-  const featuredRef = useScrollReveal();
-  const upcomingRef = useScrollReveal();
+  const [activeTab, setActiveTab] = useState<'ALL' | 'MARATHON' | 'TRAIL' | 'CYCLING' | 'TRIATHLON'>('ALL');
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
     async function loadHomeData() {
@@ -60,208 +44,418 @@ export const HomePage: React.FC = () => {
     loadHomeData();
   }, []);
 
-  const featuredEvents = events.slice(0, 4);
-  const upcomingEvents = events.filter(e => e.status === 'REGISTRATION_OPEN').slice(0, 5);
+  const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchKeyword.trim()) {
+      navigate(`/events?q=${encodeURIComponent(searchKeyword.trim())}`);
+    } else {
+      navigate('/events');
+    }
+  };
+
+  // Filter events based on active tab
+  const filteredEvents = events.filter(e => {
+    if (activeTab === 'ALL') return true;
+    const cat = (e.category || '').toUpperCase();
+    if (activeTab === 'MARATHON') return cat.includes('RUN') || cat.includes('MARATHON');
+    if (activeTab === 'TRAIL') return cat.includes('TRAIL') || cat.includes('ULTRA');
+    if (activeTab === 'CYCLING') return cat.includes('CYCLE') || cat.includes('BIKE') || cat.includes('SEPEDA');
+    if (activeTab === 'TRIATHLON') return cat.includes('TRIATHLON') || cat.includes('DUATHLON');
+    return true;
+  });
+
+  const featuredSpotlight = events[0] || null;
+  const popularEvents = filteredEvents.slice(0, 6);
 
   return (
-    <div className="min-h-screen font-sans antialiased bg-[var(--bg-main)] text-[var(--text-main)]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans antialiased">
 
-      {/* ===== HERO SECTION ===== */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1552674605-15c82513bb15?auto=format&fit=crop&w=1920&q=80" 
-            alt="Guwigo Events Hero" 
-            className="w-full h-full object-cover brightness-75"
-          />
-        </div>
-        <div className="absolute inset-0 hero-overlay" />
+      {/* ========================================================
+          HERO SECTION — Enterprise Split Layout (Style DOKU)
+          ======================================================== */}
+      <section className="relative pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden bg-gradient-to-b from-slate-50/70 via-white to-white dark:from-[#0b0f19] dark:via-[#090d16] dark:to-[#090d16] border-b border-slate-100 dark:border-slate-800">
+        <div className="absolute inset-0 doku-grid-bg opacity-70 pointer-events-none" />
         
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center text-white" ref={heroRef}>
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur border border-white/20 mb-8 reveal">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-sm font-semibold tracking-[0.2em] uppercase">
-              Platform Event Olahraga Premium
-            </span>
-          </div>
+        {/* Soft radial ambient glow */}
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-red-500/10 dark:bg-red-600/10 blur-[130px] rounded-full pointer-events-none" />
 
-          <h1 className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] leading-none tracking-wide mb-6 reveal drop-shadow-2xl">
-            Where Champions <br/><span className="text-amber-500">Come To Life</span>
-          </h1>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            
+            {/* Left Column: Value Proposition & Search */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 dark:bg-red-950/40 border border-red-200/80 dark:border-red-800/60 shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-[#e50a38] dark:text-[#ff2b58]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-[#e50a38] dark:text-[#ff476f]">
+                  Official Sports Registration Platform
+                </span>
+              </div>
 
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-12 reveal font-light">
-            Temukan event lari, triathlon, dan olahraga eksklusif di Indonesia.
-            Daftar mudah, pembayaran aman, dan nikmati pengalaman tak terlupakan.
-          </p>
+              <h1 className="text-hero text-slate-900 dark:text-white">
+                Satu Platform untuk <br className="hidden sm:inline" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e50a38] via-rose-600 to-amber-500">
+                  Semua Rekor Larimu.
+                </span>
+              </h1>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 reveal">
-            <Link
-              to="/events"
-              className="inline-flex items-center justify-center px-10 py-4 rounded-full bg-amber-600 text-white font-bold text-lg hover:bg-amber-500 transition-all shadow-lg shadow-amber-900/30 w-full sm:w-auto"
-            >
-              Lihat Event
-            </Link>
-            <Link
-              to="/about"
-              className="inline-flex items-center justify-center px-10 py-4 rounded-full bg-white/10 text-white font-semibold border border-white/30 hover:bg-white/20 transition-all backdrop-blur w-full sm:w-auto"
-            >
-              Tentang Kami
-            </Link>
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+                Temukan dan ikuti race marathon, trail run, dan ajang olahraga bergengsi di Indonesia. Registrasi instan, pembayaran terverifikasi aman, dan sertifikat resmi.
+              </p>
+
+              {/* Integrated Hero Search Form (DOKU Style Enterprise Input) */}
+              <form onSubmit={handleHeroSearch} className="max-w-xl">
+                <div className="relative flex flex-col sm:flex-row items-center gap-2 p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/40 dark:shadow-none">
+                  <div className="relative w-full flex items-center pl-3">
+                    <Search className="w-5 h-5 text-slate-400 shrink-0" />
+                    <input 
+                      type="text"
+                      placeholder="Cari event, kota (cth: Jakarta, Bali)..."
+                      value={searchKeyword}
+                      onChange={(e) => setSearchKeyword(e.target.value)}
+                      className="w-full pl-3 pr-4 py-3 bg-transparent text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
+                    />
+                  </div>
+                  <button 
+                    type="submit"
+                    className="btn-brand-primary w-full sm:w-auto shrink-0 !py-3 !px-6 text-sm"
+                  >
+                    <span>Cari Event</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </form>
+
+              {/* Trust Metrics Pill Counters */}
+              <div className="pt-4 flex flex-wrap items-center gap-6 sm:gap-8 border-t border-slate-200/70 dark:border-slate-800 text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span><strong>100%</strong> Pembayaran Resmi</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span>Sertifikat & Timing Valid</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#e50a38]" />
+                  <span>10,000+ Pelari Aktif</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Column: Hero Spotlight Interactive Card (DOKU Style) */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative mx-auto max-w-md lg:max-w-none">
+                
+                {/* Decorative floating badge */}
+                <div className="absolute -top-4 -right-4 z-20 bg-white dark:bg-slate-800 px-4 py-2 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-white animate-bounce">
+                  <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  <span>Registrasi Cepat 1 Menit</span>
+                </div>
+
+                {/* Spotlight Card */}
+                {featuredSpotlight ? (
+                  <div className="enterprise-card overflow-hidden group bg-white dark:bg-[#0f172a]">
+                    <div className="relative h-64 overflow-hidden bg-slate-900">
+                      <img 
+                        src={featuredSpotlight.banner || 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80'}
+                        alt={featuredSpotlight.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+                      
+                      <div className="absolute top-4 left-4">
+                        <span className="badge-brand">
+                          Event Terpilih
+                        </span>
+                      </div>
+
+                      <div className="absolute bottom-4 left-4 right-4 text-white">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-300 font-medium mb-1">
+                          <MapPin className="w-3.5 h-3.5 text-[#ff2b58]" />
+                          <span>{featuredSpotlight.location}</span>
+                        </div>
+                        <h3 className="text-xl font-bold leading-snug drop-shadow-md line-clamp-1">
+                          {featuredSpotlight.name}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="p-5 space-y-4">
+                      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <span className="flex items-center gap-1.5 font-semibold">
+                          <Calendar className="w-4 h-4 text-[#e50a38]" />
+                          {new Date(featuredSpotlight.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </span>
+                        <span className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold">
+                          Slot Tersedia
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+                        {featuredSpotlight.description || 'Ambil bagian dalam gelaran olahraga paling bergengsi musim ini. Kuota terbatas.'}
+                      </p>
+
+                      <div className="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                          <p className="text-[10px] uppercase font-bold text-slate-400">Kategori</p>
+                          <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                            {featuredSpotlight.category || 'Marathon'}
+                          </p>
+                        </div>
+                        <Link 
+                          to={`/events/${featuredSpotlight.slug}`}
+                          className="btn-brand-primary !py-2 !px-4 text-xs font-bold"
+                        >
+                          <span>Daftar Sekarang</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="enterprise-card p-8 text-center bg-white dark:bg-[#0f172a]">
+                    <Activity className="w-12 h-12 text-[#e50a38] mx-auto mb-4" />
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Siap Berlari?</h3>
+                    <p className="text-xs text-slate-500 mt-2 mb-4">Ribuan slot race menantimu untuk tahun 2026.</p>
+                    <Link to="/events" className="btn-brand-primary text-xs">Jelajahi Event</Link>
+                  </div>
+                )}
+
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ===== FEATURED EVENTS (DARK SECTION) ===== */}
-      <section className="bg-slate-900 text-white py-24 border-t-4 border-amber-500" ref={featuredRef}>
+      {/* ========================================================
+          ENTERPRISE CATEGORY TAB SWITCHER (Style DOKU)
+          ======================================================== */}
+      <section className="py-14 bg-white dark:bg-[#090d16] border-b border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 reveal">
-            <div className="inline-block px-4 py-1 border border-amber-500/50 rounded-full text-amber-500 text-xs font-bold tracking-widest uppercase mb-4">
-              Pilihan Editor
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-[#e50a38]">Katalog Pilihan</span>
+              <h2 className="text-title text-slate-900 dark:text-white mt-1">
+                Eksplor Berdasarkan Kategori
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Pilih jenis lomba yang sesuai dengan target dan keahlianmu.
+              </p>
             </div>
-            <h2 className="font-display text-4xl md:text-6xl tracking-wider">Event Unggulan</h2>
+
+            {/* Category Tabs */}
+            <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+              {[
+                { id: 'ALL', label: 'Semua Event' },
+                { id: 'MARATHON', label: 'Road Running' },
+                { id: 'TRAIL', label: 'Trail & Ultra' },
+                { id: 'CYCLING', label: 'Cycling' },
+                { id: 'TRIATHLON', label: 'Triathlon' },
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-white dark:bg-slate-800 text-[#e50a38] dark:text-[#ff476f] shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
+          {/* Events Grid */}
           {loading ? (
-            <div className="flex gap-6 overflow-x-auto pb-8 justify-center">
-              {[1, 2, 3, 4].map(i => <div key={i} className="w-[300px] h-[450px] bg-slate-800 animate-pulse rounded-2xl flex-shrink-0" />)}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="enterprise-card h-80 animate-pulse bg-slate-100 dark:bg-slate-900" />
+              ))}
+            </div>
+          ) : popularEvents.length === 0 ? (
+            <div className="enterprise-card p-12 text-center max-w-lg mx-auto">
+              <Calendar className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Belum Ada Event di Kategori Ini</h3>
+              <p className="text-xs text-slate-500 mt-1 mb-4">Event baru akan segera diumumkan oleh para organizer mitra kami.</p>
+              <button onClick={() => setActiveTab('ALL')} className="btn-brand-secondary text-xs">
+                Tampilkan Semua Kategori
+              </button>
             </div>
           ) : (
-            <div className="flex gap-6 overflow-x-auto pb-10 hide-scrollbar snap-x snap-mandatory reveal">
-              {featuredEvents.map((event) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {popularEvents.map(event => (
                 <Link
                   key={event.id}
                   to={`/events/${event.slug}`}
-                  className="relative w-[300px] md:w-[320px] h-[450px] flex-shrink-0 snap-center rounded-2xl overflow-hidden group border border-slate-700 hover:border-amber-500 transition-all duration-500 block"
+                  className="enterprise-card group flex flex-col justify-between overflow-hidden"
                 >
-                  <img
-                    src={event.banner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=800&q=80'}
-                    alt={event.name}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
-                  
-                  <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col justify-end h-full">
-                    <span className="px-3 py-1 bg-amber-500 text-slate-900 text-xs font-bold uppercase tracking-wider rounded w-fit mb-3">
-                      {event.category || 'Featured'}
-                    </span>
-                    <h3 className="font-display text-3xl mb-2 leading-tight group-hover:text-amber-400 transition-colors">{event.name}</h3>
-                    <div className="flex items-center gap-4 text-sm text-slate-300">
-                      <span className="flex items-center gap-1"><Calendar className="w-4 h-4 text-amber-500" /> {new Date(event.startDate).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}</span>
-                      <span className="flex items-center gap-1"><MapPin className="w-4 h-4 text-amber-500" /> {event.location}</span>
+                  {/* Image Cover */}
+                  <div className="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img 
+                      src={event.banner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=600&q=80'} 
+                      alt={event.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <span className="badge-brand">
+                        {event.category || 'Road'}
+                      </span>
+                    </div>
+                    <div className="absolute top-3 right-3 bg-white/95 dark:bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-slate-700 dark:text-slate-300 border border-slate-200/50">
+                      {event.status === 'REGISTRATION_OPEN' ? '🟢 Open' : 'Tutup'}
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold mb-2">
+                        <MapPin className="w-3.5 h-3.5 text-[#e50a38] shrink-0" />
+                        <span className="truncate">{event.location}</span>
+                      </div>
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-[#e50a38] transition-colors line-clamp-2 leading-snug">
+                        {event.name}
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                        {event.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Jadwal</span>
+                        <p className="font-bold text-slate-800 dark:text-slate-200">
+                          {new Date(event.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
+                      </div>
+                      <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:bg-[#e50a38] group-hover:text-white transition-all shadow-xs">
+                        <ChevronRight className="w-4 h-4" />
+                      </span>
                     </div>
                   </div>
                 </Link>
               ))}
             </div>
           )}
-          
-          <div className="text-center mt-8 reveal">
-            <Link to="/events" className="inline-flex items-center justify-center px-8 py-3 rounded bg-white/5 border border-white/20 text-white font-medium hover:bg-amber-600 hover:border-amber-600 transition-all">
-              Jelajahi Semua
+
+          <div className="mt-12 text-center">
+            <Link to="/events" className="btn-brand-primary">
+              <span>Lihat Semua Jadwal Event ({events.length})</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
+
         </div>
       </section>
 
-      {/* ===== UPCOMING EVENTS (LIST VIEW) ===== */}
-      <section className="py-24 bg-[var(--bg-main)]" ref={upcomingRef}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-16 reveal">
-            <h2 className="font-display text-5xl md:text-6xl tracking-wider text-slate-900 dark:text-white mb-2">Event Mendatang</h2>
-            <div className="w-24 h-1 bg-amber-500"></div>
-          </div>
-
-          <div className="space-y-6">
-            {upcomingEvents.length === 0 && !loading && (
-              <p className="text-center text-slate-500">Belum ada event mendatang saat ini.</p>
-            )}
+      {/* ========================================================
+          ENTERPRISE ORGANIZER CTA (DOKU Style Business Solutions)
+          ======================================================== */}
+      <section className="py-20 bg-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-radial from-red-600/10 via-transparent to-transparent pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
-            {upcomingEvents.map((event) => {
-              const date = new Date(event.startDate);
-              return (
-                <Link
-                  key={event.id}
-                  to={`/events/${event.slug}`}
-                  className="group flex flex-col md:flex-row items-center bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-xl hover:border-amber-200 dark:hover:border-amber-900 transition-all reveal"
-                >
-                  {/* Date Block */}
-                  <div className="flex flex-col items-center justify-center px-8 py-4 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 min-w-[140px]">
-                    <span className="text-5xl font-display font-bold text-amber-600 dark:text-amber-500">{date.getDate()}</span>
-                    <span className="text-lg font-bold text-slate-500 uppercase tracking-widest">{date.toLocaleString('id-ID', { month: 'short' })}</span>
-                  </div>
+            <div className="lg:col-span-7 space-y-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#ff2b58]">Solusi Penyelenggara Event</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                Kelola Pendaftaran, Tiket, & Race Pack dalam Satu Dashboard.
+              </h2>
+              <p className="text-sm sm:text-base text-slate-400 max-w-xl leading-relaxed">
+                Apakah Anda komunitas lari, EO, atau sponsor? Gunakan infrastruktur registrasi Guwigo Events untuk mempermudah alur verifikasi data dan pembayaran peserta Anda.
+              </p>
 
-                  {/* Image (Optional, small) */}
-                  <div className="hidden md:block w-32 h-32 ml-6 rounded-xl overflow-hidden flex-shrink-0">
-                    <img 
-                      src={event.banner || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=400&q=80'} 
-                      alt={event.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
                   </div>
+                  <span className="text-xs font-semibold text-slate-300">Auto Generate QR E-Tiket & BIB</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Scanner Check-In RPC Terintegrasi</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Payout Otomatis & Laporan Realtime</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Keamanan Data Standar ISO</span>
+                </div>
+              </div>
 
-                  {/* Details */}
-                  <div className="flex-1 mt-6 md:mt-0 md:ml-8 text-center md:text-left">
-                    <div className="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-widest rounded-full mb-3">
-                      Pendaftaran Buka
-                    </div>
-                    <h3 className="font-display text-3xl mb-2 text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors">{event.name}</h3>
-                    <p className="text-slate-500 text-sm flex items-center justify-center md:justify-start gap-2">
-                      <MapPin className="w-4 h-4 text-slate-400" /> {event.location}
-                    </p>
-                  </div>
-
-                  {/* Action */}
-                  <div className="mt-6 md:mt-0 md:ml-6">
-                    <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
-                      <ArrowRight className="w-5 h-5 -rotate-45" />
-                    </div>
-                  </div>
+              <div className="pt-6 flex flex-wrap gap-4">
+                <Link to="/host-event" className="btn-brand-primary !bg-[#ff2b58] hover:!bg-[#e50a38]">
+                  <span>Buka Pendaftaran Event Baru</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
-              );
-            })}
-          </div>
-          
-          {upcomingEvents.length > 0 && (
-            <div className="mt-12 text-center reveal">
-               <Link to="/events" className="inline-flex items-center gap-2 font-bold text-slate-900 dark:text-white hover:text-amber-600 transition-colors border-b-2 border-amber-500 pb-1 uppercase tracking-widest text-sm">
-                 Semua Event <ChevronRight className="w-4 h-4" />
-               </Link>
+                <Link to="/contact" className="btn-brand-secondary !text-white !border-slate-700 hover:!bg-slate-800">
+                  Konsultasi Gratis
+                </Link>
+              </div>
             </div>
-          )}
+
+            <div className="lg:col-span-5">
+              <div className="p-6 rounded-3xl bg-slate-800/80 border border-slate-700/80 shadow-2xl space-y-4">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-700">
+                  <span className="text-xs font-bold text-slate-400 uppercase">Live Race Control Preview</span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">Online</span>
+                </div>
+                <div className="space-y-3">
+                  <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-700/50 flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] text-slate-400">Total Tiket Terjual</p>
+                      <p className="text-lg font-bold text-white">4,850 / 5,000</p>
+                    </div>
+                    <span className="text-xs font-bold text-emerald-400">97% Sold</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-700/50 flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] text-slate-400">Peserta Check-In RPC</p>
+                      <p className="text-lg font-bold text-white">4,710</p>
+                    </div>
+                    <span className="text-xs font-bold text-sky-400">QR Valid</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
-      {/* ===== NEWSLETTER / CTA ===== */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1920&q=80" alt="CTA" className="w-full h-full object-cover brightness-50" />
-          <div className="absolute inset-0 bg-slate-900/80" />
-        </div>
-        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center text-white">
-          <h2 className="font-display text-5xl mb-4">Tetap Terhubung</h2>
-          <p className="text-lg text-slate-300 mb-8">Dapatkan informasi terbaru seputar jadwal event, diskon early bird, dan berita olahraga lainnya langsung ke inbox Anda.</p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-            <input 
-              type="email" 
-              placeholder="Masukkan alamat email..." 
-              className="flex-1 px-6 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 backdrop-blur"
-            />
-            <button type="button" className="px-8 py-4 rounded-full bg-amber-600 hover:bg-amber-500 font-bold transition-colors">
-              Subscribe
-            </button>
-          </form>
-        </div>
-      </section>
-      
-      {/* ===== SPONSORS ===== */}
+      {/* ========================================================
+          SPONSORS & PARTNERS (DOKU Style Clean Ticker)
+          ======================================================== */}
       {sponsors.length > 0 && (
-        <section className="py-12 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-8">Didukung Oleh</p>
-            <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-              {sponsors.slice(0,6).map(sp => (
-                <div key={sp.id} className="h-10">
-                  {sp.logoUrl ? <img src={sp.logoUrl} alt={sp.name} className="h-full object-contain" /> : <span className="font-bold text-xl">{sp.name}</span>}
+        <section className="py-14 bg-white dark:bg-[#090d16] border-t border-slate-100 dark:border-slate-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8">
+              Dipercaya Oleh Komunitas, Brand, & Penyelenggara Resmi
+            </p>
+            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+              {sponsors.map(sp => (
+                <div key={sp.id} className="h-9">
+                  {sp.logoUrl ? (
+                    <img src={sp.logoUrl} alt={sp.name} className="h-full object-contain" />
+                  ) : (
+                    <span className="font-bold text-slate-600 dark:text-slate-300">{sp.name}</span>
+                  )}
                 </div>
               ))}
             </div>

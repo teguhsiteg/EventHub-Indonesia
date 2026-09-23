@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, MapPin, Mail, Phone } from 'lucide-react';
+import { Trophy, MapPin, Mail, Phone, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const [footerData, setFooterData] = useState({
-    about: 'Guwigo Events adalah platform resmi manajemen event olahraga. Temukan, daftar, dan kelola pengalaman event olahraga Anda bersama kami.',
-    copyright: `\u00a9 ${currentYear} Guwigo Events. All rights reserved.`,
+    about: 'Guwigo Events adalah platform teknologi pendaftaran, timing, dan tiket event olahraga terintegrasi di Indonesia.',
+    copyright: `\u00a9 ${currentYear} Guwigo Events. Hak Cipta Dilindungi.`,
     contactAddress: 'Jakarta, Indonesia',
-    contactEmail: 'support@racepro.id',
-    contactPhone: '+62 812-XXXX-XXXX',
+    contactEmail: 'support@guwigo.id',
+    contactPhone: '+62 812-8888-9999',
     navLinks: [
-      { to: '/events', label: 'Jelajahi Event' },
+      { to: '/events', label: 'Eksplorasi Event' },
       { to: '/results', label: 'Hasil & Klasemen' },
+      { to: '/host-event', label: 'Buka Event (Organizer)' },
       { to: '/about', label: 'Tentang Kami' },
-      { to: '/contact', label: 'Bantuan' },
+      { to: '/news', label: 'Artikel & Berita' },
     ],
     legalLinks: [
       { to: '/terms', label: 'Syarat & Ketentuan' },
       { to: '/privacy', label: 'Kebijakan Privasi' },
-      { to: '/contact', label: 'Laporkan Masalah' },
+      { to: '/contact', label: 'Pusat Bantuan & Laporan' },
     ]
   });
 
@@ -50,45 +51,52 @@ export const Footer: React.FC = () => {
   }, []);
 
   return (
-    <footer className="bg-[#0B0F14] text-gray-400 pt-16 pb-8">
+    <footer className="bg-slate-900 text-slate-400 pt-16 pb-12 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        
+        {/* Main Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-14">
           
-          {/* Brand */}
-          <div className="lg:col-span-1 space-y-4">
+          {/* Brand & Value Prop */}
+          <div className="lg:col-span-4 space-y-4">
             <Link to="/" className="flex items-center gap-2.5">
-                <img 
-                  src="/logo.png" 
-                  alt="Guwigo Events" 
-                  className="h-10 w-auto object-contain"
-                />
-              </Link>
-            <p className="text-sm leading-relaxed opacity-70 max-w-xs">
+              <img 
+                src="/logo.png" 
+                alt="Guwigo Events" 
+                className="h-10 w-auto object-contain brightness-0 invert opacity-95"
+              />
+            </Link>
+            <p className="text-sm leading-relaxed text-slate-400 pr-4">
               {footerData.about}
             </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Sistem Pembayaran Resmi Terenkripsi</span>
+            </div>
           </div>
 
-          {/* Navigasi */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Navigasi</h4>
-            <ul className="space-y-3">
+          {/* Quick Nav */}
+          <div className="lg:col-span-3">
+            <h4 className="text-white font-bold mb-4 text-sm tracking-wide">Navigasi Utama</h4>
+            <ul className="space-y-2.5">
               {footerData.navLinks.map(link => (
                 <li key={link.to}>
-                  <Link to={link.to} className="text-sm hover:text-amber-400 transition-colors">
-                    {link.label}
+                  <Link to={link.to} className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1 group">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-[#e50a38] transition-colors" />
+                    <span>{link.label}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Legal */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Legal</h4>
-            <ul className="space-y-3">
+          {/* Legal Links */}
+          <div className="lg:col-span-2">
+            <h4 className="text-white font-bold mb-4 text-sm tracking-wide">Legalitas</h4>
+            <ul className="space-y-2.5">
               {footerData.legalLinks.map(link => (
                 <li key={link.to}>
-                  <Link to={link.to} className="text-sm hover:text-amber-400 transition-colors">
+                  <Link to={link.to} className="text-sm text-slate-400 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -96,34 +104,38 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Kontak */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Kontak</h4>
-            <ul className="space-y-3 text-sm">
+          {/* Contact Details */}
+          <div className="lg:col-span-3">
+            <h4 className="text-white font-bold mb-4 text-sm tracking-wide">Hubungi Kami</h4>
+            <ul className="space-y-3 text-sm text-slate-400">
               <li className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                <MapPin className="w-4 h-4 text-slate-500 mt-1 shrink-0" />
                 <span>{footerData.contactAddress}</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-amber-500 shrink-0" />
-                <a href={`mailto:${footerData.contactEmail}`} className="hover:text-amber-400 transition-colors">
+                <Mail className="w-4 h-4 text-slate-500 shrink-0" />
+                <a href={`mailto:${footerData.contactEmail}`} className="hover:text-white transition-colors">
                   {footerData.contactEmail}
                 </a>
               </li>
               <li className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-amber-500 shrink-0" />
-                <a href={`tel:${footerData.contactPhone.replace(/[^0-9+]/g, '')}`} className="hover:text-amber-400 transition-colors">
+                <Phone className="w-4 h-4 text-slate-500 shrink-0" />
+                <a href={`tel:${footerData.contactPhone.replace(/[^0-9+]/g, '')}`} className="hover:text-white transition-colors">
                   {footerData.contactPhone}
                 </a>
               </li>
             </ul>
           </div>
+
         </div>
 
-        {/* Payment Support */}
-        <div className="py-8 border-t border-gray-800 flex flex-col items-center mt-4">
-          <h4 className="text-white font-semibold mb-6 text-sm uppercase tracking-wider">Payment Support</h4>
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6 items-center opacity-90">
+        {/* Payment Channels Showcase (DOKU Style Ecosystem Trust) */}
+        <div className="py-8 border-t border-slate-800 flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs uppercase font-bold tracking-widest text-slate-400">Metode Pembayaran Resmi & Terverifikasi</span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8 items-center bg-slate-800/40 border border-slate-800 px-6 py-4 rounded-2xl">
             {[
               { src: '/asset/logo-bca.svg', alt: 'BCA' },
               { src: '/asset/logo-mandiri.webp', alt: 'Mandiri' },
@@ -140,21 +152,22 @@ export const Footer: React.FC = () => {
                 key={method.alt}
                 src={method.src} 
                 alt={method.alt} 
-                className="h-8 w-auto object-contain bg-white px-3 py-1.5 rounded-lg hover:scale-110 hover:shadow-lg transition-all duration-300 hover:ring-2 hover:ring-amber-400" 
+                className="h-6 w-auto object-contain brightness-90 hover:brightness-100 hover:scale-105 transition-all" 
               />
             ))}
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs opacity-60">
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>{footerData.copyright}</p>
           <div className="flex gap-6">
-            <Link to="/terms" className="hover:text-amber-400 transition-colors">Syarat & Ketentuan</Link>
-            <Link to="/privacy" className="hover:text-amber-400 transition-colors">Privasi</Link>
-            <Link to="/contact" className="hover:text-amber-400 transition-colors">Bantuan</Link>
+            <Link to="/terms" className="hover:text-slate-300 transition-colors">Syarat Penggunaan</Link>
+            <Link to="/privacy" className="hover:text-slate-300 transition-colors">Kebijakan Privasi</Link>
+            <Link to="/contact" className="hover:text-slate-300 transition-colors">Bantuan</Link>
           </div>
         </div>
+
       </div>
     </footer>
   );

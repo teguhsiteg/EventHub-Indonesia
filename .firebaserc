@@ -1,5 +1,15 @@
 {
   "projects": {
-    "default": "raceproevent"
-  }
+    "default": "profilcode"
+  },
+  "targets": {
+    "profilcode": {
+      "hosting": {
+        "events": [
+          "guwigo-events"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

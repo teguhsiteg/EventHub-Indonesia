@@ -2,75 +2,75 @@ import React, { useState, useEffect } from 'react';
 import { Timer } from 'lucide-react';
 
 interface CountdownProps {
-  targetDateISO: string;
+ targetDateISO: string;
 }
 
 export const Countdown: React.FC<CountdownProps> = ({ targetDateISO }) => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    isPassed: false,
-  });
+ const [timeLeft, setTimeLeft] = useState({
+ days: 0,
+ hours: 0,
+ minutes: 0,
+ seconds: 0,
+ isPassed: false,
+ });
 
-  useEffect(() => {
-    const calculateTime = () => {
-      const now = new Date().getTime();
-      const target = new Date(targetDateISO).getTime();
-      const difference = target - now;
+ useEffect(() => {
+ const calculateTime = () => {
+ const now = new Date().getTime();
+ const target = new Date(targetDateISO).getTime();
+ const difference = target - now;
 
-      if (difference <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, isPassed: true });
-        return;
-      }
+ if (difference <= 0) {
+ setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, isPassed: true });
+ return;
+ }
 
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+ const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+ const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+ const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+ const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-      setTimeLeft({ days, hours, minutes, seconds, isPassed: false });
-    };
+ setTimeLeft({ days, hours, minutes, seconds, isPassed: false });
+ };
 
-    calculateTime();
-    const timer = setInterval(calculateTime, 1000);
-    return () => clearInterval(timer);
-  }, [targetDateISO]);
+ calculateTime();
+ const timer = setInterval(calculateTime, 1000);
+ return () => clearInterval(timer);
+ }, [targetDateISO]);
 
-  if (timeLeft.isPassed) {
-    return (
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-600 dark:text-slate-300 font-bold text-xs uppercase tracking-wider">
-        <Timer className="w-4 h-4 text-emerald-400" />
-        <span>Event Berlangsung / Selesai</span>
-      </div>
-    );
-  }
+ if (timeLeft.isPassed) {
+ return (
+ <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/80 border border-[var(--glass-border)] text-slate-600 dark:text-slate-600 font-bold text-xs uppercase tracking-wider">
+ <Timer className="w-4 h-4 text-emerald-400" />
+ <span>Event Berlangsung / Selesai</span>
+ </div>
+ );
+ }
 
-  return (
-    <div className="bg-white dark:bg-red-950/90 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-xl">
-      <div className="flex items-center gap-2 text-xs font-bold text-red-400 uppercase tracking-wider mb-3">
-        <Timer className="w-4 h-4" />
-        <span>Hitung Mundur Race Start</span>
-      </div>
-      <div className="grid grid-cols-4 gap-2 text-center">
-        <div className=" p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
-          <span className="block text-xl font-black text-slate-900 dark:text-white">{String(timeLeft.days).padStart(2, '0')}</span>
-          <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">HARI</span>
-        </div>
-        <div className=" p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
-          <span className="block text-xl font-black text-slate-900 dark:text-white">{String(timeLeft.hours).padStart(2, '0')}</span>
-          <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">JAM</span>
-        </div>
-        <div className=" p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
-          <span className="block text-xl font-black text-slate-900 dark:text-white">{String(timeLeft.minutes).padStart(2, '0')}</span>
-          <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">MENIT</span>
-        </div>
-        <div className=" p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
-          <span className="block text-xl font-black text-red-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
-          <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-500 dark:text-slate-400 uppercase">DETIK</span>
-        </div>
-      </div>
-    </div>
-  );
+ return (
+ <div className="bg-white dark:bg-red-950/90 border border-[var(--glass-border)] p-4 rounded-2xl shadow-xl">
+ <div className="flex items-center gap-2 text-xs font-bold text-red-400 uppercase tracking-wider mb-3">
+ <Timer className="w-4 h-4" />
+ <span>Hitung Mundur Race Start</span>
+ </div>
+ <div className="grid grid-cols-4 gap-2 text-center">
+ <div className=" p-2.5 rounded-xl border border-[var(--glass-border)] ">
+ <span className="block text-xl font-black text-[var(--text-primary)] ">{String(timeLeft.days).padStart(2, '0')}</span>
+ <span className="block text-[10px] font-semibold text-[var(--text-secondary)] dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] uppercase">HARI</span>
+ </div>
+ <div className=" p-2.5 rounded-xl border border-[var(--glass-border)] ">
+ <span className="block text-xl font-black text-[var(--text-primary)] ">{String(timeLeft.hours).padStart(2, '0')}</span>
+ <span className="block text-[10px] font-semibold text-[var(--text-secondary)] dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] uppercase">JAM</span>
+ </div>
+ <div className=" p-2.5 rounded-xl border border-[var(--glass-border)] ">
+ <span className="block text-xl font-black text-[var(--text-primary)] ">{String(timeLeft.minutes).padStart(2, '0')}</span>
+ <span className="block text-[10px] font-semibold text-[var(--text-secondary)] dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] uppercase">MENIT</span>
+ </div>
+ <div className=" p-2.5 rounded-xl border border-[var(--glass-border)] ">
+ <span className="block text-xl font-black text-red-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
+ <span className="block text-[10px] font-semibold text-[var(--text-secondary)] dark:text-[var(--text-secondary)] dark:text-[var(--text-secondary)] uppercase">DETIK</span>
+ </div>
+ </div>
+ </div>
+ );
 };

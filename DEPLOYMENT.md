@@ -2,7 +2,7 @@
 
 **Produk:** GUWIGO EVENTS  
 **Perusahaan:** PT Guwigo Teknologi Indonesia  
-**Production URL:** [https://ev.guwigo.com](https://ev.guwigo.com)  
+**Production URL:** [https://events.guwigo.com](https://events.guwigo.com)  
 **Main Corporate Website:** [https://guwigo.com](https://guwigo.com)  
 
 ---
@@ -33,7 +33,7 @@ Aplikasi ini terhubung secara langsung dengan infrastruktur Firebase (Project ID
    - Aktifkan provider **Email / Password**.
    - Aktifkan provider **Google** (jika sudah menyiapkan OAuth consent screen di Google Cloud Console).
 2. Di tab **Settings -> Authorized Domains**, tambahkan domain production:
-   - `ev.guwigo.com`
+   - `events.guwigo.com`
    - `localhost` (untuk pengujian lokal)
 
 ---
@@ -87,7 +87,7 @@ Pastikan aturan keamanan memverifikasi otorisasi pengguna (`request.auth.uid == 
 Untuk mengizinkan login dan otentikasi Firebase di domain custom:
 1. Buka **Authentication > Settings > Authorized Domains**.
 2. Klik **Add Domain**.
-3. Masukkan `ev.guwigo.com`.
+3. Masukkan `events.guwigo.com`.
 
 ---
 
@@ -102,14 +102,14 @@ firebase deploy --only hosting
 
 ---
 
-## 9. Konfigurasi Custom Domain (`ev.guwigo.com`)
-`ev.guwigo.com` adalah subdomain resmi dalam ekosistem **Guwigo** (`guwigo.com`).
+## 9. Konfigurasi Custom Domain (`events.guwigo.com`)
+`events.guwigo.com` adalah subdomain resmi dalam ekosistem **Guwigo** (`guwigo.com`).
 
 1. Masuk ke DNS Management Penyedia Domain `guwigo.com`.
-2. Tambahkan DNS Record untuk subdomain `ev`:
+2. Tambahkan DNS Record untuk subdomain `events`:
    - **Type:** `CNAME`
-   - **Host / Name:** `ev`
-   - **Target / Value:** `<cname-target-hosting-provider>` (misal: `ghs.googlehosted.com` atau CNAME dari hosting pilihan Anda)
+   - **Host / Name:** `events`
+   - **Target / Value:** `<cname-target-hosting-provider>` (misal: `guwigo-events.web.app` atau CNAME dari hosting pilihan Anda)
    - **TTL:** `3600` (atau Auto)
 
 ---
