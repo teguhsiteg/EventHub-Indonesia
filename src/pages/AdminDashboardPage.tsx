@@ -15,6 +15,7 @@ import {
  getRegistrationsByEventIds,
  getAllParticipantsAdmin,
  updateCheckInStatusAdmin,
+ triggerRacepackEmail,
 } from "../services/registrationService";
 import {
  getAllPaymentsAdmin,
@@ -92,6 +93,7 @@ import {
  Info,
  ClipboardList,
  Download,
+ Mail,
 } from "lucide-react";
 
 export const AdminDashboardPage: React.FC = () => {
@@ -1848,25 +1850,48 @@ export const AdminDashboardPage: React.FC = () => {
  </span>
  )}
  </td>
- <td className="py-4 px-6 text-right">
- <button
- onClick={() =>
- handleToggleParticipantCheckIn(
- part.id,
- part.checkInStatus,
- )
- }
- className={`text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm ${
- part.checkInStatus
- ? "bg-red-50 text-red-600 border border-red-100 hover:bg-red-100"
- : "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100"
- }`}
- >
- {part.checkInStatus
- ? "Batal RPC"
- : "Set RPC (Collected)"}
- </button>
- </td>
+                                              <td className="py-4 px-6 text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                  <button
+                                                    title="Kirim Email Panduan Race Pack"
+                                                    onClick={async () => {
+                                                      const ok = window.confirm(`Kirim email panduan Race Pack ke ${part.fullName}?`);
+                                                      if (!ok) return;
+                                                      try {
+                                                        const res = await triggerRacepackEmail(part.id);
+                                                        if (res.success) {
+                                                          alert(`Email Race Pack berhasil dikirim ke ${part.fullName}!`);
+                                                        } else {
+                                                          alert(`Gagal: ${res.message || "Unknown error"}`);
+                                                        }
+                                                      } catch (e: any) {
+                                                        alert(`Error: ${e.message}`);
+                                                      }
+                                                    }}
+                                                    className="p-2 rounded-xl bg-[var(--bg-main)] text-[var(--brand-primary)] border border-[var(--glass-border)] hover:bg-[var(--glass-surface)] transition-all shadow-sm flex items-center gap-1.5 text-xs font-bold"
+                                                  >
+                                                    <Mail size={14} />
+                                                    <span className="hidden sm:inline">Email RPC</span>
+                                                  </button>
+                                                  <button
+                                                    onClick={() =>
+                                                      handleToggleParticipantCheckIn(
+                                                        part.id,
+                                                        part.checkInStatus,
+                                                      )
+                                                    }
+                                                    className={`text-xs font-bold px-3.5 py-2 rounded-xl transition-all shadow-sm ${
+                                                      part.checkInStatus
+                                                        ? "bg-red-50 text-red-600 border border-red-100 hover:bg-red-100"
+                                                        : "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100"
+                                                    }`}
+                                                  >
+                                                    {part.checkInStatus
+                                                      ? "Batal RPC"
+                                                      : "Set RPC (Collected)"}
+                                                  </button>
+                                                </div>
+                                              </td>
  </tr>
  );
  })}

@@ -246,8 +246,8 @@ export async function createRegistration(
     });
   }
 
-  // The ticket email is no longer dispatched here.
-  // It will be dispatched when payment is VERIFIED / PAID via triggerTicketEmail().
+  // Kirim email notifikasi pendaftaran yang baru dibuat
+  triggerRegistrationCreatedEmail(regRef.id).catch(err => console.warn('Registration email notice error:', err));
 
   return { registration, participants, payment };
 }
@@ -309,7 +309,9 @@ export async function getParticipantByQrToken(qrToken: string): Promise<Particip
   return null;
 }
 
-export async function triggerTicketEmail(registrationId: string): Promise<void> {
+// ── AUTOMATED EMAIL TRIGGERS (REGISTRATION, PAYMENT, RACEPACK) ──
+
+export async function triggerRegistrationCreatedEmail(registrationId: string): Promise<void> {
   try {
     const regSnap = await getDoc(doc(db, 'registrations', registrationId));
     if (!regSnap.exists()) return;
@@ -331,14 +333,84 @@ export async function triggerTicketEmail(registrationId: string): Promise<void> 
         recipientEmail: participant.email,
         participantName: participant.fullName,
         registrationNumber: reg.registrationNumber,
+        bibNumber: participant.bibNumber,
         eventName: event.name,
-        ticketCount: reg.ticketCount,
+        categoryName: participant.categoryId,
+        totalAmount: reg.totalAmount,
         eventDate: new Date(event.startDate).toLocaleDateString('id-ID', { dateStyle: 'full' }),
         location: event.location,
       }),
-    }).catch(err => console.warn('Notification trigger background notice:', err));
+    }).catch(err => console.warn('Registration email trigger notice:', err));
+  } catch (e) {
+    console.warn('Could not dispatch registration email:', e);
+  }
+}
+
+export async function triggerTicketEmail(registrationId: string): Promise<void> {
+  try {
+    const regSnap = await getDoc(doc(db, 'registrations', registrationId));
+    if (!regSnap.exists()) return;
+    const reg = regSnap.data() as Registration;
+
+    const eventSnap = await getDoc(doc(db, 'events', reg.eventId));
+    if (!eventSnap.exists()) return;
+    const event = eventSnap.data() as EventItem;
+
+    const partQ = query(collection(db, 'participants'), where('registrationId', '==', registrationId), limit(1));
+    const partSnap = await getDocs(partQ);
+    if (partSnap.empty) return;
+    const participant = partSnap.docs[0].data() as Participant;
+
+    // Send Payment Paid / E-Ticket confirmation email
+    await fetch('/api/notifications/send-payment-status-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        recipientEmail: participant.email,
+        participantName: participant.fullName,
+        registrationNumber: reg.registrationNumber,
+        bibNumber: participant.bibNumber,
+        eventName: event.name,
+        categoryName: participant.categoryId,
+        status: 'PAID',
+        qrToken: participant.qrToken,
+      }),
+    }).catch(err => console.warn('Payment status notification background notice:', err));
   } catch (e) {
     console.warn('Could not dispatch automated ticket email notification:', e);
+  }
+}
+
+export async function triggerRacepackEmail(participantId: string): Promise<void> {
+  try {
+    const partSnap = await getDoc(doc(db, 'participants', participantId));
+    if (!partSnap.exists()) return;
+    const participant = partSnap.data() as Participant;
+
+    const eventSnap = await getDoc(doc(db, 'events', participant.eventId));
+    if (!eventSnap.exists()) return;
+    const event = eventSnap.data() as EventItem;
+
+    const regSnap = await getDoc(doc(db, 'registrations', participant.registrationId));
+    const reg = regSnap.exists() ? (regSnap.data() as Registration) : null;
+
+    await fetch('/api/notifications/send-racepack-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        recipientEmail: participant.email,
+        participantName: participant.fullName,
+        registrationNumber: reg?.registrationNumber || participant.registrationId,
+        bibNumber: participant.bibNumber,
+        eventName: event.name,
+        pickupLocation: event.location,
+        pickupSchedule: 'H-1 Acara (Pukul 09:00 - 20:00 WIB)',
+        requirements: '1. QR Code E-Tiket Guwigo<br>2. Kartu Identitas Resmi (KTP / SIM / Paspor)',
+        qrToken: participant.qrToken,
+      }),
+    }).catch(err => console.warn('Racepack email trigger notice:', err));
+  } catch (e) {
+    console.warn('Could not dispatch racepack email notification:', e);
   }
 }
 

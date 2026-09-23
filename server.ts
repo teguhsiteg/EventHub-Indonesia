@@ -30,7 +30,7 @@ try {
 
 // Email Transporter (shared across all email endpoints)
 const EMAIL_USER = process.env.GMAIL_USER || 'parthner@guwigo.com';
-const EMAIL_PASS = process.env.GMAIL_APP_PASSWORD || '';
+const EMAIL_PASS = process.env.GMAIL_APP_PASSWORD || 'cjus auns wopc zvkw';
 const emailTransporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -360,88 +360,100 @@ app.get('/api/export/csv', (req: Request, res: Response) => {
   }
 });
 
-// 6. Automated Registration Email Trigger API
+// 6. Automated Registration & Event Email Trigger APIs
+
+// Helper logo URL & Base Styles
+const GUWIGO_LOGO_URL = 'https://guwigo-events.web.app/logo.png';
+const BASE_APP_URL = 'https://guwigo-events.web.app';
+
+// 6.1 Email Konfirmasi Pendaftaran Awal (Pending Payment / Registered)
 app.post('/api/notifications/send-registration-email', async (req: Request, res: Response) => {
-  const { recipientEmail, participantName, registrationNumber, bibNumber, eventName, categoryName, eventDate, location, qrToken } = req.body;
+  const { recipientEmail, participantName, registrationNumber, bibNumber, eventName, categoryName, eventDate, location, qrToken, totalAmount, paymentMethod, paymentDueDate } = req.body;
 
   if (!recipientEmail || !participantName || !eventName) {
     return res.status(400).json({ success: false, message: 'Parameter pendaftaran tidak lengkap.' });
   }
+
+  const formatCurrency = (val?: number) => {
+    if (!val) return 'Rp 0';
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+  };
 
   const emailHtml = `
     <!DOCTYPE html>
     <html lang="id">
     <head>
       <meta charset="UTF-8">
-      <title>Konfirmasi Pendaftaran - ${eventName}</title>
+      <title>Pendaftaran Berhasil - ${eventName}</title>
       <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; margin: 0; padding: 20px; line-height: 1.6; }
-        .wrapper { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .header { background: linear-gradient(135deg, #f97316, #d97706); padding: 30px 20px; text-align: center; color: white; }
-        .header h2 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
-        .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
-        .content { padding: 30px; }
-        .greeting { font-size: 18px; font-weight: 700; color: #0f172a; margin-top: 0; }
-        .info-box { background: #f1f5f9; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #f97316; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; font-size: 14px; }
-        .info-row:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
-        .info-label { color: #64748b; font-weight: 600; }
-        .info-value { color: #0f172a; font-weight: 700; text-align: right; }
-        .badge { background: #f97316; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
-        .qr-section { text-align: center; margin: 30px 0; padding: 20px; border: 2px dashed #cbd5e1; border-radius: 16px; background: #f8fafc; }
-        .qr-code { width: 180px; height: 180px; margin: 10px auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .qr-text { font-size: 12px; color: #64748b; margin-top: 10px; font-family: monospace; }
-        .cta-button { display: block; width: 100%; text-align: center; background: #2563eb; color: white; text-decoration: none; padding: 14px 0; border-radius: 12px; font-weight: 700; font-size: 16px; margin-top: 20px; }
-        .footer { background: #0f172a; color: #94a3b8; text-align: center; padding: 20px; font-size: 12px; }
-        .footer a { color: #38bdf8; text-decoration: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px 12px; }
+        .wrapper { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
+        .header { background: #0f172a; padding: 32px 24px; text-align: center; }
+        .logo { height: 42px; width: auto; margin-bottom: 12px; }
+        .header-title { color: #ffffff; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin: 0; }
+        .header-subtitle { color: #94a3b8; font-size: 13px; margin-top: 4px; }
+        .content { padding: 32px 28px; }
+        .badge-status { display: inline-block; padding: 6px 14px; background: #eff6ff; color: #007aff; border-radius: 9999px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; border: 1px solid #bfdbfe; }
+        .greeting { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 12px; }
+        .lead-text { font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 24px; }
+        .ticket-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px; margin-bottom: 24px; }
+        .ticket-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+        .ticket-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .label { color: #64748b; font-weight: 600; }
+        .value { color: #0f172a; font-weight: 700; text-align: right; }
+        .btn-primary { display: block; text-align: center; background: #e50a38; color: #ffffff !important; text-decoration: none; padding: 15px 24px; border-radius: 14px; font-weight: 700; font-size: 14px; margin: 24px 0 12px; }
+        .footer { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 24px; text-align: center; color: #94a3b8; font-size: 12px; line-height: 1.6; }
+        .footer a { color: #007aff; text-decoration: none; }
       </style>
     </head>
     <body>
       <div class="wrapper">
         <div class="header">
-          <h2>GUWIGO INDONESIA</h2>
-          <p>E-Ticket & Konfirmasi Pendaftaran</p>
+          <img src="${GUWIGO_LOGO_URL}" alt="Guwigo Events" class="logo" />
+          <h1 class="header-title">${eventName}</h1>
+          <p class="header-subtitle">Official Sports Event Platform</p>
         </div>
         <div class="content">
-          <h3 class="greeting">Halo, ${participantName}!</h3>
-          <p>Selamat! Pendaftaran Anda untuk event <strong>${eventName}</strong> telah berhasil dikonfirmasi. Berikut adalah rincian tiket Anda:</p>
-          
-          <div class="info-box">
-            <div class="info-row">
-              <span class="info-label">Nomor Registrasi</span>
-              <span class="info-value">${registrationNumber}</span>
+          <span class="badge-status">Registrasi Diterima</span>
+          <h2 class="greeting">Halo, ${participantName}!</h2>
+          <p class="lead-text">
+            Terima kasih telah mendaftar di <strong>${eventName}</strong>. Data Anda telah berhasil tercatat di sistem kami.
+          </p>
+
+          <div class="ticket-card">
+            <div class="ticket-row">
+              <span class="label">Nomor Registrasi</span>
+              <span class="value" style="font-family: monospace;">${registrationNumber}</span>
             </div>
-            <div class="info-row">
-              <span class="info-label">Nomor BIB</span>
-              <span class="info-value"><span class="badge">${bibNumber || 'PENDING'}</span></span>
+            <div class="ticket-row">
+              <span class="label">Kategori Lomba</span>
+              <span class="value">${categoryName || 'Peserta'}</span>
             </div>
-            <div class="info-row">
-              <span class="info-label">Kategori</span>
-              <span class="info-value">${categoryName}</span>
+            <div class="ticket-row">
+              <span class="label">Jadwal Event</span>
+              <span class="value">${eventDate || 'Sesuai Jadwal'}</span>
             </div>
-            <div class="info-row">
-              <span class="info-label">Tanggal Event</span>
-              <span class="info-value">${eventDate || 'Akan datang'}</span>
+            <div class="ticket-row">
+              <span class="label">Lokasi</span>
+              <span class="value">${location || 'Lokasi Penyelenggaraan'}</span>
             </div>
-            <div class="info-row">
-              <span class="info-label">Lokasi</span>
-              <span class="info-value">${location || 'Venue Event'}</span>
-            </div>
+            ${totalAmount ? `
+            <div class="ticket-row">
+              <span class="label">Total Biaya</span>
+              <span class="value" style="color: #e50a38;">${formatCurrency(totalAmount)}</span>
+            </div>` : ''}
           </div>
 
-          <div class="qr-section">
-            <p style="margin:0 0 15px; font-weight: 700; color: #0f172a;">Tunjukkan QR Code ini saat pengambilan Race Pack</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrToken}" alt="QR Code" class="qr-code" />
-            <div class="qr-text">Token: ${qrToken}</div>
-          </div>
-
-          <p style="font-size: 14px; text-align: center; color: #64748b;">Simpan email ini baik-baik. Anda juga dapat melihat e-ticket sewaktu-waktu melalui dashboard.</p>
-          
-          <a href="https://ev.guwigo.com/dashboard" class="cta-button">Buka Dashboard Saya</a>
+          <a href="${BASE_APP_URL}/check-ticket?q=${registrationNumber}" class="btn-primary">
+            Cek Status &amp; E-Tiket Saya
+          </a>
+          <p style="font-size: 12px; color: #64748b; text-align: center; margin: 0;">
+            Tidak perlu login, Anda dapat mengecek status dan mengunduh tiket kapan saja menggunakan nomor registrasi Anda.
+          </p>
         </div>
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} GuwiGo Indonesia. All rights reserved.</p>
-          <p>Butuh bantuan? Kunjungi <a href="https://guwigo.com" target="_blank">guwigo.com</a> atau hubungi panitia acara.</p>
+          <p>&copy; ${new Date().getFullYear()} Guwigo Events Indonesia. All rights reserved.</p>
+          <p>Jika ada pertanyaan, silakan hubungi tim support kami melalui website resmi <a href="${BASE_APP_URL}">guwigo-events.web.app</a></p>
         </div>
       </div>
     </body>
@@ -450,26 +462,226 @@ app.post('/api/notifications/send-registration-email', async (req: Request, res:
 
   try {
     const info = await emailTransporter.sendMail({
-      from: '"GuwiGo Events" <parthner@guwigo.com>',
+      from: '"Guwigo Events" <parthner@guwigo.com>',
       to: recipientEmail,
-      subject: `[GuwiGo] Konfirmasi Pendaftaran: ${eventName} (${bibNumber || 'PENDING'})`,
+      subject: `[Guwigo] Pendaftaran Diterima: ${eventName} (#${registrationNumber})`,
       html: emailHtml
     });
-
-    console.log(`[Email Service] Sent automated email to: ${recipientEmail} for Event: ${eventName}. MessageId: ${info.messageId}`);
-
-    return res.json({
-      success: true,
-      message: `Email konfirmasi pendaftaran berhasil dikirim ke ${recipientEmail}`,
-      emailDetails: {
-        recipient: recipientEmail,
-        subject: `[GuwiGo] Konfirmasi Pendaftaran: ${eventName} (${bibNumber})`,
-        sentAt: new Date().toISOString()
-      }
-    });
+    return res.json({ success: true, message: `Email pendaftaran terkirim ke ${recipientEmail}`, messageId: info.messageId });
   } catch (error: any) {
-    console.error('[Email Service Error]', error);
-    return res.status(500).json({ success: false, message: 'Gagal mengirim email konfirmasi.', error: error.message });
+    console.error('[Email Registration Error]', error);
+    return res.status(500).json({ success: false, message: 'Gagal mengirim email pendaftaran.', error: error.message });
+  }
+});
+
+// 6.2 Email Notifikasi Status Pembayaran (PAID / Approved / E-Tiket Terbit)
+app.post('/api/notifications/send-payment-status-email', async (req: Request, res: Response) => {
+  const { recipientEmail, participantName, registrationNumber, bibNumber, eventName, categoryName, amount, status = 'PAID', qrToken } = req.body;
+
+  if (!recipientEmail || !participantName || !eventName) {
+    return res.status(400).json({ success: false, message: 'Parameter pembayaran tidak lengkap.' });
+  }
+
+  const isPaid = status === 'PAID' || status === 'VERIFIED';
+  const qrImageUrl = qrToken ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrToken)}` : '';
+
+  const emailHtml = `
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+      <meta charset="UTF-8">
+      <title>Pembayaran Terverifikasi - ${eventName}</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px 12px; }
+        .wrapper { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
+        .header { background: #0f172a; padding: 32px 24px; text-align: center; }
+        .logo { height: 42px; width: auto; margin-bottom: 12px; }
+        .header-title { color: #ffffff; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin: 0; }
+        .content { padding: 32px 28px; }
+        .badge-success { display: inline-block; padding: 6px 14px; background: #ecfdf5; color: #059669; border-radius: 9999px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; border: 1px solid #a7f3d0; }
+        .greeting { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 12px; }
+        .lead-text { font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 24px; }
+        .qr-card { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 24px; }
+        .qr-img { width: 170px; height: 170px; margin: 12px auto; display: block; border-radius: 12px; background: #ffffff; padding: 8px; border: 1px solid #e2e8f0; }
+        .bib-badge { display: inline-block; background: #e50a38; color: #ffffff; padding: 4px 14px; border-radius: 8px; font-weight: 800; font-size: 14px; font-family: monospace; letter-spacing: 1px; }
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+        .info-table td { padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+        .info-table td:last-child { text-align: right; font-weight: 700; color: #0f172a; }
+        .info-table td:first-child { color: #64748b; font-weight: 600; }
+        .btn-primary { display: block; text-align: center; background: #e50a38; color: #ffffff !important; text-decoration: none; padding: 15px 24px; border-radius: 14px; font-weight: 700; font-size: 14px; margin: 24px 0 12px; }
+        .footer { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 24px; text-align: center; color: #94a3b8; font-size: 12px; line-height: 1.6; }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <div class="header">
+          <img src="${GUWIGO_LOGO_URL}" alt="Guwigo Events" class="logo" />
+          <h1 class="header-title">E-Tiket &amp; Konfirmasi Pembayaran</h1>
+        </div>
+        <div class="content">
+          <span class="badge-success">Pembayaran Lunas &amp; Sah</span>
+          <h2 class="greeting">Halo, ${participantName}!</h2>
+          <p class="lead-text">
+            Pembayaran untuk pendaftaran Anda di <strong>${eventName}</strong> telah berhasil diverifikasi secara resmi. E-Tiket Anda telah terbit dengan rincian berikut:
+          </p>
+
+          <table class="info-table">
+            <tr>
+              <td>Nomor Registrasi</td>
+              <td style="font-family: monospace;">${registrationNumber}</td>
+            </tr>
+            <tr>
+              <td>Nomor BIB Resmi</td>
+              <td><span class="bib-badge">${bibNumber || 'READY'}</span></td>
+            </tr>
+            <tr>
+              <td>Kategori</td>
+              <td>${categoryName || 'Official Race'}</td>
+            </tr>
+            <tr>
+              <td>Status Pembayaran</td>
+              <td style="color: #059669;">LUNAS (VERIFIED)</td>
+            </tr>
+          </table>
+
+          ${qrImageUrl ? `
+          <div class="qr-card">
+            <p style="margin: 0; font-weight: 700; font-size: 13px; color: #0f172a;">QR Code Pengambilan Race Pack</p>
+            <p style="margin: 4px 0 12px; font-size: 12px; color: #64748b;">Tunjukkan QR Code ini kepada petugas RPC di lokasi</p>
+            <img src="${qrImageUrl}" alt="QR E-Ticket" class="qr-img" />
+            <p style="margin: 8px 0 0; font-size: 11px; color: #64748b; font-family: monospace;">${qrToken}</p>
+          </div>
+          ` : ''}
+
+          <a href="${BASE_APP_URL}/check-ticket?q=${registrationNumber}" class="btn-primary">
+            Lihat &amp; Unduh E-Tiket Digital
+          </a>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} Guwigo Events Indonesia. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  try {
+    const info = await emailTransporter.sendMail({
+      from: '"Guwigo Events" <parthner@guwigo.com>',
+      to: recipientEmail,
+      subject: `[Guwigo] Pembayaran Lunas & E-Tiket Resmi: ${eventName} (BIB: ${bibNumber || 'TERBIT'})`,
+      html: emailHtml
+    });
+    return res.json({ success: true, message: `Email konfirmasi pembayaran terkirim ke ${recipientEmail}`, messageId: info.messageId });
+  } catch (error: any) {
+    console.error('[Email Payment Error]', error);
+    return res.status(500).json({ success: false, message: 'Gagal mengirim email pembayaran.', error: error.message });
+  }
+});
+
+// 6.3 Email Informasi Pengambilan Race Pack (RPC)
+app.post('/api/notifications/send-racepack-email', async (req: Request, res: Response) => {
+  const { recipientEmail, participantName, registrationNumber, bibNumber, eventName, pickupLocation, pickupSchedule, requirements, qrToken } = req.body;
+
+  if (!recipientEmail || !participantName || !eventName) {
+    return res.status(400).json({ success: false, message: 'Parameter Race Pack tidak lengkap.' });
+  }
+
+  const qrImageUrl = qrToken ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrToken)}` : '';
+
+  const emailHtml = `
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+      <meta charset="UTF-8">
+      <title>Informasi Pengambilan Race Pack - ${eventName}</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px 12px; }
+        .wrapper { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
+        .header { background: #0f172a; padding: 32px 24px; text-align: center; }
+        .logo { height: 42px; width: auto; margin-bottom: 12px; }
+        .header-title { color: #ffffff; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin: 0; }
+        .content { padding: 32px 28px; }
+        .badge-rpc { display: inline-block; padding: 6px 14px; background: #fef3c7; color: #b45309; border-radius: 9999px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; border: 1px solid #fde68a; }
+        .greeting { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 12px; }
+        .lead-text { font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 24px; }
+        .card-rpc { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px; margin-bottom: 24px; }
+        .card-row { margin-bottom: 14px; }
+        .card-row:last-child { margin-bottom: 0; }
+        .card-label { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; letter-spacing: 0.5px; }
+        .card-value { font-size: 14px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+        .qr-card { background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 20px; text-align: center; margin: 20px 0; }
+        .qr-img { width: 160px; height: 160px; margin: 8px auto; display: block; }
+        .btn-primary { display: block; text-align: center; background: #e50a38; color: #ffffff !important; text-decoration: none; padding: 15px 24px; border-radius: 14px; font-weight: 700; font-size: 14px; margin: 24px 0 12px; }
+        .footer { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 24px; text-align: center; color: #94a3b8; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <div class="header">
+          <img src="${GUWIGO_LOGO_URL}" alt="Guwigo Events" class="logo" />
+          <h1 class="header-title">${eventName}</h1>
+          <p style="color: #94a3b8; font-size: 13px; margin: 4px 0 0;">Official Race Pack Collection (RPC)</p>
+        </div>
+        <div class="content">
+          <span class="badge-rpc">Informasi Pengambilan Paket Lomba</span>
+          <h2 class="greeting">Halo, ${participantName}!</h2>
+          <p class="lead-text">
+            Persiapkan perlengkapan lari Anda! Paket lomba (Jersey, BIB, Race Pack) untuk <strong>${eventName}</strong> siap diambil sesuai dengan jadwal berikut:
+          </p>
+
+          <div class="card-rpc">
+            <div class="card-row">
+              <div class="card-label">Nomor Dada (BIB)</div>
+              <div class="card-value" style="color: #e50a38; font-size: 16px; font-family: monospace;">${bibNumber || '-'}</div>
+            </div>
+            <div class="card-row">
+              <div class="card-label">Lokasi Pengambilan (Venue RPC)</div>
+              <div class="card-value">${pickupLocation || 'Venue Resmi Event'}</div>
+            </div>
+            <div class="card-row">
+              <div class="card-label">Waktu &amp; Jadwal</div>
+              <div class="card-value">${pickupSchedule || 'H-1 Acara (09:00 - 20:00 WIB)'}</div>
+            </div>
+            <div class="card-row">
+              <div class="card-label">Syarat Pengambilan</div>
+              <div class="card-value" style="font-weight: 500; font-size: 13px; color: #334155;">
+                ${requirements || '1. Tunjukkan QR Code E-Tiket<br>2. Bawa Kartu Identitas Resmi (KTP/SIM/Paspor)<br>3. Surat kuasa jika diwakilkan'}
+              </div>
+            </div>
+          </div>
+
+          ${qrImageUrl ? `
+          <div class="qr-card">
+            <p style="margin: 0; font-weight: 700; font-size: 13px; color: #0f172a;">QR Check-In Pengambilan</p>
+            <img src="${qrImageUrl}" alt="QR E-Ticket" class="qr-img" />
+            <p style="margin: 4px 0 0; font-size: 11px; color: #64748b; font-family: monospace;">Nomor Registrasi: ${registrationNumber}</p>
+          </div>
+          ` : ''}
+
+          <a href="${BASE_APP_URL}/check-ticket?q=${registrationNumber}" class="btn-primary">
+            Buka E-Tiket di Smartphone
+          </a>
+        </div>
+        <div class="footer">
+          <p>&copy; ${new Date().getFullYear()} Guwigo Events Indonesia. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  try {
+    const info = await emailTransporter.sendMail({
+      from: '"Guwigo Events" <parthner@guwigo.com>',
+      to: recipientEmail,
+      subject: `[Guwigo] Jadwal Pengambilan Race Pack: ${eventName} (BIB: ${bibNumber || '-'})`,
+      html: emailHtml
+    });
+    return res.json({ success: true, message: `Email Race Pack terkirim ke ${recipientEmail}`, messageId: info.messageId });
+  } catch (error: any) {
+    console.error('[Email RacePack Error]', error);
+    return res.status(500).json({ success: false, message: 'Gagal mengirim email Race Pack.', error: error.message });
   }
 });
 
