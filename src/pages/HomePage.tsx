@@ -83,7 +83,7 @@ export const HomePage: React.FC = () => {
           {/* Top Brand Header Bar */}
           <div className="flex items-center justify-between pb-8 mb-8 border-b border-slate-200/60 dark:border-slate-800">
             <Link to="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="Guwigo Events" className="h-10 w-auto object-contain" />
+              <img src="/logo.png" alt="Guwigo Events" className="h-12 sm:h-14 w-auto object-contain transition-transform hover:scale-105" />
             </Link>
             <div className="flex items-center gap-3">
               <Link 

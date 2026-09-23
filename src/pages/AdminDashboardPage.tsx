@@ -60,6 +60,7 @@ import { PageSettings } from "../components/admin/PageSettings";
 import { SponsorSettings } from "../components/admin/SponsorSettings";
 import { GalleryManager } from "../components/admin/GalleryManager";
 import { AnnouncementManager } from "../components/admin/AnnouncementManager";
+import { ChatMonitorTab } from "../components/admin/ChatMonitorTab";
 import { ConfirmDialog } from "../components/common/ConfirmDialog";
 import {
  ShieldAlert,
@@ -111,6 +112,7 @@ export const AdminDashboardPage: React.FC = () => {
  | "users"
  | "galleries"
  | "announcements"
+    | "chat"
  | "settings") || "stats";
  // Data States
  const [events, setEvents] = useState<EventItem[]>([]);
@@ -2442,6 +2444,13 @@ export const AdminDashboardPage: React.FC = () => {
  <AnnouncementManager />
  </div>
  )}
+
+        {/* TAB: CHAT MONITOR (ASISTEN GUWIGO) */}
+        {activeTab === "chat" && !loading && (
+          <div className="animate-in fade-in duration-300">
+            <ChatMonitorTab />
+          </div>
+        )}
  </div>
  </main>
 

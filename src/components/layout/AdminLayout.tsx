@@ -7,7 +7,7 @@ import { AutoLogout } from '../auth/AutoLogout';
 import { 
  Trophy, ShieldAlert, Users, CreditCard, DollarSign,
  Activity, Settings, FileText, QrCode, Plus, Sun, Moon,
- LogOut, Menu, X, ChevronRight, ClipboardList
+ LogOut, Menu, X, ChevronRight, ClipboardList, MessageSquare
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -24,6 +24,7 @@ const adminTabs = [
  { id: 'results', label: 'Hasil Lomba', icon: FileText, href: '/admin?tab=results' },
  { id: 'galleries', label: 'Galeri', icon: FileText, href: '/admin?tab=galleries' },
  { id: 'announcements', label: 'Berita', icon: FileText, href: '/admin?tab=announcements' },
+ { id: 'chat', label: 'Log Bantuan Chat', icon: MessageSquare, href: '/admin?tab=chat' },
  { id: 'users', label: 'Pengguna', icon: Users, href: '/admin?tab=users' },
  { id: 'settings', label: 'Pengaturan', icon: Settings, href: '/admin?tab=settings' },
 ];

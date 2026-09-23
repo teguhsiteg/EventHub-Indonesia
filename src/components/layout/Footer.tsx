@@ -129,19 +129,32 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        {/* Payment Channels Showcase (Official DOKU Ecosystem Banner) */}
-        <div className="py-8 border-t border-slate-800 flex flex-col items-center">
-          <div className="flex items-center gap-2 mb-5">
+        {/* Payment Channels Showcase */}
+        <div className="py-6 border-t border-slate-800 flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-3">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs uppercase font-bold tracking-widest text-slate-400">Metode Pembayaran Resmi & Terverifikasi</span>
+            <span className="text-xs uppercase font-bold tracking-widest text-slate-300">
+              Sistem Pembayaran Resmi Terenkripsi
+            </span>
           </div>
+          <p className="text-[11px] text-slate-400 mb-4 text-center">
+            Metode Pembayaran Resmi &amp; Terverifikasi
+          </p>
           
-          <div className="w-full max-w-4xl px-4 flex justify-center">
-            <div className="p-4 sm:p-5 rounded-2xl bg-white/95 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 shadow-md backdrop-blur-sm flex items-center justify-center overflow-hidden">
+          <div className="w-full max-w-3xl px-4 flex flex-wrap items-center justify-center gap-3">
+            <div className="px-4 py-2 rounded-xl bg-white/95 border border-slate-200/80 shadow-sm flex items-center justify-center">
               <img 
                 src="https://cdn-doku.oss-ap-southeast-5.aliyuncs.com/doku-ui-framework/doku/img/register-page/Merchants/Line-1.png"
-                alt="Metode Pembayaran Resmi DOKU - Bank Transfer, Virtual Account, Kartu Kredit, E-Wallet, QRIS, Gerai Ritel"
-                className="max-h-12 sm:max-h-14 w-auto object-contain transition-transform hover:scale-102"
+                alt="Metode Pembayaran Resmi - Bank Transfer, Virtual Account, Kartu Kredit, E-Wallet, QRIS"
+                className="h-6 sm:h-7 w-auto object-contain"
+                loading="lazy"
+              />
+            </div>
+            <div className="px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200/80 shadow-sm flex items-center justify-center">
+              <img 
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv2VUH9--HNlfj5_UsEkpmeloaDU-L2XmrPEOIz3C335L6j9miqGFKsuQ&s=10"
+                alt="Mitra Resmi Pembayaran Terverifikasi"
+                className="h-6 sm:h-7 w-auto object-contain"
                 loading="lazy"
               />
             </div>
