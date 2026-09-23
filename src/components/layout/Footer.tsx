@@ -129,53 +129,22 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        {/* Payment Channels Showcase (DOKU Style Ecosystem Trust) */}
+        {/* Payment Channels Showcase (Official DOKU Ecosystem Banner) */}
         <div className="py-8 border-t border-slate-800 flex flex-col items-center">
           <div className="flex items-center gap-2 mb-5">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             <span className="text-xs uppercase font-bold tracking-widest text-slate-400">Metode Pembayaran Resmi & Terverifikasi</span>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 items-center max-w-4xl px-4">
-            {/* Real verified webp/png assets in /asset/ */}
-            {[
-              { src: '/asset/logo-qris.webp', alt: 'QRIS' },
-              { src: '/asset/logo-mandiri.webp', alt: 'Mandiri' },
-              { src: '/asset/logo-bni.webp', alt: 'BNI' },
-              { src: '/asset/logo-bri.webp', alt: 'BRI' },
-              { src: '/asset/logo-bsi.webp', alt: 'BSI' },
-              { src: '/asset/logo-shopeepay.png', alt: 'ShopeePay' },
-              { src: '/asset/indomaret.png', alt: 'Indomaret' },
-              { src: '/asset/Alfamart.png', alt: 'Alfamart' },
-            ].map(method => (
-              <div 
-                key={method.alt} 
-                className="bg-white/95 rounded-xl px-3 py-2 flex items-center justify-center shadow-xs border border-slate-700/50 hover:scale-105 transition-transform h-10"
-              >
-                <img 
-                  src={method.src} 
-                  alt={method.alt} 
-                  className="max-h-6 max-w-[70px] w-auto object-contain" 
-                />
-              </div>
-            ))}
-
-            {/* Clean SVG Pills for E-Wallets & Card Networks without broken images */}
-            {[
-              { name: 'BCA Virtual Account', color: 'bg-blue-900 text-white' },
-              { name: 'GoPay', color: 'bg-emerald-600 text-white' },
-              { name: 'OVO', color: 'bg-purple-700 text-white' },
-              { name: 'DANA', color: 'bg-sky-500 text-white' },
-              { name: 'Visa / Mastercard', color: 'bg-slate-700 text-white' },
-            ].map(pill => (
-              <div 
-                key={pill.name}
-                className="px-3.5 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] font-bold text-slate-300 flex items-center gap-1.5 shadow-xs"
-              >
-                <span className={`w-2 h-2 rounded-full ${pill.color}`} />
-                <span>{pill.name}</span>
-              </div>
-            ))}
+          <div className="w-full max-w-4xl px-4 flex justify-center">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/95 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 shadow-md backdrop-blur-sm flex items-center justify-center overflow-hidden">
+              <img 
+                src="https://cdn-doku.oss-ap-southeast-5.aliyuncs.com/doku-ui-framework/doku/img/register-page/Merchants/Line-1.png"
+                alt="Metode Pembayaran Resmi DOKU - Bank Transfer, Virtual Account, Kartu Kredit, E-Wallet, QRIS, Gerai Ritel"
+                className="max-h-12 sm:max-h-14 w-auto object-contain transition-transform hover:scale-102"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
 
