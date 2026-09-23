@@ -139,6 +139,8 @@ export async function createRegistration(
     status: 'WAITING_PAYMENT',
     amount: totalAmount,
     invoiceId,
+    customerEmail: formsData[0]?.email?.toLowerCase().trim() || '',
+    customerPhone: formsData[0]?.phone || '',
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
   };
@@ -354,4 +356,65 @@ export async function updateCheckInStatusAdmin(participantId: string, status: bo
     checkInTime: status ? new Date().toISOString() : null,
     updatedAt: new Date().toISOString()
   });
+}
+
+// ── GUEST / ZERO ACCOUNT LOOKUP FUNCTIONS (TIAS STYLE) ──
+export async function getRegistrationsByGuestEmail(email: string): Promise<Registration[]> {
+  const cleanEmail = email.toLowerCase().trim();
+  if (!cleanEmail) return [];
+  
+  // 1. Check in registrations by customerEmail
+  const q1 = query(collection(db, 'registrations'), where('customerEmail', '==', cleanEmail));
+  const snap1 = await getDocs(q1);
+  const foundMap = new Map<string, Registration>();
+  snap1.docs.forEach(d => foundMap.set(d.id, { id: d.id, ...d.data() } as Registration));
+
+  // 2. Also check participants table in case customerEmail wasn't set on old records
+  const q2 = query(collection(db, 'participants'), where('email', '==', cleanEmail));
+  const snap2 = await getDocs(q2);
+  const regIdsToFetch: string[] = [];
+  snap2.docs.forEach(d => {
+    const data = d.data();
+    if (data.registrationId && !foundMap.has(data.registrationId)) {
+      regIdsToFetch.push(data.registrationId);
+    }
+  });
+
+  if (regIdsToFetch.length > 0) {
+    const uniqueIds = Array.from(new Set(regIdsToFetch)).slice(0, 20);
+    for (const regId of uniqueIds) {
+      try {
+        const rSnap = await getDoc(doc(db, 'registrations', regId));
+        if (rSnap.exists()) {
+          foundMap.set(rSnap.id, { id: rSnap.id, ...rSnap.data() } as Registration);
+        }
+      } catch (e) {
+        console.warn('Error fetching registration by id', e);
+      }
+    }
+  }
+
+  const results = Array.from(foundMap.values());
+  return results.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+}
+
+export async function getRegistrationByInvoiceOrNumber(identifier: string): Promise<Registration | null> {
+  const clean = identifier.trim().toUpperCase();
+  if (!clean) return null;
+
+  // Search by registrationNumber
+  const q1 = query(collection(db, 'registrations'), where('registrationNumber', '==', clean), limit(1));
+  const snap1 = await getDocs(q1);
+  if (!snap1.empty) {
+    return { id: snap1.docs[0].id, ...snap1.docs[0].data() } as Registration;
+  }
+
+  // Search by invoiceId
+  const q2 = query(collection(db, 'registrations'), where('invoiceId', '==', clean), limit(1));
+  const snap2 = await getDocs(q2);
+  if (!snap2.empty) {
+    return { id: snap2.docs[0].id, ...snap2.docs[0].data() } as Registration;
+  }
+
+  return null;
 }

@@ -14,10 +14,10 @@ export const Footer: React.FC = () => {
     contactPhone: '+62 812-8888-9999',
     navLinks: [
       { to: '/events', label: 'Eksplorasi Event' },
+      { to: '/check-ticket', label: 'Cek E-Tiket Saya' },
       { to: '/results', label: 'Hasil & Klasemen' },
       { to: '/host-event', label: 'Buka Event (Organizer)' },
       { to: '/about', label: 'Tentang Kami' },
-      { to: '/news', label: 'Artikel & Berita' },
     ],
     legalLinks: [
       { to: '/terms', label: 'Syarat & Ketentuan' },

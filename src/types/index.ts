@@ -177,6 +177,8 @@ export interface Registration {
   promoCode?: string;
   discountAmount?: number;
   invoiceId: string;
+  customerEmail?: string;
+  customerPhone?: string;
   createdAt: string;
   updatedAt: string;
 }

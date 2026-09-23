@@ -16,7 +16,8 @@ import {
   ArrowRight,
   Flame,
   Calendar,
-  Sparkles
+  Sparkles,
+  Ticket
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -64,6 +65,7 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { path: '/', label: 'Beranda' },
     { path: '/events', label: 'Eksplor Event' },
+    { path: '/check-ticket', label: 'Cek E-Tiket' },
     { path: '/results', label: 'Hasil & Klasemen' },
     { path: '/host-event', label: 'Jadi Penyelenggara' },
     { path: '/about', label: 'Tentang' },
@@ -231,17 +233,17 @@ export const Navbar: React.FC = () => {
               ) : (
                 <div className="flex items-center gap-2.5">
                   <Link 
-                    to="/login"
-                    className="px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-200 hover:text-[#e50a38] transition"
-                  >
-                    Masuk
-                  </Link>
-                  <Link 
-                    to="/register" 
+                    to="/check-ticket" 
                     className="btn-brand-primary text-xs !py-2.5 !px-5"
                   >
-                    <span>Daftar Gratis</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <Ticket className="w-3.5 h-3.5" />
+                    <span>Cek E-Tiket Saya</span>
+                  </Link>
+                  <Link 
+                    to="/login"
+                    className="px-3.5 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-[#e50a38] transition"
+                  >
+                    Portal EO / Admin
                   </Link>
                 </div>
               )}
@@ -327,20 +329,21 @@ export const Navbar: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-2">
+                <Link 
+                  to="/check-ticket" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="btn-brand-primary w-full text-xs !py-3 justify-center"
+                >
+                  <Ticket className="w-3.5 h-3.5" />
+                  <span>Cek E-Tiket Saya</span>
+                </Link>
                 <Link 
                   to="/login" 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 text-center text-xs font-bold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200"
+                  className="block text-center py-2.5 text-xs font-bold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300"
                 >
-                  Masuk
-                </Link>
-                <Link 
-                  to="/register" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="btn-brand-primary text-xs !py-2.5 justify-center"
-                >
-                  Daftar
+                  Portal Penyelenggara / Admin
                 </Link>
               </div>
             )}

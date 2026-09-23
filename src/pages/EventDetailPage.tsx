@@ -233,54 +233,17 @@ export const EventDetailPage: React.FC = () => {
  }
  }
 
- setSubmitting(true);
- let currentUserId = user?.uid || tempUserId;
+    setSubmitting(true);
+    // Guest-First Zero Friction Checkout (TIAS style): Peserta tidak dipaksa buat akun
+    let currentUserId = user?.uid || tempUserId;
+    if (!currentUserId) {
+      const guestId = 'guest_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+      currentUserId = guestId;
+      setTempUserId(guestId);
+    }
 
- try {
- // Auto register if guest and no temp user id yet
- if (!currentUserId) {
- const primaryEmail = formsData[0].email;
- const primaryName = formsData[0].fullName;
- const randomPassword = Math.random().toString(36).slice(-8) + 'Aa1!';
- 
- try {
- const userCredential = await createUserWithEmailAndPassword(auth, primaryEmail, randomPassword);
- const newUser = userCredential.user;
- 
- await updateProfile(newUser, { displayName: primaryName });
- 
- await setDoc(doc(db, 'users', newUser.uid), {
- email: newUser.email,
- name: primaryName,
- role: 'PARTICIPANT',
- createdAt: new Date().toISOString()
- });
-
- // Queue welcome email (requires Trigger Email extension)
- await addDoc(collection(db, 'mail'), {
- to: newUser.email,
- message: {
- subject: 'Selamat Datang di EventHub by Guwigo! Ini Akun Anda',
- text: `Halo ${primaryName},\n\nTerima kasih telah mendaftar. Akun Anda telah dibuat secara otomatis.\n\nEmail: ${newUser.email}\nPassword Sementara: ${randomPassword}\n\nHarap segera login dan ganti password Anda di dashboard.\n\nSalam,\nTim EventHub by Guwigo`
- }
- });
- 
- currentUserId = newUser.uid;
- setTempUserId(newUser.uid);
- } catch (authErr: any) {
- if (authErr.code === 'auth/email-already-in-use') {
- addNotification('warning', 'Email Sudah Terdaftar', 'Email ini sudah memiliki akun. Silakan masuk (login) terlebih dahulu.');
- navigate('/login', { state: { from: `/events/${slug}` } });
- setSubmitting(false);
- return;
- }
- throw authErr;
- }
- }
-
- if (!currentUserId) throw new Error('Gagal mengidentifikasi sesi pengguna.');
-
- const result = await createRegistration(currentUserId, event.id, cartItems, formsData, selectedAddons, specialVoucherCode, promoCode, selectedHotels, selectedPaymentMethod);
+    try {
+      const result = await createRegistration(currentUserId, event.id, cartItems, formsData, selectedAddons, specialVoucherCode, promoCode, selectedHotels, selectedPaymentMethod);
  
  if (selectedPaymentMethod === 'MIDTRANS') {
  const isProduction = settings?.midtransEnvironment === 'production';
@@ -348,12 +311,12 @@ export const EventDetailPage: React.FC = () => {
  addNotification('warning', 'Pembayaran Berhasil', `Pembayaran berhasil. Menunggu sinkronisasi admin.`);
  }
  setSnapEmbedded(false);
- navigate('/dashboard');
+ navigate(`/payment/success?order_id=${result.registration.registrationNumber}`);
  },
  onPending: function(midtransResult: any) {
  addNotification('warning', 'Pembayaran Tertunda', 'Silakan selesaikan pembayaran Anda.');
  setSnapEmbedded(false);
- navigate('/dashboard');
+ navigate(`/payment/success?order_id=${result.registration.registrationNumber}`);
  },
  onError: function(midtransResult: any) {
  addNotification('error', 'Pembayaran Gagal', 'Terjadi kesalahan saat memproses pembayaran.');
@@ -370,11 +333,11 @@ export const EventDetailPage: React.FC = () => {
  }
  } catch (midtransError: any) {
  addNotification('error', 'Sistem Pembayaran Error', midtransError.message);
- navigate('/dashboard');
+ navigate(`/payment/success?order_id=${result.registration.registrationNumber}`);
  }
  } else {
  addNotification('success', 'Pendaftaran Berhasil!', `Nomor Registrasi: ${result.registration.registrationNumber}. Harap selesaikan pembayaran.`);
- navigate('/dashboard');
+ navigate(`/payment/success?order_id=${result.registration.registrationNumber}`);
  }
  } catch (err: any) {
  addNotification('error', 'Pendaftaran Gagal', err.message || 'Terjadi kesalahan sistem saat mendaftar.');

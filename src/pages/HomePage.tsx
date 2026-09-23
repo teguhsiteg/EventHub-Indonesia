@@ -126,6 +126,14 @@ export const HomePage: React.FC = () => {
                 </div>
               </form>
 
+              {/* Quick Guest Ticket Access (TIAS Zero-Friction) */}
+              <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                <span>Sudah mendaftar sebelumnya?</span>
+                <Link to="/check-ticket" className="text-[#e50a38] font-bold hover:underline inline-flex items-center gap-1">
+                  Cek & Unduh E-Tiket Saya <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+
               {/* Trust Metrics Pill Counters */}
               <div className="pt-4 flex flex-wrap items-center gap-6 sm:gap-8 border-t border-slate-200/70 dark:border-slate-800 text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
                 <div className="flex items-center gap-2">
