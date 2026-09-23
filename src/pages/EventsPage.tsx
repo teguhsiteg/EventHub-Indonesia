@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { searchEventsInFirestore, EventSearchParams } from '../services/eventService';
 import { EventSearchFilter } from '../components/events/EventSearchFilter';
 import { EventItem } from '../types';
-import { MapPin, ChevronRight, Trophy, Tag, Calendar, Search, Sparkles, ArrowRight } from 'lucide-react';
+import { MapPin, ChevronRight, Trophy, Tag, Calendar, Search, ShieldCheck, ArrowRight } from 'lucide-react';
 
 export const EventsPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -58,7 +58,7 @@ export const EventsPage: React.FC = () => {
         {/* Header Section (DOKU Style) */}
         <div className="mb-10 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/40 border border-red-200/80 dark:border-red-800/60 text-[#e50a38] text-xs font-bold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
+            <ShieldCheck className="w-3.5 h-3.5 stroke-[2]" />
             <span>Katalog Resmi Event Olahraga</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">

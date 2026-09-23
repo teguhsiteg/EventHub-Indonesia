@@ -107,7 +107,7 @@ export const HomePage: React.FC = () => {
             <div className="lg:col-span-7 space-y-6 text-left">
               
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 dark:bg-red-950/40 border border-red-200/80 dark:border-red-800/60 shadow-xs">
-                <Sparkles className="w-3.5 h-3.5 text-[#e50a38] dark:text-[#ff2b58]" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#e50a38] dark:text-[#ff2b58] stroke-[2]" />
                 <span className="text-xs font-bold uppercase tracking-wider text-[#e50a38] dark:text-[#ff476f]">
                   Official Sports Registration Platform
                 </span>

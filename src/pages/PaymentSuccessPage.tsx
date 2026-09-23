@@ -14,10 +14,10 @@ import {
   MapPin, 
   ArrowRight, 
   ShieldCheck, 
-  Sparkles,
   Ticket,
   Mail,
-  Share2
+  Share2,
+  Info
 } from 'lucide-react';
 
 export const PaymentSuccessPage: React.FC = () => {
@@ -173,7 +173,7 @@ export const PaymentSuccessPage: React.FC = () => {
 
         {/* Quick Tips */}
         <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 text-amber-800 dark:text-amber-300 text-xs flex items-start gap-3">
-          <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
+          <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-500 stroke-[2]" />
           <p className="leading-relaxed">
             <strong>Tips Pengambilan Race Pack:</strong> Simpan atau tangkap layar (*screenshot*) QR Code Anda. Tunjukkan QR Code ini kepada panitia saat pengambilan Race Pack di lokasi pengambilan (RPC).
           </p>
